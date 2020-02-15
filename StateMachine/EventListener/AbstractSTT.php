@@ -7,6 +7,37 @@ use Bungle\Framework\Entity\EntityRegistry;
 use Symfony\Component\Workflow\Event\TransitionEvent;
 use Bungle\Framework\StateMachine\StepContext;
 
+/**
+ * Base class for STT services.
+ *
+ * Sub class must also implement STTInterface.
+ *
+ * TODO: remove fowlliing comment if Symfony/Flex implemented to auto
+ * update config/services.yaml file.
+ *
+ * Recommend config/services.yaml to make STT services work:
+ *
+ *   # config/services.yml
+ *   services:
+ *       _defaults:
+ *           autowire: true
+ *   
+ *       _instanceof:
+ *           Bungle\Framework\StateMachine\EventListener\AbstractSTT:
+ *               tags: ['bungle.stt']
+ *               public: true # TODO: maybe not needed, because it'll auto tagged as event subscriber
+ *
+ * Or use location based, maybe more applicable:
+ *   # config/services.yml
+ *   services:
+ *       _defaults:
+ *           autowire: true
+ *   
+ *       App\STT\:
+ *           resource: '../src/STT'
+ *           tags: ['bungle.stt']
+ *           public: true # TODO: maybe not needed, because it'll auto tagged as event subscriber
+ */
 abstract class AbstractSTT
 {
     // Transaction name -> [step callbacks]

@@ -71,4 +71,9 @@ final class OrderSTT extends AbstractSTT implements STTInterface
           ],
         ];
     }
+
+    public static function getHigh(): string
+    {
+      return 'ord';
+    }
 }
