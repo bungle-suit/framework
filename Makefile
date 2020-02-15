@@ -7,7 +7,7 @@ test-watch:
 	noisy.py -d '.' -e .php -- '../vendor/bin/phpunit --bootstrap Tests/bootstrap.php Tests/'
 
 lint:
-	../vendor/bin/phpcs --standard=PSR2 --ignore=vendor . *.php
+	../vendor/bin/phpcs --standard=PSR2 --ignore=vendor .
 	../vendor/bin/phpmd  . ansi ../.phpmd-ruleset.xml --exclude vendor
 
 format:

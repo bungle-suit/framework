@@ -46,9 +46,11 @@ final class TransitionEventListener
      */
     public static function getSTTClass(string $entityClass): string
     {
-      assert(strpos($entityClass, 'Entity\\') != -1,
-        'Entity class should in "Entity" namespace');
-      return str_replace('Entity', 'STT', $entityClass) . 'STT';
+        assert(
+            strpos($entityClass, 'Entity\\') != -1,
+            'Entity class should in "Entity" namespace'
+        );
+        return str_replace('Entity', 'STT', $entityClass) . 'STT';
     }
 
     private function getSteps($subject, string $transitionName): array

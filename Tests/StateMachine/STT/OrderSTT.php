@@ -6,8 +6,9 @@ namespace Bungle\Framework\Tests\StateMachine\STT;
 use Bungle\Framework\StateMachine\STTInterface;
 use Bungle\Framework\StateMachine\StepContext;
 use Bungle\Framework\Tests\StateMachine\Entity\Order;
+use Bungle\Framework\StateMachine\EventListener\AbstractSTT;
 
-class OrderSTT implements STTInterface
+final class OrderSTT extends AbstractSTT implements STTInterface
 {
     public static function setCodeFoo(Order $ord): void
     {
@@ -46,6 +47,26 @@ class OrderSTT implements STTInterface
           'check' => [
             [static::class, 'setCodeBar'],
             [static::class, 'abort'],
+            [static::class, 'setCodeFoo'],
+          ],
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function createSteps(): array
+    {
+        return [
+          'save' => [
+            [static::class, 'setCodeFoo'],
+          ],
+          'update' => [
+            [static::class, 'updateCodeWithTransitionName'],
+          ],
+          'check' => [
+            [static::class, 'setCodeBar'],
+            [$this, 'abort'],
             [static::class, 'setCodeFoo'],
           ],
         ];
