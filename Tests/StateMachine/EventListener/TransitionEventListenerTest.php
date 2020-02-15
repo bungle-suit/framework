@@ -28,7 +28,8 @@ final class TransitionEventListenerTest extends TestBase
         $f = TransitionEventListener::class.'::getSTTClass';
 
         self::assertEquals('STT\FooSTT', $f('Entity\Foo'));
-        self::assertEquals('Order\STT\BarSTT', $f('Order\Entity\Bar'));
+        self::assertEquals('STT\Order\BarSTT', $f('Entity\Order\Bar'));
+        self::assertEquals('Bungle\App\STT\Order\BarSTT', $f('Bungle\App\Entity\Order\Bar'));
     }
 
     public function testInvoke(): void
