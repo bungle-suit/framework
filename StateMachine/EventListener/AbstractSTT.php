@@ -21,7 +21,7 @@ use Bungle\Framework\StateMachine\StepContext;
  *   services:
  *       _defaults:
  *           autowire: true
- *   
+ *
  *       _instanceof:
  *           Bungle\Framework\StateMachine\EventListener\AbstractSTT:
  *               tags: ['bungle.stt']
@@ -32,7 +32,7 @@ use Bungle\Framework\StateMachine\StepContext;
  *   services:
  *       _defaults:
  *           autowire: true
- *   
+ *
  *       App\STT\:
  *           resource: '../src/STT'
  *           tags: ['bungle.stt']
