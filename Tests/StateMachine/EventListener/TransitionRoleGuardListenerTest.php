@@ -18,12 +18,6 @@ final class TransitionRoleGuardListenerTest extends TestBase
         $this->dispatcher->addListener('workflow.guard', $listener);
     }
 
-    public function testGetTransitionRole(): void
-    {
-        $getRole = TransitionRoleGuardListener::class.'::getTransitionRole';
-        self::assertEquals('ROLE_ord_save', $getRole('ord', 'save'));
-    }
-
     public function testCan(): void
     {
         self::assertTrue($this->sm->can($this->ord, 'save'));

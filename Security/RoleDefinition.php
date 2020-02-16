@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Security;
 
+use Bungle\Framework\StateMachine\Vina;
+
 /**
  * Definition of a role,
  *
@@ -30,7 +32,7 @@ class RoleDefinition
 
     public static function newActionRole(string $high, string $action): string
     {
-        return "ROLE_${high}_$action";
+        return Vina::getTransitionRole($high, $action);
     }
 
     // Parse state machine action role name, returns array with two items:

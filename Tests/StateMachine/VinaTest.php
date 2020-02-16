@@ -113,6 +113,12 @@ final class VinaTest extends TestCase
         $vina->applyTransitionRaw(new Order, 'check');
     }
 
+    public function testGetTransitionRole(): void
+    {
+        $getRole = Vina::class.'::getTransitionRole';
+        self::assertEquals('ROLE_ord_save', $getRole('ord', 'save'));
+    }
+
     private static function createOrderWorkflow(): StateMachine
     {
         $trans = [

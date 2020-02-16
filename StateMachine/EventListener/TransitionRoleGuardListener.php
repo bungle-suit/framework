@@ -5,6 +5,7 @@ namespace Bungle\Framework\StateMachine\EventListener;
 
 use Symfony\Component\Workflow\Event\GuardEvent;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Bungle\Framework\StateMachine\Vina;
 
 /**
  * Implement role guard for workflow that test
@@ -25,7 +26,7 @@ final class TransitionRoleGuardListener
 
     public function __invoke(GuardEvent $event): void
     {
-        $role = self::getTransitionRole(
+        $role = Vina::getTransitionRole(
             $event->getWorkflowName(),
             $event->getTransition()->getName(),
         );
@@ -33,10 +34,5 @@ final class TransitionRoleGuardListener
         if (!$this->authChecker->isGranted($role, $event->getSubject())) {
             $event->setBlocked(true);
         }
-    }
-
-    public static function getTransitionRole(string $workflowName, string $transitionName): string
-    {
-        return 'ROLE_'.$workflowName.'_'.$transitionName;
     }
 }

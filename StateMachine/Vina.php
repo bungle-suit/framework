@@ -5,7 +5,6 @@ namespace Bungle\Framework\StateMachine;
 
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Bungle\Framework\StateMachine\EventListener\TransitionRoleGuardListener;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Request;
@@ -93,7 +92,7 @@ class Vina
         $trans = $sm->getDefinition()->getTransitions();
         $r = [];
         foreach ($trans as $tr) {
-            $role = TransitionRoleGuardListener::getTransitionRole(
+            $role = self::getTransitionRole(
                 $sm->getName(),
                 $tr->getName(),
             );
@@ -138,5 +137,10 @@ class Vina
         $wf->apply($subject, $name);
         $this->docManager->persist($subject);
         $this->docManager->flush();
+    }
+
+    public static function getTransitionRole(string $workflowName, string $transitionName): string
+    {
+        return 'ROLE_'.$workflowName.'_'.$transitionName;
     }
 }
