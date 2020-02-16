@@ -6,6 +6,14 @@ namespace Bungle\Framework\StateMachine;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Bungle\Framework\StateMachine\EventListener\TransitionRoleGuardListener;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Workflow\Event\CompletedEvent;
+use Symfony\Component\Workflow\Marking;
+use Symfony\Component\Workflow\Exception\TransitionException;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 /**
  * Vina is a service help us to handle StateMachine
@@ -16,15 +24,24 @@ use Bungle\Framework\StateMachine\EventListener\TransitionRoleGuardListener;
  */
 class Vina
 {
+    // TODO: remove to a more generic place
+    const FLASH_ERROR_MESSAGE = 'bungle.errorMessage';
+
     private Registry $registry;
     private AuthorizationCheckerInterface $authChecker;
+    private DocumentManager $docManager;
+    private RequestStack $reqStack;
 
     public function __construct(
         Registry $registry,
-        AuthorizationCheckerInterface $authChecker
+        AuthorizationCheckerInterface $authChecker,
+        DocumentManager $docManager,
+        RequestStack $reqStack
     ) {
         $this->registry = $registry;
         $this->authChecker = $authChecker;
+        $this->docManager =$docManager;
+        $this->reqStack = $reqStack;
     }
 
     /**
@@ -85,5 +102,41 @@ class Vina
             }
         }
         return $r;
+    }
+
+    /**
+     * Apply specific transition on subject.
+     *
+     * Handles TransitionException, put the error message into
+     * session flash, next page request can display it to user.
+     */
+    public function applyTransition(object $subject, string $name): void
+    {
+        $wf = $this->registry->get($subject);
+        try {
+            $this->doApplyTransition($wf, $subject, $name);
+        } catch (TransitionException $e) {
+            $this->reqStack
+                 ->getCurrentRequest()
+                 ->getSession()
+                 ->getFlashBag()
+                 ->add(self::FLASH_ERROR_MESSAGE, $e->getMessage());
+        }
+    }
+
+    /**
+     * Like applyTransition(), but not handles TransitionException.
+     */
+    public function applyTransitionRaw(object $subject, string $name): void
+    {
+        $wf = $this->registry->get($subject);
+        $this->doApplyTransition($wf, $subject, $name);
+    }
+
+    private function doApplyTransition(WorkflowInterface $wf, $subject, string $name): void
+    {
+        $wf->apply($subject, $name);
+        $this->docManager->persist($subject);
+        $this->docManager->flush();
     }
 }
