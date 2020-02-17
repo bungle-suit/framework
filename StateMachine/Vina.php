@@ -13,6 +13,7 @@ use Symfony\Component\Workflow\Event\CompletedEvent;
 use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\Exception\TransitionException;
 use Symfony\Component\Workflow\WorkflowInterface;
+use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
 
 /**
  * Vina is a service help us to handle StateMachine
@@ -71,7 +72,7 @@ class Vina
         foreach ($sm->getDefinition()->getPlaces() as $place) {
             $meta = $store->getPlaceMetadata($place);
             $r[$place] = $meta['title'] ?? (
-                $place == Entity::INITIAL_STATE ? '未保存' : $place
+                $place == StatefulInterface::INITIAL_STATE ? '未保存' : $place
             );
         }
         return $r;

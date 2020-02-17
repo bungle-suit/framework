@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\StateMachine;
 
-use Bungle\Framework\StateMachine\Entity;
-use Bungle\Framework\StateMachine\MarkingStore\PropertyMarkingStore;
+use Bungle\Framework\StateMachine\MarkingStore\StatefulInterfaceMarkingStore;
 use Bungle\Framework\StateMachine\Vina;
 use Bungle\Framework\Tests\StateMachine\Entity\Order;
+use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Workflow\DefinitionBuilder;
 use Symfony\Component\Workflow\Registry;
@@ -57,7 +57,7 @@ final class VinaTest extends TestCase
     {
         list($vina) = $this::createVina();
         self::assertEquals([
-            Entity::INITIAL_STATE => '未保存',
+            StatefulInterface::INITIAL_STATE => '未保存',
             'saved' => '已保存',
             'checked' => '已审核',
             'unchecked' => 'unchecked',
@@ -122,7 +122,7 @@ final class VinaTest extends TestCase
     private static function createOrderWorkflow(): StateMachine
     {
         $trans = [
-          $save = new Transition('save', Entity::INITIAL_STATE, 'saved'),
+          $save = new Transition('save', StatefulInterface::INITIAL_STATE, 'saved'),
           $update = new Transition('update', 'saved', 'saved'),
           $print = new Transition('print', 'saved', 'saved'),
           new Transition('check', 'saved', 'checked'),
@@ -142,11 +142,11 @@ final class VinaTest extends TestCase
               ],
               $transMeta,
           ))
-          ->addPlaces([Entity::INITIAL_STATE, 'saved', 'checked', 'unchecked'])
+          ->addPlaces([StatefulInterface::INITIAL_STATE, 'saved', 'checked', 'unchecked'])
           ->addTransitions($trans)
           ->build();
 
-        $marking = new PropertyMarkingStore('state');
+        $marking = new StatefulInterfaceMarkingStore();
         return new StateMachine($definition, $marking, null, 'ord');
     }
 

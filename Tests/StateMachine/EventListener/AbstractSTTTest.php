@@ -23,22 +23,22 @@ final class AbstractSTTTest extends TestBase
     {
         $this->sm->apply($this->ord, 'save');
         self::assertEquals('foo', $this->ord->code);
-        self::assertEquals('saved', $this->ord->state);
+        self::assertEquals('saved', $this->ord->getState());
     }
 
     public function testInvokeWithContext(): void
     {
-        $this->ord->state = 'saved';
+        $this->ord->setState('saved');
         $this->sm->apply($this->ord, 'update');
         self::assertEquals('update', $this->ord->code);
-        self::assertEquals('saved', $this->ord->state);
+        self::assertEquals('saved', $this->ord->getState());
     }
 
     public function testIgnoreStepsNotConfigured(): void
     {
         self::expectWarning();
-        $this->ord->state = 'saved';
+        $this->ord->setState('saved');
         $this->sm->apply($this->ord, 'print');
-        self::assertEquals('saved', $this->ord->state);
+        self::assertEquals('saved', $this->ord->getState());
     }
 }

@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\StateMachine\EventListener;
 
-use Bungle\Framework\StateMachine\Entity;
+use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
 use Symfony\Component\Workflow\Transition;
-use Bungle\Framework\StateMachine\MarkingStore\PropertyMarkingStore;
+use Bungle\Framework\StateMachine\MarkingStore\StatefulInterfaceMarkingStore;
 use Bungle\Framework\Tests\StateMachine\Entity\Order;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -29,14 +29,14 @@ abstract class TestBase extends TestCase
     {
         $definitionBuilder = new DefinitionBuilder();
         $definition = $definitionBuilder->addPlaces([
-        Entity::INITIAL_STATE, 'saved', 'checked'])
-          ->addTransition(new Transition('save', Entity::INITIAL_STATE, 'saved'))
+        StatefulInterface::INITIAL_STATE, 'saved', 'checked'])
+          ->addTransition(new Transition('save', StatefulInterface::INITIAL_STATE, 'saved'))
           ->addTransition(new Transition('update', 'saved', 'saved'))
           ->addTransition(new Transition('print', 'saved', 'saved'))
           ->addTransition(new Transition('check', 'saved', 'checked'))
           ->build();
 
-        $marking = new PropertyMarkingStore('state');
+        $marking = new StatefulInterfaceMarkingStore();
         return new StateMachine($definition, $marking, $dispatcher, 'ord');
     }
 }

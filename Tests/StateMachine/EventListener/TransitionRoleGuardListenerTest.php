@@ -22,7 +22,7 @@ final class TransitionRoleGuardListenerTest extends TestBase
     {
         self::assertTrue($this->sm->can($this->ord, 'save'));
 
-        $this->ord->state = 'saved';
+        $this->ord->setState('saved');
         self::assertFalse($this->sm->can($this->ord, 'check'));
     }
 }
