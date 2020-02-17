@@ -1,26 +1,27 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\StateMachine;
 
+use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
 use Bungle\Framework\StateMachine\MarkingStore\StatefulInterfaceMarkingStore;
 use Bungle\Framework\StateMachine\Vina;
 use Bungle\Framework\Tests\StateMachine\Entity\Order;
-use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
+use Bungle\Framework\Tests\StateMachine\EventListener\FakeAuthorizationChecker;
+use Doctrine\ODM\MongoDB\DocumentManager;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\Workflow\DefinitionBuilder;
+use Symfony\Component\Workflow\Exception\TransitionException;
+use Symfony\Component\Workflow\Metadata\InMemoryMetadataStore;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\StateMachine;
 use Symfony\Component\Workflow\SupportStrategy\InstanceOfSupportStrategy;
 use Symfony\Component\Workflow\Transition;
-use Symfony\Component\Workflow\Metadata\InMemoryMetadataStore;
-use Bungle\Framework\Tests\StateMachine\EventListener\FakeAuthorizationChecker;
-use Doctrine\ODM\MongoDB\DocumentManager;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Workflow\Exception\TransitionException;
 
 final class VinaTest extends TestCase
 {
@@ -39,6 +40,7 @@ final class VinaTest extends TestCase
             $docManager,
             $reqStack,
         );
+
         return [$vina, $docManager, $reqStack];
     }
 
@@ -75,7 +77,7 @@ final class VinaTest extends TestCase
 
     public function testApplyTransitionSucceed(): void
     {
-        $ord = new Order;
+        $ord = new Order();
         list($vina, $docManager) = $this->createVina();
         $docManager->expects($this->once())->method('persist')->with($ord);
         $docManager->expects($this->once())->method('flush');
@@ -85,7 +87,7 @@ final class VinaTest extends TestCase
 
     public function testApplyTransitionFailed(): array
     {
-        $ord = new Order;
+        $ord = new Order();
         list($vina, $docManager, $reqStack) = $this->createVina();
         $docManager->expects($this->never())->method('persist')->with($ord);
         $docManager->expects($this->never())->method('flush');
@@ -110,7 +112,7 @@ final class VinaTest extends TestCase
         $this->expectException(TransitionException::class);
         list($vina) = $args;
 
-        $vina->applyTransitionRaw(new Order, 'check');
+        $vina->applyTransitionRaw(new Order(), 'check');
     }
 
     public function testGetTransitionRole(): void
@@ -147,6 +149,7 @@ final class VinaTest extends TestCase
           ->build();
 
         $marking = new StatefulInterfaceMarkingStore();
+
         return new StateMachine($definition, $marking, null, 'ord');
     }
 
@@ -157,6 +160,7 @@ final class VinaTest extends TestCase
             self::createOrderWorkflow(),
             new InstanceOfSupportStrategy(Order::class),
         );
+
         return $r;
     }
 }

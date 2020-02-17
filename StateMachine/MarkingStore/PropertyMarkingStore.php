@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\StateMachine\MarkingStore;
@@ -19,7 +20,7 @@ class PropertyMarkingStore implements MarkingStoreInterface
     {
         $this->property = $property;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -33,6 +34,7 @@ class PropertyMarkingStore implements MarkingStoreInterface
                 $this->property
             ));
         }
+
         return new Marking([$cur => 1]);
     }
 

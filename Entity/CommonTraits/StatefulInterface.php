@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Entity\CommonTraits;
@@ -19,5 +20,6 @@ interface StatefulInterface
     public const INITIAL_STATE = 'initial';
 
     public function getState(): string;
+
     public function setState(string $v): void;
 }

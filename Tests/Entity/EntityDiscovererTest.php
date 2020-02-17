@@ -1,16 +1,17 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Entity;
 
-use PHPUnit\Framework\TestCase;
 use Bungle\Framework\Entity\EntityDiscoverer;
-use Doctrine\Persistence\Mapping\Driver\MappingDriver;
-use Doctrine\ODM\MongoDB\Configuration;
-use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
 use Bungle\Framework\Tests\StateMachine\Entity\Order;
 use Bungle\Framework\Tests\StateMachine\Entity\Product;
+use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
+use Doctrine\ODM\MongoDB\Configuration;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\Persistence\Mapping\Driver\MappingDriver;
+use PHPUnit\Framework\TestCase;
 
 final class EntityDiscovererTest extends TestCase
 {
@@ -39,6 +40,7 @@ final class EntityDiscovererTest extends TestCase
         $r = $this->createStub(ManagerRegistry::class);
         $r->method('getManager')
           ->willReturn($defManager);
+
         return $r;
     }
 }

@@ -1,11 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\StateMachine\EventListener;
 
-use Bungle\Framework\Entity\EntityRegistry;
-use Symfony\Component\Workflow\Event\TransitionEvent;
 use Bungle\Framework\StateMachine\StepContext;
+use Symfony\Component\Workflow\Event\TransitionEvent;
 
 /**
  * Base class for STT services.
@@ -68,8 +68,10 @@ abstract class AbstractSTT
                 "StateMachine of $cls no transition $actionName",
                 E_USER_WARNING
             );
+
             return [];
         }
+
         return $this->steps[$actionName];
     }
 

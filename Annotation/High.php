@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Annotation;
@@ -41,9 +42,10 @@ final class High
         }
 
         $high = $anno->value;
-        if (preg_match('/^[a-z]{3}$/', $high) === 0) {
+        if (0 === preg_match('/^[a-z]{3}$/', $high)) {
             throw new \UnexpectedValueException("Invalid format of high value '$high' of Entity '$clsName'");
         }
+
         return $high;
     }
 }

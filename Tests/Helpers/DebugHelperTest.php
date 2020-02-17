@@ -1,10 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Test\Helpers;
 
-use PHPUnit\Framework\TestCase;
 use Bungle\Framework\Helper\DebugHelper;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.Superglobals)

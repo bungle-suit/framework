@@ -1,12 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Security;
 
-use PHPUnit\Framework\TestCase;
-use Bungle\Framework\Security\RoleRegistry;
-use Bungle\Framework\Security\RoleDefinition;
 use Bungle\Framework\Security\ArrayRoleDefinitionProvider;
+use Bungle\Framework\Security\RoleDefinition;
+use Bungle\Framework\Security\RoleRegistry;
+use PHPUnit\Framework\TestCase;
 
 final class RoleRegistryTest extends TestCase
 {
@@ -28,11 +29,12 @@ final class RoleRegistryTest extends TestCase
 
     public function testAdd(): RoleRegistry
     {
-        $reg = new RoleRegistry;
+        $reg = new RoleRegistry();
         self::assertEmpty($reg->defs);
         $reg->add($r1 = new RoleDefinition('ROLE_1_1', '', ''));
         $reg->add($r2 = new RoleDefinition('ROLE_1_2', '', ''));
         self::assertEquals([$r1, $r2], $reg->defs);
+
         return $reg;
     }
 
@@ -55,7 +57,7 @@ final class RoleRegistryTest extends TestCase
           $r3 = new RoleDefinition('ROLE_2_1', '', ''),
           $r4 = new RoleDefinition('ROLE_2_2', '', ''),
         ]);
-    
+
         self::assertEquals(array_merge($expRoles, [$r3, $r4]), $reg->defs);
     }
 }

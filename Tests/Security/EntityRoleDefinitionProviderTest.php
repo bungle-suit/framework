@@ -1,17 +1,18 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Security;
 
-use PHPUnit\Framework\TestCase;
-use Bungle\Framework\Entity\EntityRegistry;
 use Bungle\Framework\Entity\ArrayEntityDiscovery;
 use Bungle\Framework\Entity\ArrayHighResolver;
+use Bungle\Framework\Entity\EntityRegistry;
 use Bungle\Framework\Security\EntityRoleDefinitionProvider;
 use Bungle\Framework\Security\RoleDefinition;
+use Bungle\Framework\StateMachine\ArrayEntityWorkflowDefinitionResolver as ArrayWorkflowResolver;
 use Bungle\Framework\Tests\StateMachine\Entity\Order;
 use Bungle\Framework\Tests\StateMachine\Entity\Product;
-use Bungle\Framework\StateMachine\ArrayEntityWorkflowDefinitionResolver as ArrayWorkflowResolver;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Workflow\Definition;
 use Symfony\Component\Workflow\Transition;
 
@@ -20,7 +21,7 @@ final class EntityRoleDefinitionProviderTest extends TestCase
     public function testRoles(): void
     {
         $orderDef = new Definition([
-        'new', 'saved', 'checked', 'deleted'
+        'new', 'saved', 'checked', 'deleted',
         ], [
         new Transition('save', 'new', 'saved'),
         new Transition('check', 'saved', 'checked'),
@@ -28,7 +29,7 @@ final class EntityRoleDefinitionProviderTest extends TestCase
         new Transition('delete', 'saved', 'deleted'),
         ]);
         $productDef = new Definition([
-        'new', 'saved', 'checked', 'disabled'
+        'new', 'saved', 'checked', 'disabled',
         ], [
         new Transition('save', 'new', 'saved'),
         new Transition('check', 'saved', 'checked'),
@@ -42,7 +43,7 @@ final class EntityRoleDefinitionProviderTest extends TestCase
         $orderDef,
         ['save' => 'Save', 'check' => 'Check'],
         ],
-        Product::class => [$productDef, []]
+        Product::class => [$productDef, []],
         ]);
         $entityReg = new EntityRegistry(
             new ArrayEntityDiscovery([

@@ -1,10 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Entity;
 
-use PHPUnit\Framework\TestCase;
 use Bungle\Framework\Entity\ArrayHighResolver;
+use PHPUnit\Framework\TestCase;
 
 final class ArrayHighResolverTest extends TestCase
 {

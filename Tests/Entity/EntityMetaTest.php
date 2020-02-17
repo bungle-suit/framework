@@ -1,12 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Entity;
 
-use PHPUnit\Framework\TestCase;
 use Bungle\Framework\Entity\EntityMeta;
 use Bungle\Framework\Entity\EntityPropertyMeta;
 use Bungle\Framework\Exception\Exceptions;
+use PHPUnit\Framework\TestCase;
 
 final class EntityMetaTest extends TestCase
 {
@@ -31,7 +32,7 @@ final class EntityMetaTest extends TestCase
     {
         $this->expectExceptionObject(Exceptions::propertyNotFound(self::class, 'id'));
 
-        $meta = new EntityMeta(self::class, 'foobar', [ ]);
+        $meta = new EntityMeta(self::class, 'foobar', []);
         $meta->getProperty('id');
     }
 }

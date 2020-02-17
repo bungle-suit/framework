@@ -1,11 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Annotations;
 
-use PHPUnit\Framework\TestCase;
 use Bungle\Framework\Annotation\High;
-use Bungle\Framework\Annotation\AnnotationNotDefinedException;
+use PHPUnit\Framework\TestCase;
 
 final class HighTest extends TestCase
 {
@@ -22,7 +22,7 @@ final class HighTest extends TestCase
     public function testInvalidHighFormat(): void
     {
         self::expectException(\UnexpectedValueException::class);
-        
+
         High::resolveHigh(InvalidHigh::class);
     }
 }

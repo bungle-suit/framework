@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Entity;
@@ -32,11 +33,12 @@ class EntityRegistry
                 throw Exceptions::entityNotDefined($clsName);
             }
         }
+
         return $r;
     }
 
     /**
-     * Get Entity class by high prefix
+     * Get Entity class by high prefix.
      */
     public function getEntityByHigh(string $high): string
     {
@@ -47,6 +49,7 @@ class EntityRegistry
         if (!($r = $this->highClsMap[$high] ?? '')) {
             throw Exceptions::highNotFound($high);
         }
+
         return $r;
     }
 
@@ -64,6 +67,7 @@ class EntityRegistry
             }
             $r[$high] = $cls;
         }
+
         return $r;
     }
 }

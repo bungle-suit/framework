@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\StateMachine\MarkingStore;
 
+use Bungle\Framework\StateMachine\MarkingStore\PropertyMarkingStore;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Workflow\Marking;
-use Bungle\Framework\StateMachine\MarkingStore\PropertyMarkingStore;
 
 final class PropertyMarkingStoreTest extends TestCase
 {
@@ -22,7 +23,7 @@ final class PropertyMarkingStoreTest extends TestCase
     {
         $this->obj->state = 'foo';
         $marking = $this->store->getMarking($this->obj);
-        self::assertEquals(['foo'=> 1], $marking->getPlaces());
+        self::assertEquals(['foo' => 1], $marking->getPlaces());
     }
 
     public function testGetMarkingWrongProperty(): void

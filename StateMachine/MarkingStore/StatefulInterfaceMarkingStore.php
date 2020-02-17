@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\StateMachine\MarkingStore;
@@ -20,6 +21,7 @@ class StatefulInterfaceMarkingStore implements MarkingStoreInterface
     public function getMarking(object $subject): Marking
     {
         $cur = $subject->getState();
+
         return new Marking([$cur => 1]);
     }
 

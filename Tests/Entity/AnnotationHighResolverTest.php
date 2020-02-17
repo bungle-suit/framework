@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Entity;
 
-use PHPUnit\Framework\TestCase;
 use Bungle\Framework\Entity\AnnotationHighResolver;
 use Bungle\Framework\Tests\Annotations\Entity;
+use PHPUnit\Framework\TestCase;
 
 final class AnnotationHighResolverTest extends TestCase
 {

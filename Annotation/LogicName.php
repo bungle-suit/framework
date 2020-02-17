@@ -38,6 +38,7 @@ final class LogicName
 
         $reader = new AnnotationReader();
         $anno = $reader->getClassAnnotation($cls, LogicName::class);
+
         return $anno ? $anno->value : self::getShortClassName($clsName);
     }
 
@@ -71,15 +72,17 @@ final class LogicName
             $anno = $reader->getPropertyAnnotation($p, LogicName::class);
             $r[$p->getName()] = $anno ? $anno->value : $p->getName();
         }
+
         return $r;
     }
 
     /**
-     * Internal use
+     * Internal use.
      */
     public static function getShortClassName(string $clsName): string
     {
         $r = strrchr($clsName, '\\');
+
         return $r ? substr($r, 1) : $clsName;
     }
 }

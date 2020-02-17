@@ -1,15 +1,16 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Entity;
 
-use PHPUnit\Framework\TestCase;
-use Bungle\Framework\Entity\EntityMetaResolver;
-use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Bungle\Framework\Annotation\LogicName;
 use Bungle\Framework\Entity\EntityMeta;
+use Bungle\Framework\Entity\EntityMetaResolver;
 use Bungle\Framework\Entity\EntityPropertyMeta;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @LogicName("订单")

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Helper;
@@ -9,7 +10,7 @@ namespace Bungle\Framework\Helper;
 final class DebugHelper
 {
     /**
-     * Returns true if debug enabled:
+     * Returns true if debug enabled:.
      *
      * 1. $_SERVER['APP_DEBUG'] is '1', it is set by symfony
      * 2. If $_SERVER['APP_DEBUG'] unset, assume debug mode
@@ -32,6 +33,7 @@ final class DebugHelper
         if (!array_key_exists('APP_DEBUG', $_SERVER)) {
             return true;
         }
+
         return boolval($_SERVER['APP_DEBUG']);
     }
 }

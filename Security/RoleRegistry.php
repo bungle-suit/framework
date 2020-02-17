@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Security;
@@ -41,6 +42,7 @@ final class RoleRegistry
                 return true;
             }
         }
+
         return false;
     }
 }

@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\StateMachine\EventListener;
 
-use Symfony\Component\Workflow\Event\GuardEvent;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Bungle\Framework\StateMachine\Vina;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Workflow\Event\GuardEvent;
 
 /**
  * Implement role guard for workflow that test

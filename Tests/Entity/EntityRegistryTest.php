@@ -1,13 +1,14 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Entity;
 
-use PHPUnit\Framework\TestCase;
-use Bungle\Framework\Entity\EntityRegistry;
 use Bungle\Framework\Entity\ArrayEntityDiscovery;
 use Bungle\Framework\Entity\ArrayHighResolver;
+use Bungle\Framework\Entity\EntityRegistry;
 use Bungle\Framework\Exception\Exceptions;
+use PHPUnit\Framework\TestCase;
 
 final class EntityRegistryTest extends TestCase
 {
@@ -46,8 +47,8 @@ final class EntityRegistryTest extends TestCase
         $order = self::ORDER;
         $this->expectExceptionObject(Exceptions::entityNotDefined($order));
         $reg = new EntityRegistry(
-            new ArrayEntityDiscovery([ ]),
-            new ArrayHighResolver([ ])
+            new ArrayEntityDiscovery([]),
+            new ArrayHighResolver([])
         );
         $reg->getHigh($order);
     }
@@ -96,8 +97,8 @@ final class EntityRegistryTest extends TestCase
     {
         $this->expectExceptionObject(Exceptions::highNotFound('ord'));
 
-        $dis = new ArrayEntityDiscovery([ ]);
-        $resolver = new ArrayHighResolver([ ]);
+        $dis = new ArrayEntityDiscovery([]);
+        $resolver = new ArrayHighResolver([]);
         $reg = new EntityRegistry($dis, $resolver);
         $reg->getEntityByHigh('ord');
     }

@@ -1,11 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\StateMachine;
 
-use Symfony\Component\Workflow\Registry;
 use Bungle\Framework\Entity\EntityUtils;
-use Bungle\Framework\StateMachine\Vina;
+use Symfony\Component\Workflow\Registry;
 
 class EntityWorkflowDefinitionResolver implements EntityWorkflowDefinitionResolverInterface
 {
@@ -22,9 +22,10 @@ class EntityWorkflowDefinitionResolver implements EntityWorkflowDefinitionResolv
     {
         $subject = EntityUtils::create($entityClass);
         $wf = $this->workflowRegistry->get($subject);
+
         return [
           $wf->getDefinition(),
-          $this->vina->getTransitionTitles($subject)
+          $this->vina->getTransitionTitles($subject),
         ];
     }
 }

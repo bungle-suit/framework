@@ -1,11 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\StateMachine\EventListener;
 
-use PHPUnit\Framework\TestCase;
 use Bungle\Framework\StateMachine\EventListener\TransitionRoleGuardListener;
-use Bungle\Framework\Tests\StateMachine\Entity\Order;
 
 final class TransitionRoleGuardListenerTest extends TestBase
 {

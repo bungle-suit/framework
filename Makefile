@@ -11,7 +11,7 @@ lint:
 	../vendor/bin/phpmd  . ansi ../.phpmd-ruleset.xml --exclude vendor
 
 format:
-	../vendor/bin/php-cs-fixer fix .
+	../vendor/bin/php-cs-fixer fix
 	../vendor/bin/phpcbf --standard=PSR2 --ignore=vendor .
 
 regen-autoload:

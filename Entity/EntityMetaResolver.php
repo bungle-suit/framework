@@ -1,10 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Entity;
 
-use Doctrine\ODM\MongoDB\DocumentManager;
 use Bungle\Framework\Annotation\LogicName;
+use Doctrine\ODM\MongoDB\DocumentManager;
 
 final class EntityMetaResolver implements EntityMetaResolverInterface
 {
@@ -29,6 +30,7 @@ final class EntityMetaResolver implements EntityMetaResolverInterface
                 $classMeta->getTypeOfField($fieldName),
             );
         }
+
         return new EntityMeta($entityClass, $clsLogicName, $propMetas);
     }
 }

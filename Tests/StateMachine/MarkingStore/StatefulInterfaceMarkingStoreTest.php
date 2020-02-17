@@ -1,12 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\StateMachine\MarkingStore;
 
-use PHPUnit\Framework\TestCase;
-use Bungle\Framework\Tests\StateMachine\Entity\Order;
 use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
 use Bungle\Framework\StateMachine\MarkingStore\StatefulInterfaceMarkingStore;
+use Bungle\Framework\Tests\StateMachine\Entity\Order;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Workflow\Marking;
 
 final class StatefulInterfaceMarkingStoreTest extends TestCase
@@ -17,7 +18,7 @@ final class StatefulInterfaceMarkingStoreTest extends TestCase
         $ord = new Order();
 
         $marking = $store->getMarking($ord);
-        self::assertEquals([StatefulInterface::INITIAL_STATE=> 1], $marking->getPlaces());
+        self::assertEquals([StatefulInterface::INITIAL_STATE => 1], $marking->getPlaces());
     }
 
     public function testSet(): void

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\StateMachine\EventListener;
@@ -8,13 +9,14 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class FakeAuthorizationChecker implements AuthorizationCheckerInterface
 {
     private array $wantedRoles;
+
     public function __construct(string ...$wantedRoles)
     {
         $this->wantedRoles = $wantedRoles;
     }
-  
+
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function isGranted($attribute, $subject = null): bool
     {

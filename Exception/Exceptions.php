@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Exception;
@@ -29,6 +30,7 @@ final class Exceptions
         if (!class_exists($entityClass)) {
             return new \DomainException("No class '$entityClass', check your spell");
         }
+
         return new \DomainException("class '$entityClass' not declared as entity");
     }
 

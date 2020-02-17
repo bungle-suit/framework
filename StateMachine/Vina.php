@@ -1,19 +1,17 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\StateMachine;
 
-use Symfony\Component\Workflow\Registry;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Doctrine\ODM\MongoDB\DocumentManager;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\Workflow\Event\CompletedEvent;
-use Symfony\Component\Workflow\Marking;
-use Symfony\Component\Workflow\Exception\TransitionException;
-use Symfony\Component\Workflow\WorkflowInterface;
 use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Workflow\Exception\TransitionException;
+use Symfony\Component\Workflow\Registry;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 /**
  * Vina is a service help us to handle StateMachine
@@ -40,7 +38,7 @@ class Vina
     ) {
         $this->registry = $registry;
         $this->authChecker = $authChecker;
-        $this->docManager =$docManager;
+        $this->docManager = $docManager;
         $this->reqStack = $reqStack;
     }
 
@@ -57,12 +55,13 @@ class Vina
             $meta = $store->getTransitionMetadata($trans);
             $r[$trans->getName()] = $meta['title'] ?? $trans->getName();
         }
+
         return $r;
     }
 
     /**
      * Return associated array of state/place name -> title
-     * for StateMachine attached with $subject
+     * for StateMachine attached with $subject.
      */
     public function getStateTitles($subject): array
     {
@@ -72,9 +71,10 @@ class Vina
         foreach ($sm->getDefinition()->getPlaces() as $place) {
             $meta = $store->getPlaceMetadata($place);
             $r[$place] = $meta['title'] ?? (
-                $place == StatefulInterface::INITIAL_STATE ? '未保存' : $place
+                StatefulInterface::INITIAL_STATE == $place ? '未保存' : $place
             );
         }
+
         return $r;
     }
 
@@ -98,9 +98,10 @@ class Vina
                 $tr->getName(),
             );
             if ($this->authChecker->isGranted($role)) {
-                $r[]=$tr->getName();
+                $r[] = $tr->getName();
             }
         }
+
         return $r;
     }
 

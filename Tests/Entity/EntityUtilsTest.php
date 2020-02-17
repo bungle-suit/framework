@@ -1,12 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Entity;
 
-use PHPUnit\Framework\TestCase;
-use Bungle\Framework\Tests\StateMachine\Entity\Order;
 use Bungle\Framework\Entity\EntityUtils;
-use Bungle\Framework\Exception\Exceptions;
+use Bungle\Framework\Tests\StateMachine\Entity\Order;
+use PHPUnit\Framework\TestCase;
 
 class EntityCtorHasArgumnet // phpcs:ignore
 {

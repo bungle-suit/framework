@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Entity;
@@ -18,7 +19,7 @@ final class EntityMeta
     public function __construct(string $fullName, string $logicName, array $properties)
     {
         $this->fullName = $fullName;
-        $this->logicName =$logicName;
+        $this->logicName = $logicName;
         $this->properties = array_combine(
             array_map(fn (EntityPropertyMeta $p) => $p->name, $properties),
             $properties,
@@ -30,7 +31,8 @@ final class EntityMeta
     {
         if (!isset($this->properties[$name])) {
             throw Exceptions::propertyNotFound($this->fullName, $name);
-        };
+        }
+
         return $this->properties[$name];
     }
 
@@ -38,6 +40,7 @@ final class EntityMeta
     public function name(): string
     {
         $words = explode('\\', $this->fullName);
+
         return $words[array_key_last($words)];
     }
 }

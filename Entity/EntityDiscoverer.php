@@ -1,10 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Entity;
 
-use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
 use Bungle\Framework\Annotation\High;
+use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
 
 class EntityDiscoverer implements EntityDiscovererInterface
 {

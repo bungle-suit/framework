@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Entity\CommonTraits;
@@ -6,18 +7,18 @@ namespace Bungle\Framework\Entity\CommonTraits;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
 /**
- * Use it to implement StatefulInterface
+ * Use it to implement StatefulInterface.
  */
 trait Stateful
 {
     /** @ODM\Field(type="string") */
     protected string $state = StatefulInterface::INITIAL_STATE;
-  
+
     public function getState(): string
     {
         return $this->state;
     }
-  
+
     public function setState(string $v): void
     {
         $this->state = $v;

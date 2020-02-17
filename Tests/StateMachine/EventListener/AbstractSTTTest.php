@@ -1,13 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\StateMachine\EventListener;
 
-use Bungle\Framework\Entity\EntityRegistry;
-use Bungle\Framework\Entity\ArrayEntityDiscovery;
-use Bungle\Framework\Entity\ArrayHighResolver;
 use Bungle\Framework\Tests\StateMachine\STT\OrderSTT;
-use Bungle\Framework\Tests\StateMachine\Entity\Order;
 
 final class AbstractSTTTest extends TestBase
 {

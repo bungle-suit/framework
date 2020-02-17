@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Entity;
@@ -28,6 +29,7 @@ class EntityMetaRepository
         $cls = $this->entityRegistry->getEntityByHigh($high);
         $meta = $this->resolver->resolveEntityMeta($cls);
         $this->metaByHigh[$high] = $meta;
+
         return $meta;
     }
 }

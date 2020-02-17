@@ -1,12 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\StateMachine\STT;
 
-use Bungle\Framework\StateMachine\StepContext;
-use Bungle\Framework\Tests\StateMachine\Entity\Order;
 use Bungle\Framework\StateMachine\EventListener\AbstractSTT;
 use Bungle\Framework\StateMachine\EventListener\STTInterface;
+use Bungle\Framework\StateMachine\StepContext;
+use Bungle\Framework\Tests\StateMachine\Entity\Order;
 
 final class OrderSTT extends AbstractSTT implements STTInterface
 {
@@ -36,7 +37,7 @@ final class OrderSTT extends AbstractSTT implements STTInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function createSteps(): array
     {

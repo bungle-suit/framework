@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Security;
@@ -6,7 +7,7 @@ namespace Bungle\Framework\Security;
 use Bungle\Framework\StateMachine\Vina;
 
 /**
- * Definition of a role,
+ * Definition of a role,.
  *
  * Role name contains three parts, separate by '_'.
  *
@@ -43,7 +44,7 @@ class RoleDefinition
     }
 
     /**
-     * Full name of the role, begin with ROLE_
+     * Full name of the role, begin with ROLE_.
      */
     public function name(): string
     {
