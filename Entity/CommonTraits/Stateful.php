@@ -10,7 +10,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
  */
 trait Stateful
 {
-    /* @ODM\String */
+    /** @ODM\Field(type="string") */
     protected string $state = StatefulInterface::INITIAL_STATE;
   
     public function getState(): string
