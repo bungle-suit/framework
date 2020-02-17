@@ -6,10 +6,10 @@ namespace Bungle\Framework\Tests\StateMachine\Entity;
 use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
 use Bungle\Framework\Entity\CommonTraits\Stateful;
 use Bungle\Framework\Entity\CommonTraits\ObjectID;
-use Bungle\Framework\Annotation\HighPrefix;
+use Bungle\Framework\Annotation\High;
 
 /**
- * @HighPrefix("prd")
+ * @High("prd")
  */
 class Product implements StatefulInterface
 {

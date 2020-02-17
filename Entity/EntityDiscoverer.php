@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\Entity;
 
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
-use Bungle\Framework\Annotation\HighPrefix;
+use Bungle\Framework\Annotation\High;
 
 class EntityDiscoverer implements EntityDiscovererInterface
 {
@@ -22,7 +22,7 @@ class EntityDiscoverer implements EntityDiscovererInterface
                                           ->getMetadataDriverImpl()
                                           ->getAllClassNames();
         foreach ($list as $cls) {
-            if (HighPrefix::loadHighPrefix($cls)) {
+            if (High::resolveHigh($cls)) {
                 yield $cls;
             }
         }

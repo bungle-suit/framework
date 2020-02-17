@@ -9,12 +9,12 @@ use Doctrine\Common\Annotations\Annotation\Target;
 use Doctrine\Common\Annotations\AnnotationReader;
 
 /**
- * Define high prefix of a entity class.
+ * Define high of a entity class.
  *
  * @Annotation
  * @Target("CLASS")
  */
-final class HighPrefix
+final class High
 {
     /**
      * @Required
@@ -26,7 +26,7 @@ final class HighPrefix
      *
      * Returns null if the Annotation not defined.
      */
-    public static function loadHighPrefix(string $clsName): ?string
+    public static function resolveHigh(string $clsName): ?string
     {
         /*
          * Doctrine annotations lib will failed if some annotations class not loaded,
@@ -35,7 +35,7 @@ final class HighPrefix
 
         $cls = new \ReflectionClass($clsName);
         $reader = new AnnotationReader();
-        $anno = $reader->getClassAnnotation($cls, HighPrefix::class);
+        $anno = $reader->getClassAnnotation($cls, High::class);
         if (!$anno) {
             return null;
         }

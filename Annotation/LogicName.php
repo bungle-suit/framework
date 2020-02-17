@@ -32,7 +32,7 @@ final class LogicName
         /*
          * Doctrine annotations lib will failed if some annotations class not loaded,
          */
-        require_once __DIR__.'/HighPrefix.php';
+        require_once __DIR__.'/High.php';
 
         $cls = new \ReflectionClass($clsName);
 
@@ -58,7 +58,7 @@ final class LogicName
         /*
          * Doctrine annotations lib will failed if some annotations class not loaded,
          */
-        require_once __DIR__.'/HighPrefix.php';
+        require_once __DIR__.'/High.php';
 
         $cls = new \ReflectionClass($clsName);
         $reader = new AnnotationReader();

@@ -3,14 +3,14 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\StateMachine\Entity;
 
-use Bungle\Framework\Annotation\HighPrefix;
+use Bungle\Framework\Annotation\High;
 use PHPUnit\Framework\TestCase;
 use Bungle\Framework\Entity\CommonTraits\ObjectID;
 use Bungle\Framework\Entity\CommonTraits\Stateful;
 use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
 
 /**
- * @HighPrefix("ord")
+ * @High("ord")
  */
 class Order implements StatefulInterface
 {

@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Annotations;
 
-use Bungle\Framework\Annotation\HighPrefix;
+use Bungle\Framework\Annotation\High;
 
 /**
- * @HighPrefix("abcd")
+ * @High("abcd")
  */
-class InvalidPrefix
+class InvalidHigh
 {
 }
