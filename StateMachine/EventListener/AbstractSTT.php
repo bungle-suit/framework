@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\StateMachine\EventListener;
 
+use Bungle\Framework\Exception\Exceptions;
 use Bungle\Framework\StateMachine\StepContext;
 use Symfony\Component\Workflow\Event\TransitionEvent;
+use Symfony\Component\Workflow\Exception\TransitionException;
 
 /**
  * Base class for STT services.
@@ -51,7 +53,7 @@ abstract class AbstractSTT
         foreach ($steps as $step) {
             $msg = call_user_func($step, $subject, $ctx);
             if (is_string($msg)) {
-                throw new TransitionException($msg);
+                throw new TransitionException($subject, $ctx->getTransitionName(), $ctx->getWorkflow(), $msg);
             }
         }
     }
@@ -64,12 +66,7 @@ abstract class AbstractSTT
 
         if (!isset($this->steps[$actionName])) {
             $cls = get_class($subject);
-            trigger_error(
-                "StateMachine of $cls no transition $actionName",
-                E_USER_WARNING
-            );
-
-            return [];
+            throw Exceptions::notSetupStateMachineSteps($cls, $actionName);
         }
 
         return $this->steps[$actionName];

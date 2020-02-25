@@ -6,6 +6,9 @@ namespace Bungle\Framework\Exception;
 
 final class Exceptions
 {
+    /**
+     * @codeCoverageIgnore
+     */
     private function __construct()
     {
     }
@@ -34,13 +37,18 @@ final class Exceptions
         return new \DomainException("class '$entityClass' not declared as entity");
     }
 
-    public function propertyNotFound(string $entityClass, string $propertyName): \DomainException
+    public static function propertyNotFound(string $entityClass, string $propertyName): \DomainException
     {
         return new \DomainException("Can not found property $propertyName in entity $entityClass");
     }
 
-    public function entityExpectDefaultConstructor(string $entityClass, $inner = null): \DomainException
+    public static function entityExpectDefaultConstructor(string $entityClass, $inner = null): \DomainException
     {
         return new \DomainException("Expect entity class $entityClass's __construct has zero argument", 0, $inner);
+    }
+
+    public static function notSetupStateMachineSteps(string $entityClass, string $transition): \DomainException
+    {
+        return new \DomainException("No step defined for workflow '$entityClass', action: $transition");
     }
 }

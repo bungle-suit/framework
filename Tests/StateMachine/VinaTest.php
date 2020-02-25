@@ -115,6 +115,16 @@ final class VinaTest extends TestCase
         $vina->applyTransitionRaw(new Order(), 'check');
     }
 
+    public function testApplyTransitionRawSucceed(): void
+    {
+        $ord = new Order();
+        list($vina, $docManager) = $this->createVina();
+        $docManager->expects($this->once())->method('persist')->with($ord);
+        $docManager->expects($this->once())->method('flush');
+
+        $vina->applyTransitionRaw($ord, 'save');
+    }
+
     public function testGetTransitionRole(): void
     {
         $getRole = Vina::class.'::getTransitionRole';

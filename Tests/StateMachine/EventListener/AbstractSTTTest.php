@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\StateMachine\EventListener;
 
+use Bungle\Framework\Exception\Exceptions;
+use Bungle\Framework\Tests\StateMachine\Entity\Order;
 use Bungle\Framework\Tests\StateMachine\STT\OrderSTT;
+use Symfony\Component\Workflow\Exception\TransitionException;
 
 final class AbstractSTTTest extends TestBase
 {
@@ -23,6 +26,13 @@ final class AbstractSTTTest extends TestBase
         self::assertEquals('saved', $this->ord->getState());
     }
 
+    public function testInvokeAbort(): void
+    {
+        $this->expectException(TransitionException::class);
+        $this->ord->setState('saved');
+        $this->sm->apply($this->ord, 'check');
+    }
+
     public function testInvokeWithContext(): void
     {
         $this->ord->setState('saved');
@@ -39,7 +49,8 @@ final class AbstractSTTTest extends TestBase
 
     public function testIgnoreStepsNotConfigured(): void
     {
-        self::expectWarning();
+        $this->expectExceptionObject(Exceptions::notSetupStateMachineSteps(Order::class, 'print'));
+
         $this->ord->setState('saved');
         $this->sm->apply($this->ord, 'print');
         self::assertEquals('saved', $this->ord->getState());
