@@ -29,6 +29,12 @@ final class AbstractSTTTest extends TestBase
         $this->sm->apply($this->ord, 'update');
         self::assertEquals('update', $this->ord->code);
         self::assertEquals('saved', $this->ord->getState());
+
+        self::assertEquals('saved', $this->ord->fromState);
+        self::assertEquals('saved', $this->ord->toState);
+        self::assertEquals('update', $this->ord->transition->getName());
+        self::assertEquals('update', $this->ord->transitionName);
+        self::assertSame($this->sm, $this->ord->workflow);
     }
 
     public function testIgnoreStepsNotConfigured(): void

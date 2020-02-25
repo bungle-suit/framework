@@ -36,6 +36,15 @@ final class OrderSTT extends AbstractSTT implements STTInterface
         return 'ord';
     }
 
+    public static function saveContextAttrs(Order $ord, StepContext $ctx): void
+    {
+        $ord->transition = $ctx->getTransition();
+        $ord->transitionName = $ctx->getTransitionName();
+        $ord->fromState = $ctx->getFromState();
+        $ord->toState = $ctx->getToState();
+        $ord->workflow = $ctx->getWorkflow();
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -47,6 +56,7 @@ final class OrderSTT extends AbstractSTT implements STTInterface
           ],
           'update' => [
             [static::class, 'updateCodeWithTransitionName'],
+            [static::class, 'saveContextAttrs'],
           ],
           'check' => [
             [static::class, 'setCodeBar'],

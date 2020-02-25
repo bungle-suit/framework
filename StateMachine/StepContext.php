@@ -35,11 +35,11 @@ final class StepContext
 
     public function getFromState(): string
     {
-        return $this->transition->getFroms();
+        return $this->transition->getFroms()[0];
     }
 
     public function getToState(): string
     {
-        return $this->transition->getTos();
+        return $this->transition->getTos()[0];
     }
 }
