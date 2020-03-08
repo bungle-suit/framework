@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\StateMachine\MarkingStore;
 
+use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
 use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
 
@@ -20,6 +21,8 @@ class StatefulInterfaceMarkingStore implements MarkingStoreInterface
      */
     public function getMarking(object $subject): Marking
     {
+        assert($subject instanceof StatefulInterface, get_class($subject).' not implement StatefulInterface');
+
         $cur = $subject->getState();
 
         return new Marking([$cur => 1]);
@@ -30,6 +33,8 @@ class StatefulInterfaceMarkingStore implements MarkingStoreInterface
      */
     public function setMarking(object $subject, Marking $marking, array $context = [])
     {
+        assert($subject instanceof StatefulInterface, get_class($subject).' not implement StatefulInterface');
+
         $subject->setState(key($marking->getPlaces()));
     }
 }
