@@ -32,6 +32,8 @@ final class LogicNameTest extends TestCase
               'id' => 'ID',
               'count' => 'Counter',
               'name' => 'name',
+              'includePrivate' => 'private_is_ok',
+              'includeProtected' => 'includeProtected',
             ],
             LogicName::resolvePropertyNames(Entity::class),
         );
@@ -45,6 +47,7 @@ final class LogicNameTest extends TestCase
               'count' => 'New Counter',
               'name' => 'name',
               'address' => '地址',
+              'includeProtected' => 'includeProtected',
             ],
             LogicName::resolvePropertyNames(Derived::class)
         );

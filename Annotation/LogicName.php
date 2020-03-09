@@ -65,7 +65,10 @@ final class LogicName
         $reader = new AnnotationReader();
 
         $r = [];
-        foreach ($cls->getProperties(\ReflectionProperty::IS_PUBLIC) as $p) {
+        $flag = \ReflectionProperty::IS_PUBLIC +
+          \ReflectionProperty::IS_PRIVATE +
+          \ReflectionProperty::IS_PROTECTED;
+        foreach ($cls->getProperties($flag) as $p) {
             if ($p->isStatic()) {
                 continue;
             }

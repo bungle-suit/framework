@@ -11,10 +11,10 @@ trait Modifier
     /**
      * @LogicName("修改人")
      */
-    public string $modifier;
+    protected string $modifier;
 
     /**
      * @LogicName("修改时间")
      */
-    public \Date $modifyTime;
+    private \Date $modifyTime;
 }

@@ -26,9 +26,12 @@ class Entity
     // Use name as logic name if no LogicName annotation defined
     public string $name;
 
-    private string $ignorePrivate;
+    /**
+     * @LogicName("private_is_ok")
+     */
+    private string $includePrivate;
 
-    protected string $ignoreProtected;
+    protected string $includeProtected;
 
     public static string $ignoreStatic;
 }
