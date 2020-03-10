@@ -11,12 +11,13 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
  */
 trait AutoIncID
 {
+    // auto increment id also need to initialized, or ODM will trigger
+    // $id must not be accessed before initialization
     /**
      * Is undef for a new document.
-     *
-     * @ODM\Id(strategy="INCREMENT")
+     * @ODM\Id(strategy="INCREMENT", type="int")
      */
-    protected int $id;
+    protected ?int $id = null;
 
     public function getId(): int
     {
