@@ -44,6 +44,15 @@ final class VinaTest extends TestCase
         return [$vina, $docManager, $reqStack];
     }
 
+    public function testGetStateTitle(): void
+    {
+        list($vina) = $this::createVina();
+        self::assertEquals('未保存', $vina->getCurrentStateTitle(new Order()));
+        $ord = new Order();
+        $ord->setState('blah');
+        self::assertEquals('blah', $vina->getCurrentStateTitle($ord));
+    }
+
     public function testGetTransitionTitles(): void
     {
         list($vina) = $this::createVina();

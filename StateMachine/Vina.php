@@ -43,6 +43,16 @@ class Vina
     }
 
     /**
+     * Return title of subject current state.
+     */
+    public function getCurrentStateTitle($subject): string
+    {
+        $titles = $this->getStateTitles($subject);
+
+        return $titles[$subject->getState()] ?? $subject->getState();
+    }
+
+    /**
      * Returns associated array of transition name -> title
      * for StateMachine attached with $subject.
      */
@@ -65,6 +75,7 @@ class Vina
      */
     public function getStateTitles($subject): array
     {
+        // TODO: cache result by subject classname
         $sm = $this->registry->get($subject);
         $store = $sm->getMetadataStore();
         $r = [];
