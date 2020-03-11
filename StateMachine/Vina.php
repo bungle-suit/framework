@@ -90,7 +90,7 @@ class Vina
     public function getPossibleTransitions($subject): array
     {
         $sm = $this->registry->get($subject);
-        $trans = $sm->getDefinition()->getTransitions();
+        $trans = $sm->getEnabledTransitions($subject);
         $r = [];
         foreach ($trans as $tr) {
             $role = self::getTransitionRole(

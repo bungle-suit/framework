@@ -15,6 +15,7 @@ trait AutoIncID
     // $id must not be accessed before initialization
     /**
      * Is undef for a new document.
+     *
      * @ODM\Id(strategy="INCREMENT", type="int")
      */
     protected ?int $id = null;

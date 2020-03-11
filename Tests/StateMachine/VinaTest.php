@@ -70,7 +70,7 @@ final class VinaTest extends TestCase
     {
         list($vina) = $this::createVina();
         self::assertEquals(
-            ['save', 'print'],
+            ['save'],
             $vina->getPossibleTransitions(new Order())
         );
     }
