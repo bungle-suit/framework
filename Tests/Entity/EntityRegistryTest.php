@@ -42,6 +42,21 @@ final class EntityRegistryTest extends TestCase
         self::assertEquals('ord', $reg->getHigh($ord));
     }
 
+    public function testNewEntity(): void
+    {
+        $dis = new ArrayEntityDiscovery([
+          Entities\Order::class,
+        ]);
+        $resolver = new ArrayHighResolver([
+          Entities\Order::class => 'ord',
+        ]);
+        $reg = new EntityRegistry($dis, $resolver);
+        self::assertInstanceOf(
+            Entities\Order::class,
+            $reg->createEntity('ord')
+        );
+    }
+
     public function testGetHighBadEntityClass(): void
     {
         $order = self::ORDER;

@@ -53,6 +53,17 @@ class EntityRegistry
         return $r;
     }
 
+    /**
+     * Shortcut method to create entity object by high,
+     * Entity must have public zero-less constructor.
+     */
+    public function createEntity(string $high)
+    {
+        $cls = $this->getEntityByHigh($high);
+
+        return EntityUtils::create($cls);
+    }
+
     private function scanMap(array $entities): array
     {
         $r = [];
