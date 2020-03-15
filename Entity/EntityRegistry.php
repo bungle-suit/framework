@@ -20,9 +20,10 @@ class EntityRegistry
     }
 
     /**
-     * Get high prefix by clsName.
+     * Like getHigh(), return empty if not High defined on
+     * $clsName instead of throw exception.
      */
-    public function getHigh(string $clsName): string
+    public function getHighSafe(string $clsName): string
     {
         if (!isset($this->highClsMap)) {
             $this->highClsMap = $this->scanMap($this->entities);
@@ -30,8 +31,22 @@ class EntityRegistry
 
         if (!($r = array_search($clsName, $this->highClsMap))) {
             if (!\in_array($clsName, $this->entities)) {
-                throw Exceptions::entityNotDefined($clsName);
+                return '';
             }
+        }
+
+        return $r;
+    }
+
+    /**
+     * Get high prefix by clsName.
+     */
+    public function getHigh(string $clsName): string
+    {
+        $r = $this->getHighSafe($clsName);
+
+        if (!$r) {
+            throw Exceptions::entityNotDefined($clsName);
         }
 
         return $r;

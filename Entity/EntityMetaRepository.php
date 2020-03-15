@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Entity;
 
+// TODO: EntityDiscovererInterface driven by high, change it to by class,
+// and EntityMetaRepository::get() driven by class either.
+// Most of symfony code relies on class, use high is inconvenience.
+
 /**
  * Service to get EntityMeta by high or class.
  */
