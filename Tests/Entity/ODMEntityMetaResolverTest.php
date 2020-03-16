@@ -6,8 +6,8 @@ namespace Bungle\Framework\Tests\Entity;
 
 use Bungle\Framework\Annotation\LogicName;
 use Bungle\Framework\Entity\EntityMeta;
-use Bungle\Framework\Entity\EntityMetaResolver;
 use Bungle\Framework\Entity\EntityPropertyMeta;
+use Bungle\Framework\Entity\ODMEntityMetaResolver;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use PHPUnit\Framework\TestCase;
@@ -25,7 +25,7 @@ class Order
     public string $name;
 }
 
-final class EntityMetaResolverTest extends TestCase // phpcs:ignore
+final class ODMEntityMetaResolverTest extends TestCase // phpcs:ignore
 {
     public function test(): void
     {
@@ -38,7 +38,7 @@ final class EntityMetaResolverTest extends TestCase // phpcs:ignore
         $clsMeta->method('getFieldNames')->willReturn(['id', 'name']);
         $docManager->method('getClassMetadata')->willReturn($clsMeta);
 
-        $resolver = new EntityMetaResolver($docManager);
+        $resolver = new ODMEntityMetaResolver($docManager);
         $meta = $resolver->resolveEntityMeta(Order::class);
         self::assertEquals(new EntityMeta(
             Order::class,

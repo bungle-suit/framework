@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Entity;
 
-use Bungle\Framework\Entity\EntityDiscoverer;
+use Bungle\Framework\Entity\ODMEntityDiscoverer;
 use Bungle\Framework\Tests\StateMachine\Entity\Order;
 use Bungle\Framework\Tests\StateMachine\Entity\Product;
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
@@ -13,23 +13,23 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use PHPUnit\Framework\TestCase;
 
-final class EntityDiscovererTest extends TestCase
+final class ODMEntityDiscovererTest extends TestCase
 {
     public function test(): void
     {
         $managerRegistry = $this->createManagerRegistry();
-        $dis = new EntityDiscoverer($managerRegistry);
+        $dis = new ODMEntityDiscoverer($managerRegistry);
         self::assertEquals([
-        Order::class, Product::class,
+          Order::class, Product::class,
         ], iterator_to_array($dis->getAllEntities()));
     }
 
-    public function createManagerRegistry(): ManagerRegistry
+    private function createManagerRegistry(): ManagerRegistry
     {
         $mappingDriver = $this->createStub(MappingDriver::class);
         $mappingDriver->method('getAllClassNames')->willReturn([
           Order::class,
-         self::class,
+          self::class,
           Product::class,
         ]);
         $config = $this->createStub(Configuration::class);

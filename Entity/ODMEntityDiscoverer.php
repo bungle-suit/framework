@@ -7,7 +7,7 @@ namespace Bungle\Framework\Entity;
 use Bungle\Framework\Annotation\High;
 use Doctrine\Bundle\MongoDBBundle\ManagerRegistry;
 
-class EntityDiscoverer implements EntityDiscovererInterface
+class ODMEntityDiscoverer implements EntityDiscovererInterface
 {
     private ManagerRegistry $managerRegistry;
 

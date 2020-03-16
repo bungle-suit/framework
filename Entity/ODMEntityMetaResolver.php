@@ -7,7 +7,7 @@ namespace Bungle\Framework\Entity;
 use Bungle\Framework\Annotation\LogicName;
 use Doctrine\ODM\MongoDB\DocumentManager;
 
-final class EntityMetaResolver implements EntityMetaResolverInterface
+final class ODMEntityMetaResolver implements EntityMetaResolverInterface
 {
     private DocumentManager $docManager;
 
