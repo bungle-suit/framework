@@ -8,12 +8,10 @@ final class EntityPropertyMeta
 {
     public string $name;
     public string $logicName;
-    public string $type;
 
-    public function __construct(string $name, string $logicName, string $type)
+    public function __construct(string $name, string $logicName)
     {
         $this->name = $name;
         $this->logicName = $logicName;
-        $this->type = $type;
     }
 }
