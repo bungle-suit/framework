@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\Form;
 
 use Bungle\Framework\Entity\EntityMetaRepository;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormTypeGuesserInterface;
 use Symfony\Component\Form\Guess\TypeGuess;
 
@@ -39,7 +40,13 @@ class BungleFormTypeGuesser implements FormTypeGuesserInterface
 
         $meta = $this->entityMetaRepository->get($class);
         $logicName = $meta->getProperty($property)->logicName;
-        $options = $inner->getOptions() + ['label' => $logicName];
+        $options = ['label' => $logicName];
+        if (TextType::class == $inner->getType()) {
+            // If not set, TextType convert empty string to null,
+            // I think null string is not allowed, always can use empty string.
+            $options['empty_data'] = '';
+        }
+        $options = $inner->getOptions() + $options;
 
         return new TypeGuess($inner->getType(), $options, $inner->getConfidence());
     }

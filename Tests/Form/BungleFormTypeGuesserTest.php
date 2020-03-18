@@ -36,6 +36,29 @@ final class BungleFormTypeGuesserTest extends TestCase
         list($guesser, $inner, $entityMetaRepository) = $this->createGuesser();
         $inner
           ->method('guessType')
+          ->willReturn(new TypeGuess(ColorType::class, [], Guess::MEDIUM_CONFIDENCE));
+        $entityMetaRepository
+          ->method('get')
+          ->willReturn(new EntityMeta(
+              'Some\Entity',
+              'Wow',
+              [
+                new EntityPropertyMeta('id', 'No', 'int'),
+                new EntityPropertyMeta('name', 'Foo', 'int'),
+              ]
+          ));
+
+        self::assertEquals(
+            new TypeGuess(ColorType::class, ['label' => 'No'], Guess::MEDIUM_CONFIDENCE),
+            $guesser->guessType('Some\Entity', 'id')
+        );
+    }
+
+    public function testSetTextTypeEmptyData(): void
+    {
+        list($guesser, $inner, $entityMetaRepository) = $this->createGuesser();
+        $inner
+          ->method('guessType')
           ->willReturn(new TypeGuess(TextType::class, [], Guess::MEDIUM_CONFIDENCE));
         $entityMetaRepository
           ->method('get')
@@ -43,14 +66,16 @@ final class BungleFormTypeGuesserTest extends TestCase
               'Some\Entity',
               'Wow',
               [
-              new EntityPropertyMeta('id', 'No', 'int'),
-              new EntityPropertyMeta('name', 'Foo', 'int'),
+                new EntityPropertyMeta('id', 'No', 'int'),
+                new EntityPropertyMeta('name', 'Foo', 'int'),
               ]
           ));
-
         self::assertEquals(
-            new TypeGuess(TextType::class, ['label' => 'No'], Guess::MEDIUM_CONFIDENCE),
-            $guesser->guessType('Some\Entity', 'id')
+            new TypeGuess(TextType::class, [
+              'label' => 'Foo',
+              'empty_data' => '',
+            ], Guess::MEDIUM_CONFIDENCE),
+            $guesser->guessType('Some\Entity', 'name')
         );
     }
 }
