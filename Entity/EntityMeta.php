@@ -6,7 +6,7 @@ namespace Bungle\Framework\Entity;
 
 use Bungle\Framework\Exception\Exceptions;
 
-final class EntityMeta
+class EntityMeta
 {
     // key is property name, value is EntityPropertyMeta
     public array $properties;

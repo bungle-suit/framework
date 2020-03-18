@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Entity;
 
-final class EntityPropertyMeta
+class EntityPropertyMeta
 {
     public string $name;
     public string $logicName;

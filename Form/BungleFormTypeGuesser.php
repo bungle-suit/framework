@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Bungle\Framework\Form;
 
 use Bungle\Framework\Entity\EntityMetaRepository;
-use Bungle\Framework\Entity\EntityRegistry;
 use Symfony\Component\Form\FormTypeGuesserInterface;
 use Symfony\Component\Form\Guess\TypeGuess;
 
@@ -16,18 +15,15 @@ class BungleFormTypeGuesser implements FormTypeGuesserInterface
 {
     private FormTypeGuesserInterface $inner;
     private EntityMetaRepository $entityMetaRepository;
-    private EntityRegistry $entityRegistry;
 
     /**
      * @param $inner, normally should use ValidatorTypeGuesser
      */
     public function __construct(
         FormTypeGuesserInterface $inner,
-        EntityMetaRepository $entityMetaRepository,
-        EntityRegistry $entityRegistry
+        EntityMetaRepository $entityMetaRepository
     ) {
         $this->inner = $inner;
-        $this->entityRegistry = $entityRegistry;
         $this->entityMetaRepository = $entityMetaRepository;
     }
 
@@ -41,12 +37,7 @@ class BungleFormTypeGuesser implements FormTypeGuesserInterface
             return $inner;
         }
 
-        $high = $this->entityRegistry->getHighSafe($class);
-        if (!$high) {
-            return $inner;
-        }
-
-        $meta = $this->entityMetaRepository->get($high);
+        $meta = $this->entityMetaRepository->get($class);
         $logicName = $meta->getProperty($property)->logicName;
         $options = $inner->getOptions() + ['label' => $logicName];
 
