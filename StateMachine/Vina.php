@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Bungle\Framework\StateMachine;
 
 use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Workflow\Exception\TransitionException;
 use Symfony\Component\Workflow\Registry;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Vina is a service help us to handle StateMachine
@@ -20,21 +22,23 @@ use Symfony\Component\Workflow\Registry;
  */
 class Vina
 {
-    // TODO: remove to a more generic place
     const FLASH_ERROR_MESSAGE = 'bungle.errorMessage';
 
     private Registry $registry;
     private AuthorizationCheckerInterface $authChecker;
     private RequestStack $reqStack;
+    private $dispatcher;
 
     public function __construct(
         Registry $registry,
         AuthorizationCheckerInterface $authChecker,
-        RequestStack $reqStack
+        RequestStack $reqStack,
+        EventDispatcherInterface $dispatcher = null
     ) {
         $this->registry = $registry;
         $this->authChecker = $authChecker;
         $this->reqStack = $reqStack;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -143,5 +147,16 @@ class Vina
     public static function getTransitionRole(string $workflowName, string $transitionName): string
     {
         return 'ROLE_'.$workflowName.'_'.$transitionName;
+    }
+
+    /**
+     * Execute STT save steps.
+     */
+    public function save(StatefulInterface $subject): void
+    {
+        $high = $this->registry->get($subject)->getName();
+        if ($this->dispatcher) {
+            $this->dispatcher->dispatch(new GenericEvent($subject), "vina.$high.save");
+        }
     }
 }

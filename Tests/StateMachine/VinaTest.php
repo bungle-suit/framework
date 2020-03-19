@@ -10,6 +10,7 @@ use Bungle\Framework\StateMachine\Vina;
 use Bungle\Framework\Tests\StateMachine\Entity\Order;
 use Bungle\Framework\Tests\StateMachine\EventListener\FakeAuthorizationChecker;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -24,10 +25,11 @@ use Symfony\Component\Workflow\Transition;
 
 final class VinaTest extends TestCase
 {
-    // Return [Vina, RequestStack]
+    // Return [Vina, RequestStack, EventDispatcher]
     private function createVina(): array
     {
         $reqStack = new RequestStack();
+        $dispatcher = new EventDispatcher();
         $vina = new Vina(
             self::createRegistry(),
             new FakeAuthorizationChecker(
@@ -36,9 +38,10 @@ final class VinaTest extends TestCase
                 'Role_prd_new'
             ),
             $reqStack,
+            $dispatcher
         );
 
-        return [$vina, $reqStack];
+        return [$vina, $reqStack, $dispatcher];
     }
 
     public function testGetStateTitle(): void
@@ -113,6 +116,23 @@ final class VinaTest extends TestCase
     {
         $getRole = Vina::class.'::getTransitionRole';
         self::assertEquals('ROLE_ord_save', $getRole('ord', 'save'));
+    }
+
+    public function testSave(): void
+    {
+        list($vina, $reqStack, $dispatcher) = $this->createVina();
+
+        $log = [];
+        $ord = new Order();
+        $listener = function ($e) use (&$log) {
+            $log[] = ['hit', $e->getSubject()];
+        };
+        $dispatcher->addListener(
+            'vina.ord.save',
+            $listener
+        );
+        $vina->save($ord);
+        self::assertEquals([['hit', $ord]], $log);
     }
 
     private static function createOrderWorkflow(): StateMachine
