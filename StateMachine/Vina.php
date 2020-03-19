@@ -159,4 +159,36 @@ class Vina
             $this->dispatcher->dispatch(new GenericEvent($subject), "vina.$high.save");
         }
     }
+
+    /**
+     * Returns true if $subject currently allows edit.
+     *
+     * NOTE: does not consider role of current user.
+     */
+    public function haveSaveAction(StatefulInterface $subject): bool
+    {
+        if (!$this->dispatcher) {
+            return false;
+        }
+
+        $high = $this->registry->get($subject)->getName();
+        $e = new HaveSaveActionResolveEvent($subject);
+        $this->dispatcher->dispatch($e, "vina.$high.have_save_action");
+
+        return $e->isHaveSaveAction();
+    }
+
+    /**
+     * Returns true if $subject currently allows edit and current user has related roles.
+     *
+     * If current user can start any transition on $subject, means has related roles.
+     */
+    public function canSave(StatefulInterface $subject): bool
+    {
+        if (!$this->haveSaveAction($subject)) {
+            return false;
+        }
+
+        return boolval($this->getPossibleTransitions($subject));
+    }
 }

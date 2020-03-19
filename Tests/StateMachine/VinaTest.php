@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\Tests\StateMachine;
 
 use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
+use Bungle\Framework\StateMachine\HaveSaveActionResolveEvent;
 use Bungle\Framework\StateMachine\MarkingStore\StatefulInterfaceMarkingStore;
 use Bungle\Framework\StateMachine\Vina;
 use Bungle\Framework\Tests\StateMachine\Entity\Order;
@@ -120,7 +121,7 @@ final class VinaTest extends TestCase
 
     public function testSave(): void
     {
-        list($vina, $reqStack, $dispatcher) = $this->createVina();
+        list($vina, , $dispatcher) = $this->createVina();
 
         $log = [];
         $ord = new Order();
@@ -133,6 +134,33 @@ final class VinaTest extends TestCase
         );
         $vina->save($ord);
         self::assertEquals([['hit', $ord]], $log);
+    }
+
+    public function testHaveSaveAction(): void
+    {
+        list($vina, , $dispatcher) = $this->createVina();
+        $ord = new Order();
+        self::assertFalse($vina->haveSaveAction($ord));
+
+        $dispatcher->addListener(
+            'vina.ord.have_save_action',
+            fn (HaveSaveActionResolveEvent $e) => $e->setHaveSaveAction()
+        );
+        self::assertTrue($vina->haveSaveAction($ord));
+    }
+
+    public function testCanSave(): void
+    {
+        list($vina, , $dispatcher) = $this->createVina();
+        $ord = new Order();
+        $dispatcher->addListener(
+            'vina.ord.have_save_action',
+            fn (HaveSaveActionResolveEvent $e) => $e->setHaveSaveAction()
+        );
+        self::assertTrue($vina->canSave($ord));
+
+        $ord->setState('checked');
+        self::assertFalse($vina->canSave($ord));
     }
 
     private static function createOrderWorkflow(): StateMachine
