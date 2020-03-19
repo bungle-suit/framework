@@ -6,8 +6,10 @@ namespace Bungle\Framework\Tests\StateMachine\STT;
 
 use Bungle\Framework\StateMachine\EventListener\AbstractSTT;
 use Bungle\Framework\StateMachine\EventListener\STTInterface;
+use Bungle\Framework\StateMachine\SaveStepContext;
 use Bungle\Framework\StateMachine\StepContext;
 use Bungle\Framework\Tests\StateMachine\Entity\Order;
+use Bungle\Framework\Traits\HasAttributesInterface;
 
 /** @SuppressWarnings(PHPMD.UnusedFormalParameter("ord")) */
 final class OrderSTT extends AbstractSTT implements STTInterface
@@ -74,8 +76,8 @@ final class OrderSTT extends AbstractSTT implements STTInterface
     protected function beforeSteps(): array
     {
         return [
-        [static::class, 'hitBefore'],
-        [static::class, 'prepBarAttr'],
+          [static::class, 'hitBefore'],
+          [static::class, 'prepBarAttr'],
         ];
     }
 
@@ -85,12 +87,38 @@ final class OrderSTT extends AbstractSTT implements STTInterface
     protected function afterSteps(): array
     {
         return [
-        [static::class, 'hitAfter'],
-        [static::class, 'saveLog'],
+          [static::class, 'hitAfter'],
+          [static::class, 'saveLog'],
         ];
     }
 
-    private static function log(StepContext $ctx, string $msg): void
+    protected function saveSteps(): array
+    {
+        return [
+          fn (Order $ord, SaveStepContext $ctx) => self::log($ctx, 'save'),
+          fn (Order $ord) => $ord->name = 'foo',
+          fn (Order $ord) => $ord->setState('hack'), // test prevent manipulate set state.
+        ];
+    }
+
+    protected function beforeSaveSteps(): array
+    {
+        return [
+          fn (Order $ord, SaveStepContext $ctx) => self::log($ctx, 'before save'),
+          fn (Order $ord) => $ord->before = 'bar',
+        ];
+    }
+
+    protected function afterSaveSteps(): array
+    {
+        return [
+          fn (Order $ord, SaveStepContext $ctx) => self::log($ctx, 'after save'),
+          fn (Order $ord) => $ord->after = 'after',
+          [self::class, 'saveLog'],
+        ];
+    }
+
+    private static function log(HasAttributesInterface $ctx, string $msg): void
     {
         $s = $ctx->get('log', '');
         $s .= ($s ? ';' : '').$msg;
@@ -117,7 +145,7 @@ final class OrderSTT extends AbstractSTT implements STTInterface
         self::log($ctx, 'after');
     }
 
-    public function saveLog(Order $ord, StepContext $ctx): void
+    public static function saveLog(Order $ord, HasAttributesInterface $ctx): void
     {
         $ord->log = $ctx->get('log');
     }

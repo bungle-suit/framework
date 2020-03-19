@@ -65,4 +65,20 @@ final class AbstractSTTTest extends TestBase
         $this->sm->apply($this->ord, 'update');
         self::assertEquals('before;bar;update;after', $this->ord->log);
     }
+
+    public function testSave(): void
+    {
+        $stt = new OrderSTT();
+
+        $oldState = $this->ord->getState();
+
+        $stt->invokeSave($this->ord);
+        self::assertEquals('before save;save;after save', $this->ord->log);
+        self::assertEquals('bar', $this->ord->before);
+        self::assertEquals('foo', $this->ord->name);
+        self::assertEquals('after', $this->ord->after);
+
+        // invokeSave() prevent steps to manipulate state.
+        self::assertEquals($oldState, $this->ord->getState());
+    }
 }

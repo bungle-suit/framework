@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\StateMachine\EventListener;
 
+use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
 use Bungle\Framework\Exception\Exceptions;
+use Bungle\Framework\StateMachine\SaveStepContext;
 use Bungle\Framework\StateMachine\StepContext;
 use Symfony\Component\Workflow\Event\TransitionEvent;
 use Symfony\Component\Workflow\Exception\TransitionException;
@@ -43,7 +45,8 @@ use Symfony\Component\Workflow\Exception\TransitionException;
 abstract class AbstractSTT
 {
     // Transaction name -> [step callbacks]
-    protected array $steps;
+    private array $steps;
+    private array $saveSteps;
 
     final public function __invoke(TransitionEvent $event): void
     {
@@ -106,5 +109,70 @@ abstract class AbstractSTT
     protected function beforeSteps(): array
     {
         return [];
+    }
+
+    /**
+     * Returns steps ran during edit/save action.
+     *
+     * Returns array like:
+     *
+     *   [
+     *      'saved': [[$this, 'act1'], [$this, 'checkFoo']],
+     *      'checked': [],
+     *   ]
+     *
+     * If state not exist in returned array, then the save action not
+     * enabled for it. Set empty array to enable save if no save action
+     * needed.
+     */
+    protected function saveSteps(): array
+    {
+        return [];
+    }
+
+    /**
+     * Steps run before all save steps.
+     */
+    protected function beforeSaveSteps(): array
+    {
+        return [];
+    }
+
+    /**
+     * Steps run after all save steps.
+     */
+    protected function afterSaveSteps(): array
+    {
+        return [];
+    }
+
+    /**
+     * Execute save action.
+     */
+    final public function invokeSave(StatefulInterface $entity): void
+    {
+        if (!isset($this->saveSteps)) {
+            $this->saveSteps = $this->initSaveSteps();
+        }
+
+        $ctx = new SaveStepContext();
+        $state = $entity->getState();
+        try {
+            foreach ($this->saveSteps as $step) {
+                $step($entity, $ctx);
+            }
+        } finally {
+            // Prevent save step to manipulate state.
+            $entity->setState($state);
+        }
+    }
+
+    private function initSaveSteps(): array
+    {
+        return array_merge(
+            $this->beforeSaveSteps(),
+            $this->saveSteps(),
+            $this->afterSaveSteps()
+        );
     }
 }
