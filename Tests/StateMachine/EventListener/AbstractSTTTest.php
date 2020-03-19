@@ -55,4 +55,14 @@ final class AbstractSTTTest extends TestBase
         $this->sm->apply($this->ord, 'print');
         self::assertEquals('saved', $this->ord->getState());
     }
+
+    public function testBeforeAfter(): void
+    {
+        $this->sm->apply($this->ord, 'save');
+        self::assertEquals('before;bar;after', $this->ord->log);
+
+        $this->ord->setState('saved');
+        $this->sm->apply($this->ord, 'update');
+        self::assertEquals('before;bar;update;after', $this->ord->log);
+    }
 }

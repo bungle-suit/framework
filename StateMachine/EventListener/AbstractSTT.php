@@ -60,20 +60,51 @@ abstract class AbstractSTT
 
     private function getSteps(object $subject, string $actionName): array
     {
-        if (!isset($this->steps)) {
-            $this->steps = $this->createSteps();
-        }
+        $steps = $this->initSteps();
 
-        if (!isset($this->steps[$actionName])) {
+        if (!isset($steps[$actionName])) {
             $cls = get_class($subject);
             throw Exceptions::notSetupStateMachineSteps($cls, $actionName);
         }
 
-        return $this->steps[$actionName];
+        return $steps[$actionName];
     }
 
     /**
      * Sub class create steps array.
      */
     abstract protected function createSteps(): array;
+
+    private function initSteps(): array
+    {
+        if (isset($this->steps)) {
+            return $this->steps;
+        }
+
+        $r = $this->createSteps();
+        $before = $this->createBeforeSteps();
+        $after = $this->createAfterSteps();
+
+        foreach ($r as $act => $steps) {
+            $r[$act] = array_merge($before, $steps, $after);
+        }
+
+        return $this->steps = $r;
+    }
+
+    /**
+     * After steps run after normal steps, runs for every transitions.
+     */
+    protected function createAfterSteps(): array
+    {
+        return [];
+    }
+
+    /**
+     * Before steps run before normal steps, runs for every transitions.
+     */
+    protected function createBeforeSteps(): array
+    {
+        return [];
+    }
 }
