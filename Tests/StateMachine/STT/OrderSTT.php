@@ -50,7 +50,7 @@ final class OrderSTT extends AbstractSTT implements STTInterface
     /**
      * {@inheritdoc}
      */
-    protected function createSteps(): array
+    protected function steps(): array
     {
         return [
           'save' => [
@@ -71,7 +71,7 @@ final class OrderSTT extends AbstractSTT implements STTInterface
     /**
      * {@inheritdoc}
      */
-    protected function createBeforeSteps(): array
+    protected function beforeSteps(): array
     {
         return [
         [static::class, 'hitBefore'],
@@ -82,7 +82,7 @@ final class OrderSTT extends AbstractSTT implements STTInterface
     /**
      * {@inheritdoc}
      */
-    protected function createAfterSteps(): array
+    protected function afterSteps(): array
     {
         return [
         [static::class, 'hitAfter'],

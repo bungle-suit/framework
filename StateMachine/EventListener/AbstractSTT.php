@@ -73,7 +73,7 @@ abstract class AbstractSTT
     /**
      * Sub class create steps array.
      */
-    abstract protected function createSteps(): array;
+    abstract protected function steps(): array;
 
     private function initSteps(): array
     {
@@ -81,9 +81,9 @@ abstract class AbstractSTT
             return $this->steps;
         }
 
-        $r = $this->createSteps();
-        $before = $this->createBeforeSteps();
-        $after = $this->createAfterSteps();
+        $r = $this->steps();
+        $before = $this->beforeSteps();
+        $after = $this->afterSteps();
 
         foreach ($r as $act => $steps) {
             $r[$act] = array_merge($before, $steps, $after);
@@ -95,7 +95,7 @@ abstract class AbstractSTT
     /**
      * After steps run after normal steps, runs for every transitions.
      */
-    protected function createAfterSteps(): array
+    protected function afterSteps(): array
     {
         return [];
     }
@@ -103,7 +103,7 @@ abstract class AbstractSTT
     /**
      * Before steps run before normal steps, runs for every transitions.
      */
-    protected function createBeforeSteps(): array
+    protected function beforeSteps(): array
     {
         return [];
     }
