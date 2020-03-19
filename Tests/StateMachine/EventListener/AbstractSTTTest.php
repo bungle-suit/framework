@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\Tests\StateMachine\EventListener;
 
 use Bungle\Framework\Exception\Exceptions;
+use Bungle\Framework\StateMachine\HaveSaveActionResolveEvent;
 use Bungle\Framework\Tests\StateMachine\Entity\Order;
 use Bungle\Framework\Tests\StateMachine\STT\OrderSTT;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -114,14 +115,20 @@ final class AbstractSTTTest extends TestBase
     {
         $stt = new OrderSTT();
         // configured empty
-        self::assertTrue($stt->canSave($this->ord));
+        $e = new HaveSaveActionResolveEvent($this->ord);
+        $stt->invokeCanSave($e);
+        self::assertTrue($e->isHaveSaveAction());
 
         // configured
         $this->ord->setState('saved');
-        self::assertTrue($stt->canSave($this->ord));
+        $e = new HaveSaveActionResolveEvent($this->ord);
+        $stt->invokeCanSave($e);
+        self::assertTrue($e->isHaveSaveAction());
 
         // Not configured
         $this->ord->setState('checked');
-        self::assertFalse($stt->canSave($this->ord));
+        $e = new HaveSaveActionResolveEvent($this->ord);
+        $stt->invokeCanSave($e);
+        self::assertFalse($e->isHaveSaveAction());
     }
 }

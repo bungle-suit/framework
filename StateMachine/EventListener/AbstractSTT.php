@@ -6,6 +6,7 @@ namespace Bungle\Framework\StateMachine\EventListener;
 
 use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
 use Bungle\Framework\Exception\Exceptions;
+use Bungle\Framework\StateMachine\HaveSaveActionResolveEvent;
 use Bungle\Framework\StateMachine\SaveStepContext;
 use Bungle\Framework\StateMachine\StepContext;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -144,10 +145,17 @@ abstract class AbstractSTT
         }
     }
 
+    final public function invokeCanSave(HaveSaveActionResolveEvent $e): void
+    {
+        if ($this->canSave($e->getSubject())) {
+            $e->setHaveSaveAction();
+        }
+    }
+
     /**
      * Returns true if entity current state defines save steps.
      */
-    public function canSave(StatefulInterface $entity): bool
+    private function canSave(StatefulInterface $entity): bool
     {
         $state = $entity->getState();
 
