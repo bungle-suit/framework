@@ -9,7 +9,6 @@ use Bungle\Framework\StateMachine\MarkingStore\StatefulInterfaceMarkingStore;
 use Bungle\Framework\StateMachine\Vina;
 use Bungle\Framework\Tests\StateMachine\Entity\Order;
 use Bungle\Framework\Tests\StateMachine\EventListener\FakeAuthorizationChecker;
-use Doctrine\ODM\MongoDB\DocumentManager;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -25,10 +24,9 @@ use Symfony\Component\Workflow\Transition;
 
 final class VinaTest extends TestCase
 {
-    // Return [Vina, DocumentManager, RequestStack]
+    // Return [Vina, RequestStack]
     private function createVina(): array
     {
-        $docManager = $this->createMock(DocumentManager::class);
         $reqStack = new RequestStack();
         $vina = new Vina(
             self::createRegistry(),
@@ -37,11 +35,10 @@ final class VinaTest extends TestCase
                 'ROLE_ord_print',
                 'Role_prd_new'
             ),
-            $docManager,
             $reqStack,
         );
 
-        return [$vina, $docManager, $reqStack];
+        return [$vina, $reqStack];
     }
 
     public function testGetStateTitle(): void
@@ -84,22 +81,10 @@ final class VinaTest extends TestCase
         );
     }
 
-    public function testApplyTransitionSucceed(): void
-    {
-        $ord = new Order();
-        list($vina, $docManager) = $this->createVina();
-        $docManager->expects($this->once())->method('persist')->with($ord);
-        $docManager->expects($this->once())->method('flush');
-
-        $vina->applyTransition($ord, 'save');
-    }
-
     public function testApplyTransitionFailed(): array
     {
         $ord = new Order();
-        list($vina, $docManager, $reqStack) = $this->createVina();
-        $docManager->expects($this->never())->method('persist')->with($ord);
-        $docManager->expects($this->never())->method('flush');
+        list($vina, $reqStack) = $this->createVina();
 
         $sess = new Session(new MockArraySessionStorage());
 
@@ -122,16 +107,6 @@ final class VinaTest extends TestCase
         list($vina) = $args;
 
         $vina->applyTransitionRaw(new Order(), 'check');
-    }
-
-    public function testApplyTransitionRawSucceed(): void
-    {
-        $ord = new Order();
-        list($vina, $docManager) = $this->createVina();
-        $docManager->expects($this->once())->method('persist')->with($ord);
-        $docManager->expects($this->once())->method('flush');
-
-        $vina->applyTransitionRaw($ord, 'save');
     }
 
     public function testGetTransitionRole(): void

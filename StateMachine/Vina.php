@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace Bungle\Framework\StateMachine;
 
 use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
-use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Workflow\Exception\TransitionException;
 use Symfony\Component\Workflow\Registry;
-use Symfony\Component\Workflow\WorkflowInterface;
 
 /**
  * Vina is a service help us to handle StateMachine
@@ -27,18 +25,15 @@ class Vina
 
     private Registry $registry;
     private AuthorizationCheckerInterface $authChecker;
-    private DocumentManager $docManager;
     private RequestStack $reqStack;
 
     public function __construct(
         Registry $registry,
         AuthorizationCheckerInterface $authChecker,
-        DocumentManager $docManager,
         RequestStack $reqStack
     ) {
         $this->registry = $registry;
         $this->authChecker = $authChecker;
-        $this->docManager = $docManager;
         $this->reqStack = $reqStack;
     }
 
@@ -126,7 +121,7 @@ class Vina
     {
         $wf = $this->registry->get($subject);
         try {
-            $this->doApplyTransition($wf, $subject, $name);
+            $wf->apply($subject, $name);
         } catch (TransitionException $e) {
             $this->reqStack
                  ->getCurrentRequest()
@@ -142,14 +137,7 @@ class Vina
     public function applyTransitionRaw(object $subject, string $name): void
     {
         $wf = $this->registry->get($subject);
-        $this->doApplyTransition($wf, $subject, $name);
-    }
-
-    private function doApplyTransition(WorkflowInterface $wf, $subject, string $name): void
-    {
         $wf->apply($subject, $name);
-        $this->docManager->persist($subject);
-        $this->docManager->flush();
     }
 
     public static function getTransitionRole(string $workflowName, string $transitionName): string
