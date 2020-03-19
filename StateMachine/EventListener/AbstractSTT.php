@@ -133,7 +133,7 @@ abstract class AbstractSTT
         $ctx = new SaveStepContext();
         $state = $entity->getState();
         try {
-            foreach ($this->getSaveSteps() as $step) {
+            foreach ($this->getSaveSteps($entity) as $step) {
                 $step($entity, $ctx);
             }
         } finally {
@@ -142,19 +142,19 @@ abstract class AbstractSTT
         }
     }
 
-    public function getSaveSteps()
+    private function getSaveSteps(StatefulInterface $entity)
     {
-        yield from $this->beforeSaveSteps();
-        yield from $this->saveSteps();
-        yield from $this->afterSaveSteps();
-    }
+        $curState = $entity->getState();
+        $steps = $this->saveSteps()[$curState] ?? null;
+        if (null === $steps) {
+            $cls = get_class($entity);
+            trigger_error("Try to execute save action on $cls state: $curState, which is not configured.");
 
-    private function initSaveSteps(): array
-    {
-        return array_merge(
-            $this->beforeSaveSteps(),
-            $this->saveSteps(),
-            $this->afterSaveSteps()
-        );
+            return;
+        }
+
+        yield from $this->beforeSaveSteps();
+        yield from $steps;
+        yield from $this->afterSaveSteps();
     }
 }

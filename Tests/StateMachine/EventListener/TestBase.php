@@ -29,8 +29,8 @@ abstract class TestBase extends TestCase
     private static function createOrderWorkflow(EventDispatcher $dispatcher): StateMachine
     {
         $definitionBuilder = new DefinitionBuilder();
-        $definition = $definitionBuilder->addPlaces([
-        StatefulInterface::INITIAL_STATE, 'saved', 'checked', ])
+        $definition = $definitionBuilder
+          ->addPlaces([StatefulInterface::INITIAL_STATE, 'saved', 'checked'])
           ->addTransition(new Transition('save', StatefulInterface::INITIAL_STATE, 'saved'))
           ->addTransition(new Transition('update', 'saved', 'saved'))
           ->addTransition(new Transition('print', 'saved', 'saved'))

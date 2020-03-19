@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\StateMachine\STT;
 
+use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
 use Bungle\Framework\StateMachine\EventListener\AbstractSTT;
 use Bungle\Framework\StateMachine\EventListener\STTInterface;
 use Bungle\Framework\StateMachine\SaveStepContext;
@@ -95,9 +96,12 @@ final class OrderSTT extends AbstractSTT implements STTInterface
     protected function saveSteps(): array
     {
         return [
-          fn (Order $ord, SaveStepContext $ctx) => self::log($ctx, 'save'),
-          fn (Order $ord) => $ord->name = 'foo',
-          fn (Order $ord) => $ord->setState('hack'), // test prevent manipulate set state.
+          'saved' => [
+            fn (Order $ord, SaveStepContext $ctx) => self::log($ctx, 'save'),
+            fn (Order $ord) => $ord->name = 'foo',
+            fn (Order $ord) => $ord->setState('hack'), // test prevent manipulate set state.
+          ],
+          StatefulInterface::INITIAL_STATE => [],
         ];
     }
 

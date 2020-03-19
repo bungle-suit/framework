@@ -69,7 +69,7 @@ final class AbstractSTTTest extends TestBase
     public function testSave(): void
     {
         $stt = new OrderSTT();
-
+        $this->ord->setState('saved');
         $oldState = $this->ord->getState();
 
         $stt->invokeSave($this->ord);
@@ -80,5 +80,32 @@ final class AbstractSTTTest extends TestBase
 
         // invokeSave() prevent steps to manipulate state.
         self::assertEquals($oldState, $this->ord->getState());
+    }
+
+    public function testSaveNotConfigured(): void
+    {
+        $old = set_error_handler(fn () => null, E_USER_NOTICE);
+        try {
+            $stt = new OrderSTT();
+            $this->ord->setState('checked');
+
+            $stt->invokeSave($this->ord);
+            self::assertNull($this->ord->log ?? null);
+            self::assertNull($this->ord->before ?? null);
+            self::assertNull($this->ord->name ?? null);
+            self::assertNull($this->ord->after ?? null);
+
+            // invokeSave() prevent steps to manipulate state.
+            self::assertEquals('checked', $this->ord->getState());
+        } finally {
+            set_error_handler($old, E_USER_NOTICE);
+        }
+    }
+
+    public function testSaveEmptyConfigured(): void
+    {
+        $stt = new OrderSTT();
+        $stt->invokeSave($this->ord);
+        self::assertEquals('before save;after save', $this->ord->log);
     }
 }
