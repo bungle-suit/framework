@@ -7,6 +7,7 @@ namespace Bungle\Framework\Tests\StateMachine\EventListener;
 use Bungle\Framework\Exception\Exceptions;
 use Bungle\Framework\Tests\StateMachine\Entity\Order;
 use Bungle\Framework\Tests\StateMachine\STT\OrderSTT;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Workflow\Exception\TransitionException;
 
 final class AbstractSTTTest extends TestBase
@@ -72,7 +73,7 @@ final class AbstractSTTTest extends TestBase
         $this->ord->setState('saved');
         $oldState = $this->ord->getState();
 
-        $stt->invokeSave($this->ord);
+        $stt->invokeSave(new GenericEvent($this->ord));
         self::assertEquals('before save;save;after save', $this->ord->log);
         self::assertEquals('bar', $this->ord->before);
         self::assertEquals('foo', $this->ord->name);
@@ -89,7 +90,7 @@ final class AbstractSTTTest extends TestBase
             $stt = new OrderSTT();
             $this->ord->setState('checked');
 
-            $stt->invokeSave($this->ord);
+            $stt->invokeSave(new GenericEvent($this->ord));
             self::assertNull($this->ord->log ?? null);
             self::assertNull($this->ord->before ?? null);
             self::assertNull($this->ord->name ?? null);
@@ -105,7 +106,7 @@ final class AbstractSTTTest extends TestBase
     public function testSaveEmptyConfigured(): void
     {
         $stt = new OrderSTT();
-        $stt->invokeSave($this->ord);
+        $stt->invokeSave(new GenericEvent($this->ord));
         self::assertEquals('before save;after save', $this->ord->log);
     }
 
