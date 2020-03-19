@@ -142,11 +142,20 @@ abstract class AbstractSTT
         }
     }
 
+    /**
+     * Returns true if entity current state defines save steps.
+     */
+    public function canSave(StatefulInterface $entity): bool
+    {
+        $state = $entity->getState();
+
+        return isset($this->saveSteps()[$state]);
+    }
+
     private function getSaveSteps(StatefulInterface $entity)
     {
         $curState = $entity->getState();
-        $steps = $this->saveSteps()[$curState] ?? null;
-        if (null === $steps) {
+        if (!$this->canSave($entity)) {
             $cls = get_class($entity);
             trigger_error("Try to execute save action on $cls state: $curState, which is not configured.");
 
@@ -154,7 +163,7 @@ abstract class AbstractSTT
         }
 
         yield from $this->beforeSaveSteps();
-        yield from $steps;
+        yield from $this->saveSteps()[$curState] ?? null;
         yield from $this->afterSaveSteps();
     }
 }

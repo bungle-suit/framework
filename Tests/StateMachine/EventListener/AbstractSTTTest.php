@@ -108,4 +108,19 @@ final class AbstractSTTTest extends TestBase
         $stt->invokeSave($this->ord);
         self::assertEquals('before save;after save', $this->ord->log);
     }
+
+    public function testCanSave(): void
+    {
+        $stt = new OrderSTT();
+        // configured empty
+        self::assertTrue($stt->canSave($this->ord));
+
+        // configured
+        $this->ord->setState('saved');
+        self::assertTrue($stt->canSave($this->ord));
+
+        // Not configured
+        $this->ord->setState('checked');
+        self::assertFalse($stt->canSave($this->ord));
+    }
 }
