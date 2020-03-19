@@ -44,16 +44,12 @@ use Symfony\Component\Workflow\Exception\TransitionException;
  */
 abstract class AbstractSTT
 {
-    // Transaction name -> [step callbacks]
-    private array $steps;
-    private array $saveSteps;
-
     final public function __invoke(TransitionEvent $event): void
     {
         $ctx = new StepContext($event->getWorkflow(), $event->getTransition());
         $subject = $event->getSubject();
-        $steps = $this->getSteps($subject, $event->getTransition()->getName());
-        foreach ($steps as $step) {
+        $action = $event->getTransition()->getName();
+        foreach ($this->getTransitionSteps($subject, $action) as $step) {
             $msg = call_user_func($step, $subject, $ctx);
             if (is_string($msg)) {
                 throw new TransitionException($subject, $ctx->getTransitionName(), $ctx->getWorkflow(), $msg);
@@ -61,38 +57,21 @@ abstract class AbstractSTT
         }
     }
 
-    private function getSteps(object $subject, string $actionName): array
-    {
-        $steps = $this->initSteps();
-
-        if (!isset($steps[$actionName])) {
-            $cls = get_class($subject);
-            throw Exceptions::notSetupStateMachineSteps($cls, $actionName);
-        }
-
-        return $steps[$actionName];
-    }
-
     /**
      * Sub class create steps array.
      */
     abstract protected function steps(): array;
 
-    private function initSteps(): array
+    private function getTransitionSteps($subject, string $actionName)
     {
-        if (isset($this->steps)) {
-            return $this->steps;
+        yield from $this->beforeSteps();
+        $steps = $this->steps();
+        if (!isset($steps[$actionName])) {
+            $cls = get_class($subject);
+            throw Exceptions::notSetupStateMachineSteps($cls, $actionName);
         }
-
-        $r = $this->steps();
-        $before = $this->beforeSteps();
-        $after = $this->afterSteps();
-
-        foreach ($r as $act => $steps) {
-            $r[$act] = array_merge($before, $steps, $after);
-        }
-
-        return $this->steps = $r;
+        yield from $steps[$actionName];
+        yield from $this->afterSteps();
     }
 
     /**
@@ -151,20 +130,23 @@ abstract class AbstractSTT
      */
     final public function invokeSave(StatefulInterface $entity): void
     {
-        if (!isset($this->saveSteps)) {
-            $this->saveSteps = $this->initSaveSteps();
-        }
-
         $ctx = new SaveStepContext();
         $state = $entity->getState();
         try {
-            foreach ($this->saveSteps as $step) {
+            foreach ($this->getSaveSteps() as $step) {
                 $step($entity, $ctx);
             }
         } finally {
             // Prevent save step to manipulate state.
             $entity->setState($state);
         }
+    }
+
+    public function getSaveSteps()
+    {
+        yield from $this->beforeSaveSteps();
+        yield from $this->saveSteps();
+        yield from $this->afterSaveSteps();
     }
 
     private function initSaveSteps(): array
