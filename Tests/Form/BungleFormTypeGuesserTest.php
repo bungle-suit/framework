@@ -9,6 +9,7 @@ use Bungle\Framework\Entity\EntityMetaRepository;
 use Bungle\Framework\Entity\EntityPropertyMeta;
 use Bungle\Framework\Form\BungleFormTypeGuesser;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormTypeGuesserInterface;
 use Symfony\Component\Form\Guess\Guess;
@@ -74,6 +75,28 @@ final class BungleFormTypeGuesserTest extends TestCase
             new TypeGuess(TextType::class, [
               'label' => 'Foo',
               'empty_data' => '',
+            ], Guess::MEDIUM_CONFIDENCE),
+            $guesser->guessType('Some\Entity', 'name')
+        );
+    }
+
+    public function testDateTimeField(): void
+    {
+        list($guesser, $inner, $entityMetaRepository) = $this->createGuesser();
+        $inner
+          ->method('guessType')
+          ->willReturn(new TypeGuess(DateTimeType::class, [], Guess::MEDIUM_CONFIDENCE));
+        $entityMetaRepository
+          ->method('get')
+          ->willReturn(new EntityMeta(
+              'Some\Entity',
+              'Wow',
+              [new EntityPropertyMeta('name', 'No')]
+          ));
+        self::assertEquals(
+            new TypeGuess(DateTimeType::class, [
+              'label' => 'No',
+              'widget' => 'single_text',
             ], Guess::MEDIUM_CONFIDENCE),
             $guesser->guessType('Some\Entity', 'name')
         );

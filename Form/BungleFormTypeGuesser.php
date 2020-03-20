@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\Form;
 
 use Bungle\Framework\Entity\EntityMetaRepository;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormTypeGuesserInterface;
 use Symfony\Component\Form\Guess\TypeGuess;
@@ -45,6 +46,8 @@ class BungleFormTypeGuesser implements FormTypeGuesserInterface
             // If not set, TextType convert empty string to null,
             // I think null string is not allowed, always can use empty string.
             $options['empty_data'] = '';
+        } elseif (DateTimeType::class == $inner->getType()) {
+            $options['widget'] = 'single_text';
         }
         $options = $inner->getOptions() + $options;
 
