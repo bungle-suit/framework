@@ -31,29 +31,33 @@ final class InquiryTest extends TestCase
         $inquiry = new Inquiry($db);
 
         return [
-        $inquiry,
-        $this->db = $db,
-        $params,
-        $q,
+            $inquiry,
+            $this->db = $db,
+            $params,
+            $q,
         ];
     }
 
     private function mockSearch(Query $q, iterable $returns): void
     {
-        $this->db
-        ->expects($this->once())
-        ->method('search')
-        ->with($this->equalTo($q))
-        ->willReturn($returns);
+        $this
+            ->db
+            ->expects($this->once())
+            ->method('search')
+            ->with($this->equalTo($q))
+            ->willReturn($returns)
+        ;
     }
 
     public function mockCount(Query $q, int $returns): void
     {
-        $this->db
-        ->expects($this->once())
-        ->method('count')
-        ->with($this->equalTo($q))
-        ->willReturn($returns);
+        $this
+            ->db
+            ->expects($this->once())
+            ->method('count')
+            ->with($this->equalTo($q))
+            ->willReturn($returns)
+        ;
     }
 
     public function testSearchEmpty(): void
@@ -70,12 +74,12 @@ final class InquiryTest extends TestCase
         list($inquiry, , $params, $q) = $this->createObjects();
 
         $qb = new ArrayQueryBuilder([
-        function (StepContext $ctx): void {
-            self::assertFalse($ctx->isBuildForCount());
-            $ctx->query->offset = 10;
-            $ctx->set('foo', 'bar');
-        },
-        fn ($ctx) => $ctx->query->fields[] = $ctx->get('foo'),
+            function (StepContext $ctx): void {
+                self::assertFalse($ctx->isBuildForCount());
+                $ctx->query->offset = 10;
+                $ctx->set('foo', 'bar');
+            },
+            fn ($ctx) => $ctx->query->fields[] = $ctx->get('foo'),
         ]);
 
         $q->offset = 10;
@@ -103,7 +107,7 @@ final class InquiryTest extends TestCase
         $qSearch = clone $q;
 
         $qb = new ArrayQueryBuilder([
-        fn ($ctx) => $ctx->query->offset = $ctx->isBuildForCount() ? 3 : 4,
+            fn ($ctx) => $ctx->query->offset = $ctx->isBuildForCount() ? 3 : 4,
         ]);
 
         $qCount->offset = 3;
@@ -121,7 +125,7 @@ final class InquiryTest extends TestCase
         $qSearch = clone $q;
 
         $qb = new ArrayQueryBuilder([
-        fn ($ctx) => $ctx->query->offset = $ctx->isBuildForCount() ? 3 : 4,
+            fn ($ctx) => $ctx->query->offset = $ctx->isBuildForCount() ? 3 : 4,
         ]);
 
         $qCount->offset = 3;

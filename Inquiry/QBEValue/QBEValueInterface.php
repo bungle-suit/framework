@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Inquiry;
@@ -15,4 +16,6 @@ namespace Bungle\Framework\Inquiry;
  *
  * QBEValueBuilder create by QBEValueBuilderFactory.
  */
-interface QBEValueInterface { }
+interface QBEValueInterface
+{
+}
