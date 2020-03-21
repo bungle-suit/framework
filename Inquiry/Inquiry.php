@@ -58,27 +58,4 @@ class Inquiry
         return $this->db->search($ctx->query);
     }
 
-    /* private function doSearch(Query $q): \Iterator */
-    /* { */
-        /* $qb = $this->dm */
-        /*   ->createQueryBuilder($options->docClass) */
-        /*   ->select($options->fields) */
-        /*   ->readOnly(); */
-        /* foreach ($options->qbe as $attr => $val) { */
-        /*   $qb->field($attr)->equals($val); */
-        /* } */
-
-        /* $recs = (clone $qb)->count()->getQuery()->execute(); */
-
-        /* $rows = $qb */
-        /*   ->limit($options->count) */
-        /*   ->skip($options->offset) */
-        /*   ->getQuery()->execute(); */
-
-        /* $r = new PagedData(); */
-        /* $r->count = $recs; */
-        /* $r->data = \iterator_to_array($rows); */
-
-        /* return $r; */
-    /* } */
 }

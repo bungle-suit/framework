@@ -12,6 +12,9 @@ class Query
     public string $docClass;
     // empty means select the whole object.
     public array $fields;
-    // array of condition objects.
+
+    /**
+     * @var ConditionInterface[]
+     */
     public array $conditions;
 }
