@@ -57,5 +57,4 @@ class Inquiry
 
         return $this->db->search($ctx->query);
     }
-
 }

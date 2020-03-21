@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Inquiry;
@@ -37,7 +38,7 @@ class DBProvider implements DBProviderInterface
             ->readOnly()
         ;
         if ($q->fields) {
-          $qb->select($q->fields);
+            $qb->select($q->fields);
         }
         foreach ($q->conditions as $field => $cond) {
             $qb->field($field);
