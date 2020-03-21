@@ -14,7 +14,7 @@ class Query
     public array $fields;
 
     /**
-     * @var ConditionInterface[]
+     * @var Conditions\ConditionInterface[]
      */
     public array $conditions;
 }
