@@ -45,7 +45,7 @@ class Inquiry
 
     private function count(QueryBuilderInterface $qb, QueryParams $params): int
     {
-        $ctx = $this->createContext($params, true)
+        $ctx = $this->createContext($params, true);
         foreach ($qb->steps() as $step) {
             call_user_func($step, $ctx);
         }
