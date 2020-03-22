@@ -6,6 +6,7 @@ namespace Bungle\Framework\Inquiry;
 
 use Bungle\Framework\Traits\Attributes;
 use Bungle\Framework\Traits\HasAttributesInterface;
+use Doctrine\ODM\MongoDB\Query\Builder;
 
 /**
  * Context object passed to Inquiry step functions.
@@ -14,20 +15,22 @@ class StepContext implements HasAttributesInterface
 {
     use Attributes;
 
-    public Query $query;
-    public QueryParams $params;
     private bool $buildForCount;
 
-    public function __construct(bool $buildForCount, QueryParams $params)
+    /**
+     * @var Builder
+     */
+    private Builder $builder;
+    /**
+     * @var QueryParams
+     */
+    private QueryParams $params;
+
+    public function __construct(bool $buildForCount, QueryParams $params, Builder $builder)
     {
-        $this->query = $q = new Query();
-        $q->offset = 0;
-        $q->count = -1;
-        $q->docClass = $params->docClass;
-        $q->fields = [];
-        $q->conditions = [];
-        $this->params = $params;
         $this->buildForCount = $buildForCount;
+        $this->builder = $builder;
+        $this->params = $params;
     }
 
     /**
@@ -37,5 +40,15 @@ class StepContext implements HasAttributesInterface
     public function isBuildForCount(): bool
     {
         return $this->buildForCount;
+    }
+
+    public function getBuilder(): Builder
+    {
+        return $this->builder;
+    }
+
+    public function getParams(): QueryParams
+    {
+        return $this->params;
     }
 }

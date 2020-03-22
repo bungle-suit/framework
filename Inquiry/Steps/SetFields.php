@@ -26,6 +26,6 @@ class SetFields
 
     public function __invoke(StepContext $context)
     {
-        $context->query->fields = $this->fields;
+        $context->getBuilder()->select($this->fields);
     }
 }

@@ -23,7 +23,11 @@ class SetPaging
 
     public function __invoke(StepContext $context)
     {
-        $context->query->offset = $this->recsPerPage * $context->params->pageNo;
-        $context->query->count = $this->recsPerPage;
+        if ($context->isBuildForCount()) {
+            return;
+        }
+
+        $context->getBuilder()->skip($this->recsPerPage * $context->getParams()->pageNo);
+        $context->getBuilder()->limit($this->recsPerPage);
     }
 }
