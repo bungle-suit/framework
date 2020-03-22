@@ -49,7 +49,8 @@ class Inquiry
         foreach ($qb->steps() as $step) {
             call_user_func($step, $ctx);
         }
-        return $ctx->getBuilder()->getQuery()->execute();
+
+        return $ctx->getBuilder()->count()->getQuery()->execute();
     }
 
     /**
@@ -70,6 +71,7 @@ class Inquiry
     {
         $builder = $this->dm->createQueryBuilder($params->docClass);
         $builder->readOnly();
+
         return new StepContext($buildForCount, $params, $builder);
     }
 }
