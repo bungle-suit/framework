@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Bungle\Framework\Inquiry\Steps;
 
 use Bungle\Framework\Inquiry\StepContext;
+use MongoDB\BSON\Regex;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\Validator\Constraints\Regex;
 
 /**
  * Step set query conditions by field value types.

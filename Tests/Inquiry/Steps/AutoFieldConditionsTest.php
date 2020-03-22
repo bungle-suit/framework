@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\Tests\Inquiry\Steps;
 
 use Bungle\Framework\Inquiry\Steps\AutoFieldConditions;
-use Symfony\Component\Validator\Constraints\Regex;
+use MongoDB\BSON\Regex;
 
 class AutoFieldConditionsTest extends BaseStepTest
 {
