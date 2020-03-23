@@ -11,12 +11,12 @@ namespace Bungle\Framework\Inquiry;
 class QueryParams
 {
     /**
-     * @see QueryParams::$sortTuple
+     * @see QueryParams::$sort
      */
     public const ORDER_ASC = true;
 
     /**
-     * @see QueryParams::$sortTuple
+     * @see QueryParams::$sort
      */
     public const ORDER_DESC = false;
 
@@ -36,7 +36,7 @@ class QueryParams
      *
      * Two element tuple, first is field name, 2nd is bool, use ORDER_ASC, ORDER_DESC const.
      */
-    public ?array $sortTuple = null;
+    public ?array $sort = null;
 
     public function __construct(string $docClass, int $pageNo, $qbe)
     {
