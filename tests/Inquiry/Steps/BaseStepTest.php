@@ -23,8 +23,23 @@ abstract class BaseStepTest extends TestCase
 
     public function setUp(): void
     {
+        $this->buildForPage();
+    }
+
+    protected function buildForCount(): void {
+        $this->create(true);
+    }
+
+    protected function buildForPage(): void
+    {
+        $this->create(false);
+    }
+
+    protected function create(bool $buildForCount): void
+    {
         $this->builder = $this->createMock(Builder::class);
         $this->params = new QueryParams(Order::class, 0, new stdClass());
-        $this->ctx = new StepContext(true, $this->params, $this->builder);
+        $this->ctx = new StepContext($buildForCount, $this->params, $this->builder);
     }
+
 }
