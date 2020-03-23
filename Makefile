@@ -1,14 +1,14 @@
 .phony: test test-watch lint format regen-autoload test-cover
 
 test:
-	../vendor/bin/phpunit --bootstrap Tests/bootstrap.php Tests/
+	../vendor/bin/phpunit --bootstrap tests/bootstrap.php tests/
 
 test-watch:
-	noisy.py -d '.' -e .php -- '../vendor/bin/phpunit --bootstrap Tests/bootstrap.php Tests/'
+	noisy.py -d '.' -e .php -- '../vendor/bin/phpunit --bootstrap tests/bootstrap.php tests/'
 
 test-cover:
 	rm -rf /tmp/test-report/
-	../vendor/bin/phpunit --bootstrap Tests/bootstrap.php Tests --coverage-html /tmp/test-report --whitelist .
+	../vendor/bin/phpunit --bootstrap tests/bootstrap.php tests --coverage-html /tmp/test-report --whitelist .
 	xdg-open /tmp/test-report/index.html
 
 lint:

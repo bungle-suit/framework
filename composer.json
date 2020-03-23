@@ -16,9 +16,9 @@
     "symfony/validator": "^5.0"
   },
   "autoload": {
-    "psr-4": { "Bungle\\Framework\\": "" },
-    "exclude-from-classmap": [
-      "/Tests/"
-    ]
+    "psr-4": { "Bungle\\Framework\\": "src/" }
+  },
+  "autoload-dev": {
+    "psr-4": { "Bungle\\Framework\\Tests\\": "tests/" }
   }
 }
