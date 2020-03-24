@@ -108,7 +108,7 @@ final class OrderSTT extends AbstractSTT implements STTInterface
     protected function beforeSaveSteps(): array
     {
         return [
-          fn (Order $ord, SaveStepContext $ctx) => self::log($ctx, 'before save'),
+          fn (Order $ord, SaveStepContext $ctx) => self::log($ctx, 'before save'.$ctx->get('attr', '')),
           fn (Order $ord) => $ord->before = 'bar',
         ];
     }

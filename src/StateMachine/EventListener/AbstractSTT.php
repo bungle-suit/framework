@@ -6,10 +6,10 @@ namespace Bungle\Framework\StateMachine\EventListener;
 
 use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
 use Bungle\Framework\Exception\Exceptions;
+use Bungle\Framework\StateMachine\Events\SaveEvent;
 use Bungle\Framework\StateMachine\HaveSaveActionResolveEvent;
 use Bungle\Framework\StateMachine\SaveStepContext;
 use Bungle\Framework\StateMachine\StepContext;
-use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Workflow\Event\TransitionEvent;
 use Symfony\Component\Workflow\Exception\TransitionException;
 
@@ -130,10 +130,10 @@ abstract class AbstractSTT
     /**
      * Execute save action, Handles `vina.high.save` action.
      */
-    final public function invokeSave(GenericEvent $e): void
+    final public function invokeSave(SaveEvent $e): void
     {
         $entity = $e->getSubject();
-        $ctx = new SaveStepContext();
+        $ctx = new SaveStepContext($e->getAttrs());
         $state = $entity->getState();
         try {
             foreach ($this->getSaveSteps($entity) as $step) {

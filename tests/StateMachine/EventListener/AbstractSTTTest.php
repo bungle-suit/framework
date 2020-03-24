@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Bungle\Framework\Tests\StateMachine\EventListener;
 
 use Bungle\Framework\Exception\Exceptions;
+use Bungle\Framework\StateMachine\Events\SaveEvent;
 use Bungle\Framework\StateMachine\HaveSaveActionResolveEvent;
 use Bungle\Framework\Tests\StateMachine\Entity\Order;
 use Bungle\Framework\Tests\StateMachine\STT\OrderSTT;
-use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Workflow\Exception\TransitionException;
 
 final class AbstractSTTTest extends TestBase
@@ -74,8 +74,8 @@ final class AbstractSTTTest extends TestBase
         $this->ord->setState('saved');
         $oldState = $this->ord->getState();
 
-        $stt->invokeSave(new GenericEvent($this->ord));
-        self::assertEquals('before save;save;after save', $this->ord->log);
+        $stt->invokeSave(new SaveEvent($this->ord, ['attr' => ' foo']));
+        self::assertEquals('before save foo;save;after save', $this->ord->log);
         self::assertEquals('bar', $this->ord->before);
         self::assertEquals('foo', $this->ord->name);
         self::assertEquals('after', $this->ord->after);
@@ -91,7 +91,7 @@ final class AbstractSTTTest extends TestBase
             $stt = new OrderSTT();
             $this->ord->setState('checked');
 
-            $stt->invokeSave(new GenericEvent($this->ord));
+            $stt->invokeSave(new SaveEvent($this->ord, []));
             self::assertNull($this->ord->log ?? null);
             self::assertNull($this->ord->before ?? null);
             self::assertNull($this->ord->name ?? null);
@@ -107,7 +107,7 @@ final class AbstractSTTTest extends TestBase
     public function testSaveEmptyConfigured(): void
     {
         $stt = new OrderSTT();
-        $stt->invokeSave(new GenericEvent($this->ord));
+        $stt->invokeSave(new SaveEvent($this->ord, []));
         self::assertEquals('before save;after save', $this->ord->log);
     }
 
