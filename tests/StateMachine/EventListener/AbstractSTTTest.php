@@ -37,9 +37,9 @@ final class AbstractSTTTest extends TestBase
 
     public function testDisableAbortByAttr(): void
     {
-        $this->doesNotPerformAssertions();
         $this->ord->setState('saved');
         $this->sm->apply($this->ord, 'check', ['abort' => false]);
+        self::assertTrue(true, 'Ensure no exception raised');
     }
 
     public function testInvokeWithContext(): void
