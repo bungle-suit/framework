@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\StateMachine;
 
 use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
-use Symfony\Component\HttpFoundation\Request;
+use Bungle\Framework\StateMachine\Events\SaveEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Workflow\Exception\TransitionException;
@@ -159,12 +158,13 @@ class Vina
 
     /**
      * Execute STT save steps. If succeed, $subject synced to DB.
+     * @param array $attrs initial attribute for StepContext.
      */
-    public function save(StatefulInterface $subject): void
+    public function save(StatefulInterface $subject, array $attrs = []): void
     {
         $high = $this->registry->get($subject)->getName();
         if ($this->dispatcher) {
-            $this->dispatcher->dispatch(new GenericEvent($subject), "vina.$high.save");
+            $this->dispatcher->dispatch(new SaveEvent($subject, $attrs), "vina.$high.save");
         }
 
         $this->syncToDB->syncToDB($subject);

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\Tests\StateMachine;
 
 use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
+use Bungle\Framework\StateMachine\Events\SaveEvent;
 use Bungle\Framework\StateMachine\HaveSaveActionResolveEvent;
 use Bungle\Framework\StateMachine\MarkingStore\StatefulInterfaceMarkingStore;
 use Bungle\Framework\StateMachine\SyncToDBInterface;
@@ -13,6 +14,7 @@ use Bungle\Framework\Tests\StateMachine\Entity\Order;
 use Bungle\Framework\Tests\StateMachine\EventListener\FakeAuthorizationChecker;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use SplObjectStorage;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -152,16 +154,16 @@ final class VinaTest extends TestCase
 
         $log = [];
         $ord = new Order();
-        $listener = function ($e) use (&$log) {
+        $attrs = ['foo' => 'bar'];
+        $listener = function (SaveEvent $e) use (&$log, $ord, $attrs) {
             $log[] = ['hit', $e->getSubject()];
+            self::assertSame($ord, $e->getSubject());
+            self::assertEquals($attrs, $e->getAttrs());
         };
-        $dispatcher->addListener(
-            'vina.ord.save',
-            $listener
-        );
+        $dispatcher->addListener( 'vina.ord.save', $listener );
         $syncToDB->expects($this->once())->method('syncToDB')->with($ord);
 
-        $vina->save($ord);
+        $vina->save($ord, $attrs);
         self::assertEquals([['hit', $ord]], $log);
     }
 
@@ -202,7 +204,7 @@ final class VinaTest extends TestCase
           new Transition('check', 'saved', 'checked'),
         ];
 
-        $transMeta = new \SplObjectStorage();
+        $transMeta = new SplObjectStorage();
         $transMeta[$save] = ['title' => '保存'];
         $transMeta[$update] = ['title' => '保存'];
         $transMeta[$print] = ['title' => '打印'];
