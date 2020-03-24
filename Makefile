@@ -6,6 +6,9 @@ test:
 test-watch:
 	noisy.py -d '.' -e .php -- '../vendor/bin/phpunit --bootstrap tests/bootstrap.php tests/'
 
+test-watch-quiet:
+	noisy.py -d '.' --vol 0.4 -e .php -- '../vendor/bin/phpunit --bootstrap tests/bootstrap.php tests/'
+
 test-cover:
 	rm -rf /tmp/test-report/
 	../vendor/bin/phpunit --bootstrap tests/bootstrap.php tests --coverage-html /tmp/test-report --whitelist .
