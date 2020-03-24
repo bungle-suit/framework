@@ -27,24 +27,27 @@ class Vina
     private Registry $registry;
     private AuthorizationCheckerInterface $authChecker;
     private RequestStack $reqStack;
-    private $dispatcher;
+    private ?EventDispatcherInterface $dispatcher;
+    private SyncToDBInterface $syncToDB;
 
     public function __construct(
         Registry $registry,
         AuthorizationCheckerInterface $authChecker,
         RequestStack $reqStack,
-        EventDispatcherInterface $dispatcher = null
+        EventDispatcherInterface $dispatcher = null,
+        SyncToDBInterface $syncToDB = null
     ) {
         $this->registry = $registry;
         $this->authChecker = $authChecker;
         $this->reqStack = $reqStack;
         $this->dispatcher = $dispatcher;
+        $this->syncToDB = $syncToDB ?? new EmptySyncToDB();
     }
 
     /**
      * Return title of subject current state.
      */
-    public function getCurrentStateTitle($subject): string
+    public function getCurrentStateTitle(StatefulInterface $subject): string
     {
         $titles = $this->getStateTitles($subject);
 
@@ -55,7 +58,7 @@ class Vina
      * Returns associated array of transition name -> title
      * for StateMachine attached with $subject.
      */
-    public function getTransitionTitles($subject): array
+    public function getTransitionTitles(StatefulInterface $subject): array
     {
         $sm = $this->registry->get($subject);
         $store = $sm->getMetadataStore();
@@ -72,7 +75,7 @@ class Vina
      * Return associated array of state/place name -> title
      * for StateMachine attached with $subject.
      */
-    public function getStateTitles($subject): array
+    public function getStateTitles(StatefulInterface $subject): array
     {
         // TODO: cache result by subject classname
         $sm = $this->registry->get($subject);
@@ -97,7 +100,7 @@ class Vina
      * has a transition named 'save', If current user do have 'ROLE_ord_save'
      * then 'save' transition excluded from getPossibleTransitions() result.
      */
-    public function getPossibleTransitions($subject): array
+    public function getPossibleTransitions(StatefulInterface $subject): array
     {
         $sm = $this->registry->get($subject);
         $trans = $sm->getEnabledTransitions($subject);
@@ -120,12 +123,15 @@ class Vina
      *
      * Handles TransitionException, put the error message into
      * session flash, next page request can display it to user.
+     *
+     * If succeed, $subject synced to DB.
      */
-    public function applyTransition(object $subject, string $name): void
+    public function applyTransition(StatefulInterface $subject, string $name): void
     {
         $wf = $this->registry->get($subject);
         try {
             $wf->apply($subject, $name);
+            $this->syncToDB->syncToDB($subject);
         } catch (TransitionException $e) {
             $this->reqStack
                  ->getCurrentRequest()
@@ -137,8 +143,10 @@ class Vina
 
     /**
      * Like applyTransition(), but not handles TransitionException.
+     *
+     * $subject not sync to db.
      */
-    public function applyTransitionRaw(object $subject, string $name): void
+    public function applyTransitionRaw(StatefulInterface $subject, string $name): void
     {
         $wf = $this->registry->get($subject);
         $wf->apply($subject, $name);
@@ -150,7 +158,7 @@ class Vina
     }
 
     /**
-     * Execute STT save steps.
+     * Execute STT save steps. If succeed, $subject synced to DB.
      */
     public function save(StatefulInterface $subject): void
     {
@@ -158,6 +166,8 @@ class Vina
         if ($this->dispatcher) {
             $this->dispatcher->dispatch(new GenericEvent($subject), "vina.$high.save");
         }
+
+        $this->syncToDB->syncToDB($subject);
     }
 
     /**

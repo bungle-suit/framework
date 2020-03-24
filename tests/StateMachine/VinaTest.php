@@ -7,9 +7,11 @@ namespace Bungle\Framework\Tests\StateMachine;
 use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
 use Bungle\Framework\StateMachine\HaveSaveActionResolveEvent;
 use Bungle\Framework\StateMachine\MarkingStore\StatefulInterfaceMarkingStore;
+use Bungle\Framework\StateMachine\SyncToDBInterface;
 use Bungle\Framework\StateMachine\Vina;
 use Bungle\Framework\Tests\StateMachine\Entity\Order;
 use Bungle\Framework\Tests\StateMachine\EventListener\FakeAuthorizationChecker;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,10 +29,11 @@ use Symfony\Component\Workflow\Transition;
 final class VinaTest extends TestCase
 {
     // Return [Vina, RequestStack, EventDispatcher]
-    private function createVina(): array
+    private function createVina(bool $mockDB = false): array
     {
         $reqStack = new RequestStack();
         $dispatcher = new EventDispatcher();
+        $syncToDb = $mockDB ? $this->createMock(SyncToDBInterface::class): null;
         $vina = new Vina(
             self::createRegistry(),
             new FakeAuthorizationChecker(
@@ -39,14 +42,16 @@ final class VinaTest extends TestCase
                 'Role_prd_new'
             ),
             $reqStack,
-            $dispatcher
+            $dispatcher,
+            $syncToDb
         );
 
-        return [$vina, $reqStack, $dispatcher];
+        return [$vina, $reqStack, $dispatcher, $syncToDb];
     }
 
     public function testGetStateTitle(): void
     {
+        /** @var Vina $vina */
         list($vina) = $this::createVina();
         self::assertEquals('未保存', $vina->getCurrentStateTitle(new Order()));
         $ord = new Order();
@@ -85,16 +90,34 @@ final class VinaTest extends TestCase
         );
     }
 
+    public function testApplyTransitionSyncToDB(): void
+    {
+        /** @var SyncToDBInterface|MockObject $syncToDB */
+        $ord = new Order();
+        list($vina, $reqStack, , $syncToDB) = $this->createVina(true);
+
+        $sess = new Session(new MockArraySessionStorage());
+        $req = Request::create('/foo');
+        $req->setSession($sess);
+        $reqStack->push($req);
+        $syncToDB->expects($this->once())->method('syncToDB')->with($ord);
+
+        $vina->applyTransition($ord, 'save');
+    }
+
     public function testApplyTransitionFailed(): array
     {
+        /** @var SyncToDBInterface|MockObject $syncToDB */
+        /** @var Vina $vina */
         $ord = new Order();
-        list($vina, $reqStack) = $this->createVina();
+        list($vina, $reqStack, , $syncToDB) = $this->createVina(true);
 
         $sess = new Session(new MockArraySessionStorage());
 
         $req = Request::create('/foo');
         $req->setSession($sess);
         $reqStack->push($req);
+        $syncToDB->expects($this->never())->method('syncToDB');
 
         $vina->applyTransition($ord, 'check');
         self::assertNotEmpty($sess->getFlashBag()->get(Vina::FLASH_ERROR_MESSAGE));
@@ -107,6 +130,7 @@ final class VinaTest extends TestCase
      */
     public function testApplyTransitionRawFailed(array $args): void
     {
+        /** @var Vina $vina */
         $this->expectException(TransitionException::class);
         list($vina) = $args;
 
@@ -121,7 +145,10 @@ final class VinaTest extends TestCase
 
     public function testSave(): void
     {
-        list($vina, , $dispatcher) = $this->createVina();
+        /** @var SyncToDBInterface|MockObject $syncToDB */
+        /** @var Vina $vina */
+        /** @var EventDispatcher $dispatcher */
+        list($vina, , $dispatcher, $syncToDB) = $this->createVina(true);
 
         $log = [];
         $ord = new Order();
@@ -132,6 +159,8 @@ final class VinaTest extends TestCase
             'vina.ord.save',
             $listener
         );
+        $syncToDB->expects($this->once())->method('syncToDB')->with($ord);
+
         $vina->save($ord);
         self::assertEquals([['hit', $ord]], $log);
     }
@@ -151,6 +180,7 @@ final class VinaTest extends TestCase
 
     public function testCanSave(): void
     {
+        /** @var Vina $vina */
         list($vina, , $dispatcher) = $this->createVina();
         $ord = new Order();
         $dispatcher->addListener(
