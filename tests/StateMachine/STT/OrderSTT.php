@@ -25,9 +25,12 @@ final class OrderSTT extends AbstractSTT implements STTInterface
         $ord->code = 'bar';
     }
 
-    public function abort(): string
+    public function abort(Order $ord, StepContext $ctx): ?string
     {
-        return 'Abort';
+        if ($ctx->get('abort', true)) {
+            return 'Abort';
+        }
+        return null;
     }
 
     public function updateCodeWithTransitionName(Order $ord, StepContext $ctx): void

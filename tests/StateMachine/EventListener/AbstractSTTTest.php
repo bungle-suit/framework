@@ -35,6 +35,13 @@ final class AbstractSTTTest extends TestBase
         $this->sm->apply($this->ord, 'check');
     }
 
+    public function testDisableAbortByAttr(): void
+    {
+        $this->doesNotPerformAssertions();
+        $this->ord->setState('saved');
+        $this->sm->apply($this->ord, 'check', ['abort' => false]);
+    }
+
     public function testInvokeWithContext(): void
     {
         $this->ord->setState('saved');

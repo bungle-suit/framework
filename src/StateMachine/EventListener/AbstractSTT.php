@@ -48,7 +48,7 @@ abstract class AbstractSTT
 {
     final public function __invoke(TransitionEvent $event): void
     {
-        $ctx = new StepContext($event->getWorkflow(), $event->getTransition());
+        $ctx = new StepContext($event->getWorkflow(), $event->getTransition(), $event->getContext());
         $subject = $event->getSubject();
         $action = $event->getTransition()->getName();
         foreach ($this->getTransitionSteps($subject, $action) as $step) {
