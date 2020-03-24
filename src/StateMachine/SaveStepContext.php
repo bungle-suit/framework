@@ -13,4 +13,14 @@ use Bungle\Framework\Traits\HasAttributesInterface;
 final class SaveStepContext implements HasAttributesInterface
 {
     use Attributes;
+
+    /**
+     * @param array $attrs initial attrs for SaveStepContext.
+     */
+    public function __construct(array $attrs = [])
+    {
+        if ($attrs) {
+           $this->attributes = $attrs;
+        }
+    }
 }

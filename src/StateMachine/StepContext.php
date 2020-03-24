@@ -16,10 +16,20 @@ final class StepContext implements HasAttributesInterface
     private $transition;
     private $workflow;
 
-    public function __construct(WorkflowInterface $workflow, Transition $transition)
+    /**
+     * StepContext constructor.
+     * @param WorkflowInterface $workflow
+     * @param Transition $transition
+     * @param array $initalAttrs Initial attributes of StepContext.
+     */
+    public function __construct(WorkflowInterface $workflow, Transition $transition, array $initalAttrs = [])
     {
         $this->workflow = $workflow;
         $this->transition = $transition;
+
+        if ($initalAttrs) {
+            $this->attributes = $initalAttrs;
+        }
     }
 
     public function getTransition(): Transition
