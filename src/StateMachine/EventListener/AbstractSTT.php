@@ -18,7 +18,7 @@ use Symfony\Component\Workflow\Exception\TransitionException;
  *
  * Sub class must also implement STTInterface.
  *
- * TODO: remove fowlliing comment if Symfony/Flex implemented to auto
+ * TODO: remove fowling comment if Symfony/Flex implemented to auto
  * update config/services.yaml file.
  *
  * Recommend config/services.yaml to make STT services work:
@@ -31,7 +31,6 @@ use Symfony\Component\Workflow\Exception\TransitionException;
  *       _instanceof:
  *           Bungle\Framework\StateMachine\EventListener\AbstractSTT:
  *               tags: ['bungle.stt']
- *               public: true # TODO: maybe not needed, because it'll auto tagged as event subscriber
  *
  * Or use location based, maybe more applicable:
  *   # config/services.yml
@@ -42,7 +41,6 @@ use Symfony\Component\Workflow\Exception\TransitionException;
  *       App\STT\:
  *           resource: '../src/STT'
  *           tags: ['bungle.stt']
- *           public: true # TODO: maybe not needed, because it'll auto tagged as event subscriber
  */
 abstract class AbstractSTT
 {
