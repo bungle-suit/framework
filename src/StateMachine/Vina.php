@@ -124,19 +124,20 @@ class Vina
      * session flash, next page request can display it to user.
      *
      * If succeed, $subject synced to DB.
+     * @param array $attrs initial attrs of StepContext.
      */
-    public function applyTransition(StatefulInterface $subject, string $name): void
+    public function applyTransition(StatefulInterface $subject, string $name, array $attrs = []): void
     {
         $wf = $this->registry->get($subject);
         try {
-            $wf->apply($subject, $name);
+            $wf->apply($subject, $name, $attrs);
             $this->syncToDB->syncToDB($subject);
         } catch (TransitionException $e) {
             $this->reqStack
-                 ->getCurrentRequest()
-                 ->getSession()
-                 ->getFlashBag()
-                 ->add(self::FLASH_ERROR_MESSAGE, $e->getMessage());
+                ->getCurrentRequest()
+                ->getSession()
+                ->getFlashBag()
+                ->add(self::FLASH_ERROR_MESSAGE, $e->getMessage());
         }
     }
 
@@ -144,8 +145,9 @@ class Vina
      * Like applyTransition(), but not handles TransitionException.
      *
      * $subject not sync to db.
+     * @param array $attrs initial attrs of StepContext.
      */
-    public function applyTransitionRaw(StatefulInterface $subject, string $name): void
+    public function applyTransitionRaw(StatefulInterface $subject, string $name, array $attrs = []): void
     {
         $wf = $this->registry->get($subject);
         $wf->apply($subject, $name);

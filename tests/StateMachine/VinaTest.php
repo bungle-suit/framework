@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\Workflow\DefinitionBuilder;
+use Symfony\Component\Workflow\Event\TransitionEvent;
 use Symfony\Component\Workflow\Exception\TransitionException;
 use Symfony\Component\Workflow\Metadata\InMemoryMetadataStore;
 use Symfony\Component\Workflow\Registry;
@@ -37,7 +38,7 @@ final class VinaTest extends TestCase
         $dispatcher = new EventDispatcher();
         $syncToDb = $mockDB ? $this->createMock(SyncToDBInterface::class): null;
         $vina = new Vina(
-            self::createRegistry(),
+            self::createRegistry($dispatcher),
             new FakeAuthorizationChecker(
                 'ROLE_ord_save',
                 'ROLE_ord_print',
@@ -92,18 +93,29 @@ final class VinaTest extends TestCase
         );
     }
 
+    public function testApplyTransitionSetAttrs(): void
+    {
+        $attrs = ['foo' => 1, 'bar'=>2];
+        $ord = new Order();
+        /** @var EventDispatcher $dispatcher */
+        list($vina, , $dispatcher) = $this->createVina();
+        $hit = 0;
+        $dispatcher->addListener('workflow.ord.transition', function (TransitionEvent $e) use (&$hit, $attrs) {
+            $hit ++;
+            self::assertEquals($attrs, $e->getContext());
+        });
+        $vina->applyTransition($ord, 'save', $attrs);
+        self::assertEquals(1, $hit);
+
+    }
+
     public function testApplyTransitionSyncToDB(): void
     {
         /** @var SyncToDBInterface|MockObject $syncToDB */
         $ord = new Order();
-        list($vina, $reqStack, , $syncToDB) = $this->createVina(true);
+        list($vina, , , $syncToDB) = $this->createVina(true);
 
-        $sess = new Session(new MockArraySessionStorage());
-        $req = Request::create('/foo');
-        $req->setSession($sess);
-        $reqStack->push($req);
         $syncToDB->expects($this->once())->method('syncToDB')->with($ord);
-
         $vina->applyTransition($ord, 'save');
     }
 
@@ -195,7 +207,7 @@ final class VinaTest extends TestCase
         self::assertFalse($vina->canSave($ord));
     }
 
-    private static function createOrderWorkflow(): StateMachine
+    private static function createOrderWorkflow(EventDispatcher $dispatcher): StateMachine
     {
         $trans = [
           $save = new Transition('save', StatefulInterface::INITIAL_STATE, 'saved'),
@@ -224,14 +236,14 @@ final class VinaTest extends TestCase
 
         $marking = new StatefulInterfaceMarkingStore();
 
-        return new StateMachine($definition, $marking, null, 'ord');
+        return new StateMachine($definition, $marking, $dispatcher, 'ord');
     }
 
-    private static function createRegistry(): Registry
+    private static function createRegistry(EventDispatcher $dispatcher): Registry
     {
         $r = new Registry();
         $r->addWorkflow(
-            self::createOrderWorkflow(),
+            self::createOrderWorkflow($dispatcher),
             new InstanceOfSupportStrategy(Order::class),
         );
 
