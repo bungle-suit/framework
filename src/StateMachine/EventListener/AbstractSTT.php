@@ -58,71 +58,36 @@ abstract class AbstractSTT
     }
 
     /**
-     * Sub class create steps array.
+     * @return array of settings configuration, contains fowling items:
+     *
+     * 1. 'before', Steps run before transition actions
+     * 1. 'after', Steps run after transition actions.
+     * 1. 'actions', Actions of each transition.
+     * 1. 'beforeSave', Save steps run before save actions.
+     * 1. 'afterSave', Save steps run after save actions.
+     * 1. 'saveActions', Save actions for each state.
+     *
+     * `actions`, contains steps for each transition action, such as:
+     * [ 'save' => [$step1, $step2], 'commit' => [$step3], 'rollback' => [] ]
+     *
+     * Use an empty array if the transition needs zero steps.
+     *
+     * `saveActions`, contains save steps for each state, if not configured,
+     * save action for that state is disabled. Use empty array if not steps required.
      */
     abstract protected function steps(): array;
 
     private function getTransitionSteps($subject, string $actionName)
     {
-        yield from $this->beforeSteps();
         $steps = $this->steps();
-        if (!isset($steps[$actionName])) {
+        yield from $steps['before'];
+        $actions = $steps['actions'];
+        if (!isset($actions[$actionName])) {
             $cls = get_class($subject);
             throw Exceptions::notSetupStateMachineSteps($cls, $actionName);
         }
-        yield from $steps[$actionName];
-        yield from $this->afterSteps();
-    }
-
-    /**
-     * After steps run after normal steps, runs for every transitions.
-     */
-    protected function afterSteps(): array
-    {
-        return [];
-    }
-
-    /**
-     * Before steps run before normal steps, runs for every transitions.
-     */
-    protected function beforeSteps(): array
-    {
-        return [];
-    }
-
-    /**
-     * Returns steps ran during edit/save action.
-     *
-     * Returns array like:
-     *
-     *   [
-     *      'saved': [[$this, 'act1'], [$this, 'checkFoo']],
-     *      'checked': [],
-     *   ]
-     *
-     * If state not exist in returned array, then the save action not
-     * enabled for it. Set empty array to enable save if no save action
-     * needed.
-     */
-    protected function saveSteps(): array
-    {
-        return [];
-    }
-
-    /**
-     * Steps run before all save steps.
-     */
-    protected function beforeSaveSteps(): array
-    {
-        return [];
-    }
-
-    /**
-     * Steps run after all save steps.
-     */
-    protected function afterSaveSteps(): array
-    {
-        return [];
+        yield from $actions[$actionName];
+        yield from $steps['after'];
     }
 
     /**
@@ -156,8 +121,8 @@ abstract class AbstractSTT
     private function canSave(StatefulInterface $entity): bool
     {
         $state = $entity->getState();
-
-        return isset($this->saveSteps()[$state]);
+        $steps = $this->steps();
+        return isset($steps['saveActions'][$state]);
     }
 
     private function getSaveSteps(StatefulInterface $entity)
@@ -170,8 +135,9 @@ abstract class AbstractSTT
             return;
         }
 
-        yield from $this->beforeSaveSteps();
-        yield from $this->saveSteps()[$curState] ?? null;
-        yield from $this->afterSaveSteps();
+        $steps = $this->steps();
+        yield from $steps['beforeSave'];
+        yield from $steps['saveActions'][$curState];
+        yield from $steps['afterSave'];
     }
 }

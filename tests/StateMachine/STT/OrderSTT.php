@@ -54,75 +54,52 @@ final class OrderSTT extends AbstractSTT implements STTInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
     protected function steps(): array
     {
-        return [
-          'save' => [
-            [static::class, 'setCodeFoo'],
-          ],
-          'update' => [
-            [static::class, 'updateCodeWithTransitionName'],
-            [static::class, 'saveContextAttrs'],
-          ],
-          'check' => [
-            [static::class, 'setCodeBar'],
-            [$this, 'abort'],
-            [static::class, 'setCodeFoo'],
-          ],
-        ];
-    }
+       return [
+            'actions' => [
+                'save' => [
+                    [static::class, 'setCodeFoo'],
+                ],
+                'update' => [
+                    [static::class, 'updateCodeWithTransitionName'],
+                    [static::class, 'saveContextAttrs'],
+                ],
+                'check' => [
+                    [static::class, 'setCodeBar'],
+                    [$this, 'abort'],
+                    [static::class, 'setCodeFoo'],
+                ],
+            ],
+           'before' => [
+               [static::class, 'hitBefore'],
+               [static::class, 'prepBarAttr'],
+           ],
+           'after' => [
+               [static::class, 'hitAfter'],
+               [static::class, 'saveLog'],
+           ],
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function beforeSteps(): array
-    {
-        return [
-          [static::class, 'hitBefore'],
-          [static::class, 'prepBarAttr'],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function afterSteps(): array
-    {
-        return [
-          [static::class, 'hitAfter'],
-          [static::class, 'saveLog'],
-        ];
-    }
-
-    protected function saveSteps(): array
-    {
-        return [
-          'saved' => [
-            fn (Order $ord, SaveStepContext $ctx) => self::log($ctx, 'save'),
-            fn (Order $ord) => $ord->name = 'foo',
-            fn (Order $ord) => $ord->setState('hack'), // test prevent manipulate set state.
-          ],
-          StatefulInterface::INITIAL_STATE => [],
-        ];
-    }
-
-    protected function beforeSaveSteps(): array
-    {
-        return [
-          fn (Order $ord, SaveStepContext $ctx) => self::log($ctx, 'before save'.$ctx->get('attr', '')),
-          fn (Order $ord) => $ord->before = 'bar',
-        ];
-    }
-
-    protected function afterSaveSteps(): array
-    {
-        return [
-          fn (Order $ord, SaveStepContext $ctx) => self::log($ctx, 'after save'),
-          fn (Order $ord) => $ord->after = 'after',
-          [self::class, 'saveLog'],
-        ];
+           'saveActions' => [
+               'saved' => [
+                   fn (Order $ord, SaveStepContext $ctx) => self::log($ctx, 'save'),
+                   fn (Order $ord) => $ord->name = 'foo',
+                   fn (Order $ord) => $ord->setState('hack'), // test prevent manipulate set state.
+               ],
+               StatefulInterface::INITIAL_STATE => [],
+           ],
+           'beforeSave' => [
+               fn (Order $ord, SaveStepContext $ctx) => self::log($ctx, 'before save'.$ctx->get('attr', '')),
+               fn (Order $ord) => $ord->before = 'bar',
+           ],
+           'afterSave' => [
+               fn (Order $ord, SaveStepContext $ctx) => self::log($ctx, 'after save'),
+               fn (Order $ord) => $ord->after = 'after',
+               [self::class, 'saveLog'],
+           ],
+       ];
     }
 
     private static function log(HasAttributesInterface $ctx, string $msg): void
