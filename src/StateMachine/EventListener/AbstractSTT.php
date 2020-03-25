@@ -80,14 +80,14 @@ abstract class AbstractSTT
     private function getTransitionSteps($subject, string $actionName)
     {
         $steps = $this->steps();
-        yield from $steps['before'];
+        yield from $steps['before']??[];
         $actions = $steps['actions'];
         if (!isset($actions[$actionName])) {
             $cls = get_class($subject);
             throw Exceptions::notSetupStateMachineSteps($cls, $actionName);
         }
         yield from $actions[$actionName];
-        yield from $steps['after'];
+        yield from $steps['after']?? [];
     }
 
     /**
@@ -136,8 +136,8 @@ abstract class AbstractSTT
         }
 
         $steps = $this->steps();
-        yield from $steps['beforeSave'];
+        yield from $steps['beforeSave'] ?? [];
         yield from $steps['saveActions'][$curState];
-        yield from $steps['afterSave'];
+        yield from $steps['afterSave'] ?? [];
     }
 }
