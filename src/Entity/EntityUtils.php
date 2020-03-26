@@ -15,7 +15,7 @@ final class EntityUtils
      * Create an instance of specific entity class.
      *
      * Entity class must have empty constructor.  */
-    public function create(string $entityClass): object
+    public static function create(string $entityClass): object
     {
         try {
             return new $entityClass();

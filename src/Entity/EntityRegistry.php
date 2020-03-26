@@ -9,6 +9,7 @@ use Bungle\Framework\Exception\Exceptions;
 class EntityRegistry
 {
     // array of entities full class name.
+    /** @var string[] $entities */
     public array $entities;
     private HighResolverInterface $highResolver;
     private array $highClsMap;
