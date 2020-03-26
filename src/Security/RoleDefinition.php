@@ -36,8 +36,11 @@ class RoleDefinition
         return Vina::getTransitionRole($high, $action);
     }
 
-    // Parse state machine action role name, returns array with two items:
-    // [$high, $action].
+    /**
+     * Parse state machine action role name, returns array with two items:
+     *
+     * @return string[int]
+     */
     public function parseActionRole(string $roleName): array
     {
         return array_slice(explode('_', $roleName), 1);

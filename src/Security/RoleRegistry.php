@@ -6,10 +6,13 @@ namespace Bungle\Framework\Security;
 
 final class RoleRegistry
 {
+    /**
+     * @var RoleDefinition[] $defs
+     */
     public array $defs = [];
 
     /**
-     * $providers: array of RoleDefinitionProviderInterface.
+     * @param RoleDefinitionProviderInterface[int] $providers
      */
     public function __construct(array $providers = [])
     {
@@ -28,6 +31,9 @@ final class RoleRegistry
         $this->defs[] = $roleDef;
     }
 
+    /**
+     * @param iterable|RoleDefinition[] $roleDefs
+     */
     public function adds(iterable $roleDefs): void
     {
         foreach ($roleDefs as $item) {
@@ -35,6 +41,9 @@ final class RoleRegistry
         }
     }
 
+    /**
+     * @param RoleDefinition[int] $arr
+     */
     private static function roleExists(array $arr, RoleDefinition $role): bool
     {
         foreach ($arr as $item) {
