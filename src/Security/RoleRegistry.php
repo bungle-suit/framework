@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Security;
 
-final class RoleRegistry
+class RoleRegistry
 {
     /**
      * @var RoleDefinition[] $defs
