@@ -41,7 +41,7 @@ class RoleDefinition
      *
      * @return string[int]
      */
-    public function parseActionRole(string $roleName): array
+    public static function parseActionRole(string $roleName): array
     {
         return array_slice(explode('_', $roleName), 1);
     }
