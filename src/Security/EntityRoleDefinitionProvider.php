@@ -33,7 +33,7 @@ final class EntityRoleDefinitionProvider implements RoleDefinitionProviderInterf
                 // If workflow not defined, workflow registry throws thi exception.
                 continue;
             }
-
+            
             $actions = [];
             foreach ($def->getTransitions() as $trans) {
                 $action = $trans->getName();

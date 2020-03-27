@@ -68,15 +68,15 @@ final class EntityRoleDefinitionProviderTest extends TestCase
         $entityRoleDefProvider = new EntityRoleDefinitionProvider($entityReg, $workflowResolver);
 
         self::assertEquals([
-            new RoleDefinition('R_ord_save', 'Save', ''),
-            new RoleDefinition('R_ord_check', 'Check', ''),
-            new RoleDefinition('R_ord_rollback', 'rollback', ''),
-            new RoleDefinition('R_ord_delete', 'delete', ''),
-            new RoleDefinition('R_prd_save', 'save', ''),
-            new RoleDefinition('R_prd_check', 'check', ''),
-            new RoleDefinition('R_prd_rollback', 'rollback', ''),
-            new RoleDefinition('R_prd_disable', 'disable', ''),
-            new RoleDefinition('R_prd_enable', 'enable', ''),
+            new RoleDefinition('ROLE_ord_save', 'Save', ''),
+            new RoleDefinition('ROLE_ord_check', 'Check', ''),
+            new RoleDefinition('ROLE_ord_rollback', 'rollback', ''),
+            new RoleDefinition('ROLE_ord_delete', 'delete', ''),
+            new RoleDefinition('ROLE_prd_save', 'save', ''),
+            new RoleDefinition('ROLE_prd_check', 'check', ''),
+            new RoleDefinition('ROLE_prd_rollback', 'rollback', ''),
+            new RoleDefinition('ROLE_prd_disable', 'disable', ''),
+            new RoleDefinition('ROLE_prd_enable', 'enable', ''),
         ], iterator_to_array($entityRoleDefProvider->getRoleDefinitions()));
     }
 

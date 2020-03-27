@@ -40,9 +40,9 @@ final class VinaTest extends TestCase
         $vina = new Vina(
             self::createRegistry($dispatcher),
             new FakeAuthorizationChecker(
-                'R_ord_save',
-                'R_ord_print',
-                'R_prd_new'
+                'ROLE_ord_save',
+                'ROLE_ord_print',
+                'Role_prd_new'
             ),
             $reqStack,
             $dispatcher,
@@ -154,7 +154,7 @@ final class VinaTest extends TestCase
     public function testGetTransitionRole(): void
     {
         $getRole = Vina::class.'::getTransitionRole';
-        self::assertEquals('R_ord_save', $getRole('ord', 'save'));
+        self::assertEquals('ROLE_ord_save', $getRole('ord', 'save'));
     }
 
     public function testSave(): void

@@ -11,7 +11,7 @@ final class RoleDefinitionTest extends TestCase
 {
     public function testNewActionRole(): void
     {
-        self::assertEquals('R_Foo_Bar', RoleDefinition::newActionRole('Foo', 'Bar'));
+        self::assertEquals('ROLE_Foo_Bar', RoleDefinition::newActionRole('Foo', 'Bar'));
     }
 
     public function testParseActionRole(): void
