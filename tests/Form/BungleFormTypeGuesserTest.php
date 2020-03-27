@@ -17,6 +17,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormTypeGuesserInterface;
 use Symfony\Component\Form\Guess\Guess;
 use Symfony\Component\Form\Guess\TypeGuess;
+use Symfony\Component\Form\Guess\ValueGuess;
 
 final class BungleFormTypeGuesserTest extends TestCase
 {
@@ -111,5 +112,26 @@ final class BungleFormTypeGuesserTest extends TestCase
             ], Guess::MEDIUM_CONFIDENCE),
             $this->guesser->guessType('Some\Entity', 'name')
         );
+    }
+
+    public function testGuessRequired(): void
+    {
+        $expGuess = new ValueGuess(true, Guess::VERY_HIGH_CONFIDENCE);
+        $this->inner->allows('guessRequired')->andReturn($expGuess);
+        self::assertSame($expGuess, $this->guesser->guessRequired('Some\Entity', 'name'));
+    }
+
+    public function testGuessMaxLength(): void
+    {
+        $expGuess = new ValueGuess(true, Guess::VERY_HIGH_CONFIDENCE);
+        $this->inner->allows('guessMaxLength')->andReturn($expGuess);
+        self::assertSame($expGuess, $this->guesser->guessMaxLength('Some\Entity', 'name'));
+    }
+
+    public function testGuessPattern(): void
+    {
+        $expGuess = new ValueGuess(true, Guess::VERY_HIGH_CONFIDENCE);
+        $this->inner->allows('guessPattern')->andReturn($expGuess);
+        self::assertSame($expGuess, $this->guesser->guessPattern('Some\Entity', 'name'));
     }
 }
