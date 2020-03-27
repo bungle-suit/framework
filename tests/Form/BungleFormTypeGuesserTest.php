@@ -8,6 +8,8 @@ use Bungle\Framework\Entity\EntityMeta;
 use Bungle\Framework\Entity\EntityMetaRepository;
 use Bungle\Framework\Entity\EntityPropertyMeta;
 use Bungle\Framework\Form\BungleFormTypeGuesser;
+use Mockery;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Extension\Core\Type\ColorType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -18,88 +20,96 @@ use Symfony\Component\Form\Guess\TypeGuess;
 
 final class BungleFormTypeGuesserTest extends TestCase
 {
-    private function createGuesser(): array
-    {
-        $entityMetaRepository = $this->createStub(EntityMetaRepository::class);
-        $inner = $this->createStub(FormTypeGuesserInterface::class);
-        $guesser = new BungleFormTypeGuesser($inner, $entityMetaRepository);
+    use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
-        return [$guesser, $inner, $entityMetaRepository];
+    /**
+     * @var EntityMetaRepository|MockInterface
+     */
+    private $entityMetaRepository;
+    /**
+     * @var MockInterface|FormTypeGuesserInterface
+     */
+    private $inner;
+    private BungleFormTypeGuesser $guesser;
+
+    public function setUp(): void
+    {
+        $this->entityMetaRepository = Mockery::mock(EntityMetaRepository::class);
+        $this->inner = Mockery::mock(FormTypeGuesserInterface::class);
+        $this->guesser = new BungleFormTypeGuesser($this->inner, $this->entityMetaRepository);
     }
 
     public function testGuessTypeInnerNull(): void
     {
-        list($guesser) = $this->createGuesser();
-        self::assertNull($guesser->guessType('Some\Entity', 'ID'));
+        $this->inner->allows('guessType')->andReturn(null);
+        self::assertNull($this->guesser->guessType('Some\Entity', 'ID'));
     }
 
     public function testGuessTypeSetLabel(): void
     {
-        list($guesser, $inner, $entityMetaRepository) = $this->createGuesser();
-        $inner
-          ->method('guessType')
-          ->willReturn(new TypeGuess(ColorType::class, [], Guess::MEDIUM_CONFIDENCE));
-        $entityMetaRepository
-          ->method('get')
-          ->willReturn(new EntityMeta(
-              'Some\Entity',
-              'Wow',
-              [
-                new EntityPropertyMeta('id', 'No'),
-                new EntityPropertyMeta('name', 'Foo'),
-              ]
-          ));
+        $this
+            ->inner
+            ->allows('guessType')
+            ->andReturn(new TypeGuess(ColorType::class, [], Guess::MEDIUM_CONFIDENCE));
+        $this->entityMetaRepository
+            ->allows('get')
+            ->andReturn(new EntityMeta(
+                'Some\Entity',
+                'Wow',
+                [
+                    new EntityPropertyMeta('id', 'No'),
+                    new EntityPropertyMeta('name', 'Foo'),
+                ]
+            ));
 
         self::assertEquals(
             new TypeGuess(ColorType::class, ['label' => 'No'], Guess::MEDIUM_CONFIDENCE),
-            $guesser->guessType('Some\Entity', 'id')
+            $this->guesser->guessType('Some\Entity', 'id')
         );
     }
 
     public function testSetTextTypeEmptyData(): void
     {
-        list($guesser, $inner, $entityMetaRepository) = $this->createGuesser();
-        $inner
-          ->method('guessType')
-          ->willReturn(new TypeGuess(TextType::class, [], Guess::MEDIUM_CONFIDENCE));
-        $entityMetaRepository
-          ->method('get')
-          ->willReturn(new EntityMeta(
-              'Some\Entity',
-              'Wow',
-              [
-                new EntityPropertyMeta('id', 'No'),
-                new EntityPropertyMeta('name', 'Foo'),
-              ]
-          ));
+        $this->inner
+            ->allows('guessType')
+            ->andReturn(new TypeGuess(TextType::class, [], Guess::MEDIUM_CONFIDENCE));
+        $this->entityMetaRepository
+            ->allows('get')
+            ->andReturn(new EntityMeta(
+                'Some\Entity',
+                'Wow',
+                [
+                    new EntityPropertyMeta('id', 'No'),
+                    new EntityPropertyMeta('name', 'Foo'),
+                ]
+            ));
         self::assertEquals(
             new TypeGuess(TextType::class, [
-              'label' => 'Foo',
-              'empty_data' => '',
+                'label' => 'Foo',
+                'empty_data' => '',
             ], Guess::MEDIUM_CONFIDENCE),
-            $guesser->guessType('Some\Entity', 'name')
+            $this->guesser->guessType('Some\Entity', 'name')
         );
     }
 
     public function testDateTimeField(): void
     {
-        list($guesser, $inner, $entityMetaRepository) = $this->createGuesser();
-        $inner
-          ->method('guessType')
-          ->willReturn(new TypeGuess(DateTimeType::class, [], Guess::MEDIUM_CONFIDENCE));
-        $entityMetaRepository
-          ->method('get')
-          ->willReturn(new EntityMeta(
-              'Some\Entity',
-              'Wow',
-              [new EntityPropertyMeta('name', 'No')]
-          ));
+        $this->inner
+            ->allows('guessType')
+            ->andReturn(new TypeGuess(DateTimeType::class, [], Guess::MEDIUM_CONFIDENCE));
+        $this->entityMetaRepository
+            ->allows('get')
+            ->andReturn(new EntityMeta(
+                'Some\Entity',
+                'Wow',
+                [new EntityPropertyMeta('name', 'No')]
+            ));
         self::assertEquals(
             new TypeGuess(DateTimeType::class, [
-              'label' => 'No',
-              'widget' => 'single_text',
+                'label' => 'No',
+                'widget' => 'single_text',
             ], Guess::MEDIUM_CONFIDENCE),
-            $guesser->guessType('Some\Entity', 'name')
+            $this->guesser->guessType('Some\Entity', 'name')
         );
     }
 }
