@@ -12,7 +12,7 @@ final class TransitionRoleGuardListenerTest extends TestBase
     {
         parent::setUp();
         $listener = new TransitionRoleGuardListener(
-            new FakeAuthorizationChecker('ROLE_ord_save')
+            new FakeAuthorizationChecker('R_ord_save')
         );
         $this->dispatcher->addListener('workflow.guard', $listener);
     }

@@ -133,8 +133,11 @@ class Vina
             $wf->apply($subject, $name, $attrs);
             $this->syncToDB->syncToDB($subject);
         } catch (TransitionException $e) {
-            $this->reqStack
-                ->getCurrentRequest()
+            $request = $this->reqStack->getCurrentRequest();
+            if (!$request) {
+                throw $e;
+            }
+            $request
                 ->getSession()
                 ->getFlashBag()
                 ->add(self::FLASH_ERROR_MESSAGE, $e->getMessage());
@@ -153,9 +156,26 @@ class Vina
         $wf->apply($subject, $name);
     }
 
+    /**
+     * Returns auth role for specific workflow/transaction.
+     *
+     * Note: use different role prefix ('R_') than symfony default ('ROLE_') for shorter
+     * role names. It should work without problem, some rules need to consider:
+     *
+     * 1. symfony builtin role names, such as 'ROLE_USER' will break.
+     * 1. 3rd party lib breaks.
+     *
+     * Reconfigure symfony security voter support prefix ('ROLE_'), if the feature not
+     *    used, its okay. If depends on the feature, override voter container settings by:
+     *
+     * security.access.simple_role_voter:
+     *     public: true
+     *     class: Symfony\Component\Security\Core\Authorization\Voter\RoleVoter
+     *     arguments: ['R_']
+     */
     public static function getTransitionRole(string $workflowName, string $transitionName): string
     {
-        return 'ROLE_'.$workflowName.'_'.$transitionName;
+        return 'R_'.$workflowName.'_'.$transitionName;
     }
 
     /**
