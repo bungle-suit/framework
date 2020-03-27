@@ -9,6 +9,7 @@ use Bungle\Framework\Entity\EntityMetaRepository;
 use Bungle\Framework\Entity\EntityPropertyMeta;
 use Bungle\Framework\Form\BungleFormTypeGuesser;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\Extension\Core\Type\ColorType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormTypeGuesserInterface;
@@ -44,8 +45,8 @@ final class BungleFormTypeGuesserTest extends TestCase
               'Some\Entity',
               'Wow',
               [
-                new EntityPropertyMeta('id', 'No', 'int'),
-                new EntityPropertyMeta('name', 'Foo', 'int'),
+                new EntityPropertyMeta('id', 'No'),
+                new EntityPropertyMeta('name', 'Foo'),
               ]
           ));
 
@@ -67,8 +68,8 @@ final class BungleFormTypeGuesserTest extends TestCase
               'Some\Entity',
               'Wow',
               [
-                new EntityPropertyMeta('id', 'No', 'int'),
-                new EntityPropertyMeta('name', 'Foo', 'int'),
+                new EntityPropertyMeta('id', 'No'),
+                new EntityPropertyMeta('name', 'Foo'),
               ]
           ));
         self::assertEquals(
