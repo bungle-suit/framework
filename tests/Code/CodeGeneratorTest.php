@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\Tests\Code;
 
 use Bungle\Framework\Code\CodeGenerator;
+use DateTime;
 use Doctrine\ODM\MongoDB\Configuration;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\Annotations\Document;
@@ -52,5 +53,19 @@ class CodeGeneratorTest extends TestCase
 
         $this->expectException(RangeException::class);
         $gen->nextPrefixedCode('foo', 1);
+    }
+
+    public function testCompactYearMonth(): void
+    {
+        $recs = [
+            '2019-01-02' => '191',
+            '2020-10-02' => '20X',
+            '2020-11-02' => '20Y',
+            '2020-12-02' => '20Z',
+        ];
+        foreach ($recs as $sd => $exp) {
+            $d = new DateTime($sd);
+            self::assertEquals($exp, CodeGenerator::compactYearMonth($d));
+        }
     }
 }
