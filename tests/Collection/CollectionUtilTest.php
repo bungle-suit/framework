@@ -18,4 +18,14 @@ class CollectionUtilTest extends TestCase
             'bar' => ['bar', 2],
         ], CollectionUtil::toKeyed(fn ($v) => $v[0], $arr));
     }
+
+    public function testGetOrCreate(): void
+    {
+        $arr  = [];
+        $f = fn (int $k) => (string)$k;
+        self::assertEquals('3', CollectionUtil::getOrCreate($arr, 3, $f));
+        self::assertEquals([3 => '3'], $arr);
+        self::assertEquals('3', CollectionUtil::getOrCreate($arr, 3, $f));
+        self::assertEquals([3 => '3'], $arr);
+    }
 }
