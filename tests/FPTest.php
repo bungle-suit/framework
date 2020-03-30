@@ -24,6 +24,17 @@ class FPTest extends TestCase
         };
         $f = FP::getter('getName');
         self::assertEquals('bar', $f($o));
+    }
 
+    public function testT(): void
+    {
+        $f = FP::t();
+        self::assertTrue($f());
+    }
+
+    public function testF(): void
+    {
+        $f = FP::f();
+        self::assertFalse($f());
     }
 }

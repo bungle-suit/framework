@@ -24,4 +24,21 @@ class FP
     {
         return fn (object $o) => $o->$method();
     }
+
+    /**
+     * @return callable that always returns true.
+     */
+    public static function t(): callable
+    {
+        return fn() => true;
+    }
+
+    /**
+     * @return callable that always returns false.
+     */
+    public static function f(): callable
+    {
+        return fn() => false;
+    }
 }
+
