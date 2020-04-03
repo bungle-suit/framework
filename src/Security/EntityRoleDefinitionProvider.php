@@ -33,8 +33,9 @@ final class EntityRoleDefinitionProvider implements RoleDefinitionProviderInterf
                 // If workflow not defined, workflow registry throws thi exception.
                 continue;
             }
-            
+
             $actions = [];
+            $group = $this->entityRegistry->getEntityMeta($entity)->logicName;
             foreach ($def->getTransitions() as $trans) {
                 $action = $trans->getName();
                 if (array_key_exists($action, $actions)) {
@@ -51,6 +52,7 @@ final class EntityRoleDefinitionProvider implements RoleDefinitionProviderInterf
                     RoleDefinition::newActionRole($high, $action),
                     $actionTitles[$action] ?? $action,
                     '',
+                    $group
                 );
             }
         }

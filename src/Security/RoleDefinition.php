@@ -25,11 +25,12 @@ class RoleDefinition
     private string $description;
     private string $group;
 
-    public function __construct(string $name, string $title, string $description)
+    public function __construct(string $name, string $title, string $description, string $group)
     {
         $this->name = $name;
         $this->title = $title;
         $this->description = $description;
+        $this->group = $group;
     }
 
     public static function newActionRole(string $high, string $action): string
@@ -66,7 +67,7 @@ class RoleDefinition
     }
 
     /**
-     *
+     * RoleRegistry::getGroups() groups role definitions by result of getGroup().
      */
     public function getGroup(): string
     {
