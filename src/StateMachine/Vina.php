@@ -133,8 +133,12 @@ class Vina
             $wf->apply($subject, $name, $attrs);
             $this->syncToDB->syncToDB($subject);
         } catch (TransitionException $e) {
-            $this->reqStack
-                ->getCurrentRequest()
+            $request = $this->reqStack->getCurrentRequest();
+            if (!$request) {
+                throw $e;
+            }
+
+            $request
                 ->getSession()
                 ->getFlashBag()
                 ->add(self::FLASH_ERROR_MESSAGE, $e->getMessage());
@@ -150,7 +154,7 @@ class Vina
     public function applyTransitionRaw(StatefulInterface $subject, string $name, array $attrs = []): void
     {
         $wf = $this->registry->get($subject);
-        $wf->apply($subject, $name);
+        $wf->apply($subject, $name, $attrs);
     }
 
     public static function getTransitionRole(string $workflowName, string $transitionName): string

@@ -139,6 +139,20 @@ final class VinaTest extends TestCase
         return [$vina, $sess];
     }
 
+    public function testApplyTransitionFailedNoCurrentRequest(): void
+    {
+        $this->expectException(TransitionException::class);
+
+        /** @var SyncToDBInterface|MockObject $syncToDB */
+        /** @var Vina $vina */
+        $ord = new Order();
+        list($vina, , , $syncToDB) = $this->createVina(true);
+
+        $syncToDB->expects($this->never())->method('syncToDB');
+
+        $vina->applyTransition($ord, 'check');
+    }
+
     /**
      * @depends testApplyTransitionFailed
      */
