@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Bungle\Framework\Security;
 
 use Bungle\Framework\FP;
-use function Functional\group;
 
 class RoleRegistry
 {
@@ -89,7 +88,6 @@ class RoleRegistry
      */
     public function getGroups(): array
     {
-        $r = group($this->getDefinitions(), FP::getter('getGroup'));
-        return array_map('array_values', $r);
+        return FP::group(FP::getter('getGroup'), $this->getDefinitions());
     }
 }
