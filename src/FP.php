@@ -40,5 +40,17 @@ class FP
     {
         return fn() => false;
     }
+
+    /**
+     * Group array/iterator, key returned by $fKey.
+     */
+    public static function group(callable $fKey, iterable $values): array {
+        $r = [];
+        foreach ($values as $value) {
+            $key = $fKey($value);
+            $r[$key][] = $value;
+        }
+        return $r;
+    }
 }
 

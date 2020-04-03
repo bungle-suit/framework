@@ -37,4 +37,13 @@ class FPTest extends TestCase
         $f = FP::f();
         self::assertFalse($f());
     }
+
+    public function testGroup(): void
+    {
+        $arr = range(0, 10);
+        self::assertEquals([
+            0 => [0, 2, 4, 6, 8, 10],
+            1 => [1, 3, 5, 7, 9],
+        ], FP::group(fn (int $v) => $v % 2, $arr));
+    }
 }
