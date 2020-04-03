@@ -7,6 +7,8 @@ namespace Bungle\Framework\Tests\Security;
 use Bungle\Framework\Entity\ArrayEntityDiscovery;
 use Bungle\Framework\Entity\ArrayEntityMetaResolver;
 use Bungle\Framework\Entity\ArrayHighResolver;
+use Bungle\Framework\Entity\EntityMeta;
+use Bungle\Framework\Entity\EntityMetaResolverInterface;
 use Bungle\Framework\Entity\EntityRegistry;
 use Bungle\Framework\Security\EntityRoleDefinitionProvider;
 use Bungle\Framework\Security\RoleDefinition;
@@ -25,6 +27,19 @@ use function iterator_to_array;
 final class EntityRoleDefinitionProviderTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
+    private EntityMeta $productMeta;
+    private EntityMeta $orderMeta;
+    private EntityMetaResolverInterface $metaResolver;
+
+    protected function setUp(): void
+    {
+        $this->productMeta = new EntityMeta(Product::class, 'Product', []);
+        $this->orderMeta = new EntityMeta(Order::class, 'Order', []);
+        $this->metaResolver = new ArrayEntityMetaResolver([
+            Order::class => $this->orderMeta,
+            Product::class => $this->productMeta,
+        ]);
+    }
 
     public function testRoles(): void
     {
@@ -65,20 +80,20 @@ final class EntityRoleDefinitionProviderTest extends TestCase
                 Order::class => 'ord',
                 Product::class => 'prd',
             ]),
-            new ArrayEntityMetaResolver([])
+            $this->metaResolver
         );
         $entityRoleDefProvider = new EntityRoleDefinitionProvider($entityReg, $workflowResolver);
 
         self::assertEquals([
-            new RoleDefinition('ROLE_ord_save', 'Save', ''),
-            new RoleDefinition('ROLE_ord_check', 'Check', ''),
-            new RoleDefinition('ROLE_ord_rollback', 'rollback', ''),
-            new RoleDefinition('ROLE_ord_delete', 'delete', ''),
-            new RoleDefinition('ROLE_prd_save', 'save', ''),
-            new RoleDefinition('ROLE_prd_check', 'check', ''),
-            new RoleDefinition('ROLE_prd_rollback', 'rollback', ''),
-            new RoleDefinition('ROLE_prd_disable', 'disable', ''),
-            new RoleDefinition('ROLE_prd_enable', 'enable', ''),
+            new RoleDefinition('ROLE_ord_save', 'Save', '', 'Order'),
+            new RoleDefinition('ROLE_ord_check', 'Check', '', 'Order'),
+            new RoleDefinition('ROLE_ord_rollback', 'rollback', '', 'Order'),
+            new RoleDefinition('ROLE_ord_delete', 'delete', '', 'Order'),
+            new RoleDefinition('ROLE_prd_save', 'save', '', 'Product'),
+            new RoleDefinition('ROLE_prd_check', 'check', '', 'Product'),
+            new RoleDefinition('ROLE_prd_rollback', 'rollback', '', 'Product'),
+            new RoleDefinition('ROLE_prd_disable', 'disable', '', 'Product'),
+            new RoleDefinition('ROLE_prd_enable', 'enable', '', 'Product'),
         ], iterator_to_array($entityRoleDefProvider->getRoleDefinitions()));
     }
 

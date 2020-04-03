@@ -25,16 +25,16 @@ final class RoleRegistryTest extends TestCase
           ]),
         ]);
 
-        self::assertEquals([$r1, $r2, $r3], $reg->defs);
+        self::assertEquals([$r1, $r2, $r3], $reg->getDefinitions());
     }
 
     public function testAdd(): RoleRegistry
     {
         $reg = new RoleRegistry();
-        self::assertEmpty($reg->defs);
+        self::assertEmpty($reg->getDefinitions());
         $reg->add($r1 = new RoleDefinition('ROLE_1_1', '', '', ''));
         $reg->add($r2 = new RoleDefinition('ROLE_1_2', '', '', ''));
-        self::assertEquals([$r1, $r2], $reg->defs);
+        self::assertEquals([$r1, $r2], $reg->getDefinitions());
 
         return $reg;
     }
@@ -53,12 +53,12 @@ final class RoleRegistryTest extends TestCase
      */
     public function testAdds(RoleRegistry $reg): void
     {
-        $expRoles = $reg->defs;
+        $expRoles = $reg->getDefinitions();
         $reg->adds([
           $r3 = new RoleDefinition('ROLE_2_1', '', '', ''),
           $r4 = new RoleDefinition('ROLE_2_2', '', '', ''),
         ]);
 
-        self::assertEquals(array_merge($expRoles, [$r3, $r4]), $reg->defs);
+        self::assertEquals(array_merge($expRoles, [$r3, $r4]), $reg->getDefinitions());
     }
 }

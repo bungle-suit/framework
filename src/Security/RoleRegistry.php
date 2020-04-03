@@ -9,7 +9,7 @@ class RoleRegistry
     /**
      * @var RoleDefinition[] $defs
      */
-    public array $defs = [];
+    private array $defs = [];
 
     /**
      * @param RoleDefinitionProviderInterface[] $providers
@@ -53,5 +53,13 @@ class RoleRegistry
         }
 
         return false;
+    }
+
+    /**
+     * @return RoleDefinition[]
+     */
+    public function getDefinitions(): array
+    {
+        return $this->defs;
     }
 }
