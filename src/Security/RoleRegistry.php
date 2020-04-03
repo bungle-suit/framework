@@ -9,19 +9,18 @@ class RoleRegistry
     /**
      * @var RoleDefinition[] $defs
      */
-    private array $defs = [];
+    private array $defs;
+    private array $providers;
 
     /**
      * @param RoleDefinitionProviderInterface[] $providers
      */
     public function __construct(array $providers = [])
     {
-        foreach ($providers as $p) {
-            $this->adds($p->getRoleDefinitions());
-        }
+        $this->providers = $providers;
     }
 
-    public function add(RoleDefinition $roleDef): void
+    private function add(RoleDefinition $roleDef): void
     {
         assert(
             !self::roleExists($this->defs, $roleDef),
@@ -36,6 +35,7 @@ class RoleRegistry
      */
     public function adds(iterable $roleDefs): void
     {
+        $this->initDefs();
         foreach ($roleDefs as $item) {
             $this->add($item);
         }
@@ -56,10 +56,27 @@ class RoleRegistry
     }
 
     /**
+     * @return true if defs just initialized.
+     */
+    private function initDefs(): bool
+    {
+        if (!isset($this->defs)) {
+            $this->defs = [];
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * @return RoleDefinition[]
      */
     public function getDefinitions(): array
     {
+        if ($this->initDefs()) {
+            foreach ($this->providers as $p) {
+                $this->adds($p->getRoleDefinitions());
+            }
+        }
         return $this->defs;
     }
 }

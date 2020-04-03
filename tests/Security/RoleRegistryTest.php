@@ -32,8 +32,8 @@ final class RoleRegistryTest extends TestCase
     {
         $reg = new RoleRegistry();
         self::assertEmpty($reg->getDefinitions());
-        $reg->add($r1 = new RoleDefinition('ROLE_1_1', '', '', ''));
-        $reg->add($r2 = new RoleDefinition('ROLE_1_2', '', '', ''));
+        $reg->adds([$r1 = new RoleDefinition('ROLE_1_1', '', '', '')]);
+        $reg->adds([$r2 = new RoleDefinition('ROLE_1_2', '', '', '')]);
         self::assertEquals([$r1, $r2], $reg->getDefinitions());
 
         return $reg;
@@ -45,7 +45,7 @@ final class RoleRegistryTest extends TestCase
     public function testAddCheckDupName(RoleRegistry $reg): void
     {
         $this->expectException(AssertionError::class);
-        $reg->add(new RoleDefinition('ROLE_1_1', 'a', 'b', ''));
+        $reg->adds([new RoleDefinition('ROLE_1_1', 'a', 'b', '')]);
     }
 
     /**
