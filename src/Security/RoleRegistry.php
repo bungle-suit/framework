@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Security;
 
+use Bungle\Framework\FP;
+use function Functional\group;
+use function Functional\map;
+
 class RoleRegistry
 {
     /**
@@ -78,5 +82,15 @@ class RoleRegistry
             }
         }
         return $this->defs;
+    }
+
+    /**
+     * Return Definitions grouped by RoleDefinition group property.
+     * @return RoleDefinition[]
+     */
+    public function getGroups(): array
+    {
+        $r =  group($this->getDefinitions(), FP::getter('getGroup'));
+        return map($r, fn (array $v) => array_values($v));
     }
 }

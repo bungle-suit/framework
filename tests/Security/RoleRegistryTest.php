@@ -61,4 +61,20 @@ final class RoleRegistryTest extends TestCase
 
         self::assertEquals(array_merge($expRoles, [$r3, $r4]), $reg->getDefinitions());
     }
+
+    public function testGetGroups(): void
+    {
+        $reg = new RoleRegistry();
+        $reg->adds([
+            $ra1 = new RoleDefinition('ROLE_2_1', '', '', 'ga'),
+            $rb1 = new RoleDefinition('ROLE_3_1', '', '', 'gb'),
+            $ra2 = new RoleDefinition('ROLE_2_2', '', '', 'ga'),
+            $rb2 = new RoleDefinition('ROLE_3_2', '', '', 'gb'),
+        ]);
+        $exp = [
+            'ga' => [$ra1, $ra2],
+            'gb' => [$rb1, $rb2],
+        ];
+        self::assertEquals($exp, $reg->getGroups());
+    }
 }
