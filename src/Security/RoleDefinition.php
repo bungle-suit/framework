@@ -23,6 +23,7 @@ class RoleDefinition
     private string $name;
     private string $title;
     private string $description;
+    private string $group;
 
     public function __construct(string $name, string $title, string $description)
     {
@@ -62,5 +63,13 @@ class RoleDefinition
     public function description(): string
     {
         return $this->description;
+    }
+
+    /**
+     *
+     */
+    public function getGroup(): string
+    {
+        return $this->group;
     }
 }

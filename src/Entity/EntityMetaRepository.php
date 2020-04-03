@@ -6,6 +6,7 @@ namespace Bungle\Framework\Entity;
 
 /**
  * Service to get EntityMeta by high or class.
+ * @deprecated use EntityRegistry
  */
 class EntityMetaRepository
 {

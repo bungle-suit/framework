@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\Tests\Security;
 
 use Bungle\Framework\Entity\ArrayEntityDiscovery;
+use Bungle\Framework\Entity\ArrayEntityMetaResolver;
 use Bungle\Framework\Entity\ArrayHighResolver;
 use Bungle\Framework\Entity\EntityRegistry;
 use Bungle\Framework\Security\EntityRoleDefinitionProvider;
@@ -63,7 +64,8 @@ final class EntityRoleDefinitionProviderTest extends TestCase
             new ArrayHighResolver([
                 Order::class => 'ord',
                 Product::class => 'prd',
-            ])
+            ]),
+            new ArrayEntityMetaResolver([])
         );
         $entityRoleDefProvider = new EntityRoleDefinitionProvider($entityReg, $workflowResolver);
 
@@ -84,7 +86,8 @@ final class EntityRoleDefinitionProviderTest extends TestCase
     {
         $entityReg = new EntityRegistry(
             new ArrayEntityDiscovery([ Order::class ]),
-            new ArrayHighResolver([ Order::class => 'ord' ])
+            new ArrayHighResolver([ Order::class => 'ord' ]),
+            new ArrayEntityMetaResolver([])
         );
         $workflowResolver = Mockery::mock(EntityWorkflowDefinitionResolverInterface::class);
         $workflowResolver->allows('resolveDefinition')

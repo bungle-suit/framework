@@ -12,7 +12,7 @@ class RoleRegistry
     public array $defs = [];
 
     /**
-     * @param RoleDefinitionProviderInterface[int] $providers
+     * @param RoleDefinitionProviderInterface[] $providers
      */
     public function __construct(array $providers = [])
     {
