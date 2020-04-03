@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Bungle\Framework\Tests\Form;
 
 use Bungle\Framework\Entity\EntityMeta;
-use Bungle\Framework\Entity\EntityMetaRepository;
 use Bungle\Framework\Entity\EntityPropertyMeta;
+use Bungle\Framework\Entity\EntityRegistry;
 use Bungle\Framework\Form\BungleFormTypeGuesser;
 use Mockery;
 use Mockery\MockInterface;
@@ -23,21 +23,17 @@ final class BungleFormTypeGuesserTest extends TestCase
 {
     use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
-    /**
-     * @var EntityMetaRepository|MockInterface
-     */
-    private $entityMetaRepository;
-    /**
-     * @var MockInterface|FormTypeGuesserInterface
-     */
+    /** @var EntityRegistry|MockInterface */
+    private $entityRegistry;
+    /** @var MockInterface|FormTypeGuesserInterface */
     private $inner;
     private BungleFormTypeGuesser $guesser;
 
     public function setUp(): void
     {
-        $this->entityMetaRepository = Mockery::mock(EntityMetaRepository::class);
+        $this->entityRegistry = Mockery::mock(EntityRegistry::class);
         $this->inner = Mockery::mock(FormTypeGuesserInterface::class);
-        $this->guesser = new BungleFormTypeGuesser($this->inner, $this->entityMetaRepository);
+        $this->guesser = new BungleFormTypeGuesser($this->inner, $this->entityRegistry);
     }
 
     public function testGuessTypeInnerNull(): void
@@ -52,8 +48,8 @@ final class BungleFormTypeGuesserTest extends TestCase
             ->inner
             ->allows('guessType')
             ->andReturn(new TypeGuess(ColorType::class, [], Guess::MEDIUM_CONFIDENCE));
-        $this->entityMetaRepository
-            ->allows('get')
+        $this->entityRegistry
+            ->allows('getEntityMeta')
             ->andReturn(new EntityMeta(
                 'Some\Entity',
                 'Wow',
@@ -74,8 +70,8 @@ final class BungleFormTypeGuesserTest extends TestCase
         $this->inner
             ->allows('guessType')
             ->andReturn(new TypeGuess(TextType::class, [], Guess::MEDIUM_CONFIDENCE));
-        $this->entityMetaRepository
-            ->allows('get')
+        $this->entityRegistry
+            ->allows('getEntityMeta')
             ->andReturn(new EntityMeta(
                 'Some\Entity',
                 'Wow',
@@ -98,8 +94,8 @@ final class BungleFormTypeGuesserTest extends TestCase
         $this->inner
             ->allows('guessType')
             ->andReturn(new TypeGuess(DateTimeType::class, [], Guess::MEDIUM_CONFIDENCE));
-        $this->entityMetaRepository
-            ->allows('get')
+        $this->entityRegistry
+            ->allows('getEntityMeta')
             ->andReturn(new EntityMeta(
                 'Some\Entity',
                 'Wow',
