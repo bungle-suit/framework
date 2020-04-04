@@ -64,4 +64,10 @@ class FPTest extends TestCase
         self::assertFalse(FP::all(fn (int $v) => $v % 2 === 0, [1, 3, 6, 9]));
         self::assertTrue(FP::all(fn (int $v) => $v % 2 === 1, [1, 9, 111]));
     }
+
+    public function testIsEmpty(): void
+    {
+        self::assertTrue(FP::isEmpty([]));
+        self::assertFalse(FP::isEmpty([1]));
+    }
 }

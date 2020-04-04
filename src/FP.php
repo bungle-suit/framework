@@ -80,5 +80,17 @@ class FP
         }
         return true;
     }
+
+    /**
+     * Returns true if iterable is empty.
+     */
+    public static function isEmpty(iterable $values): bool
+    {
+        /** @noinspection PhpUnusedLocalVariableInspection */
+        foreach ($values as $v) {
+            return false;
+        }
+        return true;
+    }
 }
 
