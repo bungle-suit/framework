@@ -46,4 +46,22 @@ class FPTest extends TestCase
             1 => [1, 3, 5, 7, 9],
         ], FP::group(fn (int $v) => $v % 2, $arr));
     }
+
+    public function testAny(): void
+    {
+        // empty always return false
+        self::assertFalse(FP::any(FP::t(), []));
+
+        self::assertTrue(FP::any(fn (int $v) => $v % 2 === 0, [1, 3, 6, 9]));
+        self::assertFalse(FP::any(fn (int $v) => $v % 2 === 0, [1, 9, 111]));
+    }
+
+    public function testAll(): void
+    {
+        // empty always return true
+        self::assertTrue(FP::all(FP::f(), []));
+
+        self::assertFalse(FP::all(fn (int $v) => $v % 2 === 0, [1, 3, 6, 9]));
+        self::assertTrue(FP::all(fn (int $v) => $v % 2 === 1, [1, 9, 111]));
+    }
 }

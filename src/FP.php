@@ -52,5 +52,33 @@ class FP
         }
         return $r;
     }
+
+    /**
+     * Call $fCheck on item of $values, returns true if any callback result is true.
+     * Returns false if $values is empty.
+     */
+    public static function any(callable $fCheck, iterable $values): bool
+    {
+        foreach ($values as $value) {
+            if ($fCheck($value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Call fCheck on item of $values, returns false if any callback result is false.
+     * Return true if $values is empty.
+     */
+    public static function all(callable $fCheck, iterable $values): bool
+    {
+        foreach ($values as $value) {
+            if (!$fCheck($value)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
 
