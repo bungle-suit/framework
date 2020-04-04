@@ -36,6 +36,12 @@ final class EntityRoleDefinitionProvider implements RoleDefinitionProviderInterf
 
             $actions = [];
             $group = $this->entityRegistry->getEntityMeta($entity)->logicName;
+            yield new RoleDefinition(
+                RoleDefinition::newActionRole($high, 'view'),
+                '查看',
+                '',
+                $group
+            );
             foreach ($def->getTransitions() as $trans) {
                 $action = $trans->getName();
                 if (array_key_exists($action, $actions)) {

@@ -85,10 +85,12 @@ final class EntityRoleDefinitionProviderTest extends TestCase
         $entityRoleDefProvider = new EntityRoleDefinitionProvider($entityReg, $workflowResolver);
 
         self::assertEquals([
+            new RoleDefinition('ROLE_ord_view', '查看', '', 'Order'),
             new RoleDefinition('ROLE_ord_save', 'Save', '', 'Order'),
             new RoleDefinition('ROLE_ord_check', 'Check', '', 'Order'),
             new RoleDefinition('ROLE_ord_rollback', 'rollback', '', 'Order'),
             new RoleDefinition('ROLE_ord_delete', 'delete', '', 'Order'),
+            new RoleDefinition('ROLE_prd_view', '查看', '', 'Product'),
             new RoleDefinition('ROLE_prd_save', 'save', '', 'Product'),
             new RoleDefinition('ROLE_prd_check', 'check', '', 'Product'),
             new RoleDefinition('ROLE_prd_rollback', 'rollback', '', 'Product'),
