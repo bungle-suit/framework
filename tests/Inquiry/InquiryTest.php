@@ -4,148 +4,68 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Inquiry;
 
-use ArrayIterator;
 use Bungle\Framework\Inquiry\ArrayQueryBuilder;
 use Bungle\Framework\Inquiry\Inquiry;
 use Bungle\Framework\Inquiry\PagedData;
 use Bungle\Framework\Inquiry\QueryParams;
 use Bungle\Framework\Inquiry\StepContext;
-use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\Query\Builder;
-use Doctrine\ODM\MongoDB\Query\Query;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\MockObject\Stub;
+use Bungle\Framework\Tests\DBTestable;
+use MongoDB\Collection;
 use PHPUnit\Framework\TestCase;
 
 final class InquiryTest extends TestCase
 {
-    /**
-     * @var DocumentManager|MockObject
-     */
-    private $dm;
-    /**
-     * @var Query|Stub
-     */
-    private $query;
+    use DBTestable {
+        setup as baseSetup;
+    }
 
-    private static function createQueryParams(): QueryParams
+    private Collection $coll;
+    /** @var Order[] */
+    private array $orders;
+
+    protected function setUp(): void
+    {
+        $this->baseSetup();
+
+        $coll = $this->dm->getDocumentCollection(Order::class);
+        $coll->drop();
+
+        $order1 = Order::create('1', 'foo');
+        $order2 = Order::create('2', 'foo');
+        $order3 = Order::create('3', 'foobar');
+        $order4 = Order::create('4', 'blah');
+        $this->orders = [$order1, $order2, $order3, $order4];
+        $this->dm->persist($order1);
+        $this->dm->persist($order2);
+        $this->dm->persist($order3);
+        $this->dm->persist($order4);
+        $this->dm->flush();
+    }
+
+    private function createQueryParams(): QueryParams
     {
         return new QueryParams(Order::class, 0, OrderQBE::class);
     }
 
-    // Returns [Inquiry, DocumentManagerMock, BuilderMock, QueryStub]
-    private function createObjects(): array
+    public function testSearch(): void
     {
-        $dm = $this->createMock(DocumentManager::class);
-        $builder = $this->createMock(Builder::class);
-        $dm
-            ->expects($this->once())
-            ->method('createQueryBuilder')
-            ->with(Order::class)
-            ->willReturn($builder)
-        ;
-        $query = $this->createStub(Query::class);
-        $builder
-            ->expects($this->once())
-            ->willReturn($query);
-        $inquiry = new Inquiry($dm);
-
-        return [
-            $inquiry,
-            $this->dm = $dm,
-            $builder,
-            $this->query = $query,
-        ];
-    }
-
-    private function mockSearch(iterable $returns): void
-    {
-        $this->query->method('getIterator')->willReturn($returns);
-    }
-
-    public function mockCount(int $returns): void
-    {
-        $this->query->method('execute')->willReturn($returns);
-    }
-
-    public function testSearchEmpty(): void
-    {
-        $this->markTestSkipped('Failed to mock ODM Query object, we\'ll figured out later.');
         $params = self::createQueryParams();
-        list($inquiry) = $this->createObjects();
-        $this->mockSearch([]);
+        $inquiry = new Inquiry($this->dm);
 
         $qb = new ArrayQueryBuilder([]);
-        self::assertEmpty($inquiry->search($qb, $params));
-    }
-
-    public function testSearchSteps(): void
-    {
-        $this->markTestSkipped('Failed to mock ODM Query object, we\'ll figured out later.');
-        list($inquiry, , $params, $q) = $this->createObjects();
-
-        $qb = new ArrayQueryBuilder([
-            function (StepContext $ctx): void {
-                self::assertFalse($ctx->isBuildForCount());
-                $ctx->query->offset = 10;
-                $ctx->set('foo', 'bar');
-            },
-            fn ($ctx) => $ctx->query->fields[] = $ctx->get('foo'),
-        ]);
-
-        $q->offset = 10;
-        $q->fields = ['bar'];
-        $this->mockSearch($q, []);
-        self::assertEmpty($inquiry->search($qb, $params));
-    }
-
-    public function testPagedEmpty(): void
-    {
-        $this->markTestSkipped('Failed to mock ODM Query object, we\'ll figured out later.');
-        list($inquiry, , $params, $q) = $this->createObjects();
-        $this->mockCount($q, 0);
-
-        $qb = new ArrayQueryBuilder([]);
-        $exp = new PagedData([], 0);
-
-        self::assertEquals($exp, $inquiry->paged($qb, $params));
+        $rs = iterator_to_array($inquiry->search($qb, $params));
+        self::assertEquals($this->orders, $rs);
     }
 
     public function testPaged(): void
     {
-        $this->markTestSkipped('Failed to mock ODM Query object, we\'ll figured out later.');
-        list($inquiry, , $params, $q) = $this->createObjects();
-
-        $qCount = clone $q;
-        $qSearch = clone $q;
+        $params = self::createQueryParams();
+        $inquiry = new Inquiry($this->dm);
 
         $qb = new ArrayQueryBuilder([
-            fn ($ctx) => $ctx->query->offset = $ctx->isBuildForCount() ? 3 : 4,
+            fn (StepContext $ctx) => $ctx->getBuilder()->skip($ctx->isBuildForCount() ? 0 : 2),
         ]);
 
-        $qCount->offset = 3;
-        $qSearch->offset = 4;
-        $this->mockCount($qCount, 2);
-        $this->mockSearch($qSearch, [1, 2, 3]);
-        self::assertEquals(new PagedData([1, 2, 3], 2), $inquiry->paged($qb, $params));
-    }
-
-    public function testPagedIterator(): void
-    {
-        $this->markTestSkipped('Failed to mock ODM Query object, we\'ll figured out later.');
-        list($inquiry, , $params, $q) = $this->createObjects();
-
-        $qCount = clone $q;
-        $qSearch = clone $q;
-
-        $qb = new ArrayQueryBuilder([
-            fn ($ctx) => $ctx->query->offset = $ctx->isBuildForCount() ? 3 : 4,
-        ]);
-
-        $qCount->offset = 3;
-        $qSearch->offset = 4;
-        $this->mockCount($qCount, 2);
-        $this->mockSearch($qSearch, new ArrayIterator([1, 2, 3]));
-        self::assertEquals(new PagedData([1, 2, 3], 2), $inquiry->paged($qb, $params));
+        self::assertEquals(new PagedData([$this->orders[2], $this->orders[3]], 4), $inquiry->paged($qb, $params));
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\Inquiry;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Traversable;
 use const true;
 
 /**
@@ -36,7 +37,6 @@ class Inquiry
 
         $data = $this->search($qb, $params);
         if (!is_array($data)) {
-            /** @noinspection PhpParamsInspection */
             $data = iterator_to_array($data);
         }
 
@@ -57,7 +57,7 @@ class Inquiry
      * Returns query result in a stream, count query
      * not performed.
      */
-    public function search(QueryBuilderInterface $qb, QueryParams $params): iterable
+    public function search(QueryBuilderInterface $qb, QueryParams $params): Traversable
     {
         $ctx = $this->createContext($params, false);
         foreach ($qb->steps() as $step) {

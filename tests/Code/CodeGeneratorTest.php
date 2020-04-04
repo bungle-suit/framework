@@ -4,34 +4,21 @@ declare(strict_types=1);
 namespace Bungle\Framework\Tests\Code;
 
 use Bungle\Framework\Code\CodeGenerator;
+use Bungle\Framework\Tests\DBTestable;
 use DateTime;
-use Doctrine\ODM\MongoDB\Configuration;
-use Doctrine\ODM\MongoDB\DocumentManager;
-use Doctrine\ODM\MongoDB\Mapping\Annotations\Document;
-use MongoDB\Client;
-use PHP_CodeSniffer\Reports\Code;
 use PHPUnit\Framework\TestCase;
 use RangeException;
 
 class CodeGeneratorTest extends TestCase
 {
-    const TEST_DB = 'test';
-
-    private DocumentManager $dm;
+    use DBTestable {
+        setUp as baseSetup;
+    }
 
     protected function setUp(): void
     {
-        $client = new Client(
-            'mongodb://localhost:27017', [],
-            ['typeMap' => ['root' => 'array', 'document' => 'array']]
-        );
-        $config = new Configuration();
-        $config->setDefaultDB(self::TEST_DB);
-        $config->setHydratorDir('/tmp/mongo_db_test/hydrator');
-        $config->setHydratorNamespace('Hydrators');
-
-        $this->dm = DocumentManager::create($client, $config);
-        $coll = $client->selectCollection(self::TEST_DB, CodeGenerator::ID_COLLECTION);
+        $this->baseSetup();
+        $coll = $this->db->selectCollection(CodeGenerator::ID_COLLECTION);
         $coll->drop();
     }
 
