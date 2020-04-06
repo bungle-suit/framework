@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Bungle\Framework\StateMachine\EventListener;
+namespace Bungle\Framework\StateMachine\STT;
 
 /**
  * Interface must implemented by the solid STT class.

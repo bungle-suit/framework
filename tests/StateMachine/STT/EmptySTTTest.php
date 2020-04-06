@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Bungle\Framework\Tests\StateMachine\EventListener;
+namespace Bungle\Framework\Tests\StateMachine\STT;
 
-use Bungle\Framework\Tests\StateMachine\STT\EmptySTT;
+use Bungle\Framework\Tests\StateMachine\EventListener\TestBase;
 
 class EmptySTTTest extends TestBase
 {

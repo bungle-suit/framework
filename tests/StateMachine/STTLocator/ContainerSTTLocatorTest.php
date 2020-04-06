@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\StateMachine\STTLocator;
 
-use Bungle\Framework\StateMachine\EventListener\AbstractSTT;
+use Bungle\Framework\StateMachine\STT\AbstractSTT;
 use Bungle\Framework\StateMachine\STTLocator\ContainerSTTLocator;
 use LogicException;
 use Mockery;

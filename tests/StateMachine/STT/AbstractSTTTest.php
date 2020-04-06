@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Bungle\Framework\Tests\StateMachine\EventListener;
+namespace Bungle\Framework\Tests\StateMachine\STT;
 
 use Bungle\Framework\Exception\Exceptions;
 use Bungle\Framework\Tests\StateMachine\Entity\Order;
-use Bungle\Framework\Tests\StateMachine\STT\OrderSTT;
+use Bungle\Framework\Tests\StateMachine\EventListener\TestBase;
 use Symfony\Component\Workflow\Exception\TransitionException;
 
 final class AbstractSTTTest extends TestBase

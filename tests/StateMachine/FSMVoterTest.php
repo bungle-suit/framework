@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Bungle\Framework\Tests\StateMachine;
 
 use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
-use Bungle\Framework\StateMachine\EventListener\AbstractSTT;
-use Bungle\Framework\StateMachine\EventListener\EntityAccessControlInterface;
+use Bungle\Framework\StateMachine\STT\AbstractSTT;
+use Bungle\Framework\StateMachine\STT\EntityAccessControlInterface;
 use Bungle\Framework\StateMachine\FSMVoter;
 use Bungle\Framework\StateMachine\STTLocator\STTLocatorInterface;
 use Bungle\Framework\Tests\StateMachine\Entity\Order;

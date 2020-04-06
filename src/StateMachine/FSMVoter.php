@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\StateMachine;
 
 use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
-use Bungle\Framework\StateMachine\EventListener\EntityAccessControlInterface;
+use Bungle\Framework\StateMachine\STT\EntityAccessControlInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 

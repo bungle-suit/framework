@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\StateMachine\STTLocator;
 
-use Bungle\Framework\StateMachine\EventListener\AbstractSTT;
+use Bungle\Framework\StateMachine\STT\AbstractSTT;
 use LogicException;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;

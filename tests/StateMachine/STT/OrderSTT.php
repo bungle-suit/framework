@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Bungle\Framework\Tests\StateMachine\STT;
 
 use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
-use Bungle\Framework\StateMachine\EventListener\AbstractSTT;
-use Bungle\Framework\StateMachine\EventListener\STTInterface;
+use Bungle\Framework\StateMachine\STT\AbstractSTT;
+use Bungle\Framework\StateMachine\STT\STTInterface;
 use Bungle\Framework\StateMachine\SaveStepContext;
 use Bungle\Framework\StateMachine\StepContext;
 use Bungle\Framework\Tests\StateMachine\Entity\Order;

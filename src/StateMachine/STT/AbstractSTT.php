@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Bungle\Framework\StateMachine\EventListener;
+namespace Bungle\Framework\StateMachine\STT;
 
 use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
 use Bungle\Framework\Exception\Exceptions;

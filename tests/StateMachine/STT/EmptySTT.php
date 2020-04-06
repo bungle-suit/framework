@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\StateMachine\STT;
 
-use Bungle\Framework\StateMachine\EventListener\AbstractSTT;
-use Bungle\Framework\StateMachine\EventListener\STTInterface;
+use Bungle\Framework\StateMachine\STT\AbstractSTT;
+use Bungle\Framework\StateMachine\STT\STTInterface;
 
 /**
  * STT that all steps are empty, use the same workflow as OrderSTT
