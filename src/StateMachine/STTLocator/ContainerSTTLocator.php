@@ -30,4 +30,9 @@ class ContainerSTTLocator implements STTLocatorInterface, ContainerAwareInterfac
     {
         $this->container = $container;
     }
+
+    public function getContainer(): ?ContainerInterface
+    {
+        return $this->container;
+    }
 }
