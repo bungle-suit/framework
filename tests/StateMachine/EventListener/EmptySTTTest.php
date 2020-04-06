@@ -28,7 +28,7 @@ class EmptySTTTest extends TestBase
         $this->ord->setState('saved');
         $oldState = $this->ord->getState();
 
-        $stt->invokeSave(new SaveEvent($this->ord, []));
+        $stt->save(new SaveEvent($this->ord, []));
 
         self::assertEquals($oldState, $this->ord->getState());
     }

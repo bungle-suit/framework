@@ -93,7 +93,7 @@ abstract class AbstractSTT
     /**
      * Execute save action, Handles `vina.high.save` action.
      */
-    final public function invokeSave(SaveEvent $e): void
+    final public function save(SaveEvent $e): void
     {
         $entity = $e->getSubject();
         $ctx = new SaveStepContext($e->getAttrs());
@@ -108,9 +108,9 @@ abstract class AbstractSTT
         }
     }
 
-    final public function invokeCanSave(HaveSaveActionResolveEvent $e): void
+    final public function canSave(HaveSaveActionResolveEvent $e): void
     {
-        if ($this->canSave($e->getSubject())) {
+        if ($this->_canSave($e->getSubject())) {
             $e->setHaveSaveAction();
         }
     }
@@ -118,7 +118,7 @@ abstract class AbstractSTT
     /**
      * Returns true if entity current state defines save steps.
      */
-    private function canSave(StatefulInterface $entity): bool
+    private function _canSave(StatefulInterface $entity): bool
     {
         $state = $entity->getState();
         $steps = $this->steps();
@@ -128,7 +128,7 @@ abstract class AbstractSTT
     private function getSaveSteps(StatefulInterface $entity)
     {
         $curState = $entity->getState();
-        if (!$this->canSave($entity)) {
+        if (!$this->_canSave($entity)) {
             $cls = get_class($entity);
             trigger_error("Try to execute save action on $cls state: $curState, which is not configured.");
 

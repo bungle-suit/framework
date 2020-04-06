@@ -81,7 +81,7 @@ final class AbstractSTTTest extends TestBase
         $this->ord->setState('saved');
         $oldState = $this->ord->getState();
 
-        $stt->invokeSave(new SaveEvent($this->ord, ['attr' => ' foo']));
+        $stt->save(new SaveEvent($this->ord, ['attr' => ' foo']));
         self::assertEquals('before save foo;save;after save', $this->ord->log);
         self::assertEquals('bar', $this->ord->before);
         self::assertEquals('foo', $this->ord->name);
@@ -98,7 +98,7 @@ final class AbstractSTTTest extends TestBase
             $stt = new OrderSTT();
             $this->ord->setState('checked');
 
-            $stt->invokeSave(new SaveEvent($this->ord, []));
+            $stt->save(new SaveEvent($this->ord, []));
             self::assertNull($this->ord->log ?? null);
             self::assertNull($this->ord->before ?? null);
             self::assertNull($this->ord->name ?? null);
@@ -114,7 +114,7 @@ final class AbstractSTTTest extends TestBase
     public function testSaveEmptyConfigured(): void
     {
         $stt = new OrderSTT();
-        $stt->invokeSave(new SaveEvent($this->ord, []));
+        $stt->save(new SaveEvent($this->ord, []));
         self::assertEquals('before save;after save', $this->ord->log);
     }
 
@@ -123,19 +123,19 @@ final class AbstractSTTTest extends TestBase
         $stt = new OrderSTT();
         // configured empty
         $e = new HaveSaveActionResolveEvent($this->ord);
-        $stt->invokeCanSave($e);
+        $stt->canSave($e);
         self::assertTrue($e->isHaveSaveAction());
 
         // configured
         $this->ord->setState('saved');
         $e = new HaveSaveActionResolveEvent($this->ord);
-        $stt->invokeCanSave($e);
+        $stt->canSave($e);
         self::assertTrue($e->isHaveSaveAction());
 
         // Not configured
         $this->ord->setState('checked');
         $e = new HaveSaveActionResolveEvent($this->ord);
-        $stt->invokeCanSave($e);
+        $stt->canSave($e);
         self::assertFalse($e->isHaveSaveAction());
     }
 }
