@@ -6,8 +6,6 @@ namespace Bungle\Framework\StateMachine\EventListener;
 
 use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
 use Bungle\Framework\Exception\Exceptions;
-use Bungle\Framework\StateMachine\Events\SaveEvent;
-use Bungle\Framework\StateMachine\HaveSaveActionResolveEvent;
 use Bungle\Framework\StateMachine\SaveStepContext;
 use Bungle\Framework\StateMachine\StepContext;
 use Symfony\Component\Workflow\Event\TransitionEvent;
@@ -93,10 +91,9 @@ abstract class AbstractSTT
     /**
      * Execute save action, Handles `vina.high.save` action.
      */
-    final public function save(SaveEvent $e): void
+    public function save(StatefulInterface $entity, array $attrs = []): void
     {
-        $entity = $e->getSubject();
-        $ctx = new SaveStepContext($e->getAttrs());
+        $ctx = new SaveStepContext($attrs);
         $state = $entity->getState();
         try {
             foreach ($this->getSaveSteps($entity) as $step) {
@@ -108,11 +105,9 @@ abstract class AbstractSTT
         }
     }
 
-    final public function canSave(HaveSaveActionResolveEvent $e): void
+    public function canSave(StatefulInterface $subject): bool
     {
-        if ($this->_canSave($e->getSubject())) {
-            $e->setHaveSaveAction();
-        }
+        return $this->_canSave($subject);
     }
 
     /**

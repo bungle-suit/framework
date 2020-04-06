@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace Bungle\Framework\StateMachine;
 
 use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
-use Bungle\Framework\StateMachine\Events\SaveEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Workflow\Exception\TransitionException;
 use Symfony\Component\Workflow\Registry;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Vina is a service help us to handle StateMachine
@@ -26,21 +24,21 @@ class Vina
     private Registry $registry;
     private AuthorizationCheckerInterface $authChecker;
     private RequestStack $reqStack;
-    private ?EventDispatcherInterface $dispatcher;
     private SyncToDBInterface $syncToDB;
+    private STTLocator\STTLocatorInterface $sttLocator;
 
     public function __construct(
         Registry $registry,
         AuthorizationCheckerInterface $authChecker,
         RequestStack $reqStack,
-        EventDispatcherInterface $dispatcher = null,
+        STTLocator\STTLocatorInterface $sttLocator,
         SyncToDBInterface $syncToDB = null
     ) {
         $this->registry = $registry;
         $this->authChecker = $authChecker;
         $this->reqStack = $reqStack;
-        $this->dispatcher = $dispatcher;
         $this->syncToDB = $syncToDB ?? new EmptySyncToDB();
+        $this->sttLocator = $sttLocator;
     }
 
     /**
@@ -168,10 +166,8 @@ class Vina
      */
     public function save(StatefulInterface $subject, array $attrs = []): void
     {
-        $high = $this->registry->get($subject)->getName();
-        if ($this->dispatcher) {
-            $this->dispatcher->dispatch(new SaveEvent($subject, $attrs), "vina.$high.save");
-        }
+        $stt = $this->sttLocator->getSTTForClass(get_class($subject));
+        $stt->save($subject, $attrs);
 
         $this->syncToDB->syncToDB($subject);
     }
@@ -183,15 +179,8 @@ class Vina
      */
     public function haveSaveAction(StatefulInterface $subject): bool
     {
-        if (!$this->dispatcher) {
-            return false;
-        }
-
-        $high = $this->registry->get($subject)->getName();
-        $e = new HaveSaveActionResolveEvent($subject);
-        $this->dispatcher->dispatch($e, "vina.$high.have_save_action");
-
-        return $e->isHaveSaveAction();
+        $stt = $this->sttLocator->getSTTForClass(get_class($subject));
+        return $stt->canSave($subject);
     }
 
     /**

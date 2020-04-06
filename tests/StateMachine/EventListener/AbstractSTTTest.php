@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Bungle\Framework\Tests\StateMachine\EventListener;
 
 use Bungle\Framework\Exception\Exceptions;
-use Bungle\Framework\StateMachine\Events\SaveEvent;
-use Bungle\Framework\StateMachine\HaveSaveActionResolveEvent;
 use Bungle\Framework\Tests\StateMachine\Entity\Order;
 use Bungle\Framework\Tests\StateMachine\STT\OrderSTT;
 use Symfony\Component\Workflow\Exception\TransitionException;
@@ -81,7 +79,7 @@ final class AbstractSTTTest extends TestBase
         $this->ord->setState('saved');
         $oldState = $this->ord->getState();
 
-        $stt->save(new SaveEvent($this->ord, ['attr' => ' foo']));
+        $stt->save($this->ord, ['attr' => ' foo']);
         self::assertEquals('before save foo;save;after save', $this->ord->log);
         self::assertEquals('bar', $this->ord->before);
         self::assertEquals('foo', $this->ord->name);
@@ -98,7 +96,7 @@ final class AbstractSTTTest extends TestBase
             $stt = new OrderSTT();
             $this->ord->setState('checked');
 
-            $stt->save(new SaveEvent($this->ord, []));
+            $stt->save($this->ord, []);
             self::assertNull($this->ord->log ?? null);
             self::assertNull($this->ord->before ?? null);
             self::assertNull($this->ord->name ?? null);
@@ -114,7 +112,7 @@ final class AbstractSTTTest extends TestBase
     public function testSaveEmptyConfigured(): void
     {
         $stt = new OrderSTT();
-        $stt->save(new SaveEvent($this->ord, []));
+        $stt->save($this->ord, []);
         self::assertEquals('before save;after save', $this->ord->log);
     }
 
@@ -122,20 +120,14 @@ final class AbstractSTTTest extends TestBase
     {
         $stt = new OrderSTT();
         // configured empty
-        $e = new HaveSaveActionResolveEvent($this->ord);
-        $stt->canSave($e);
-        self::assertTrue($e->isHaveSaveAction());
+        self::assertTrue($stt->canSave($this->ord));
 
         // configured
         $this->ord->setState('saved');
-        $e = new HaveSaveActionResolveEvent($this->ord);
-        $stt->canSave($e);
-        self::assertTrue($e->isHaveSaveAction());
+        self::assertTrue($stt->canSave($this->ord));
 
         // Not configured
         $this->ord->setState('checked');
-        $e = new HaveSaveActionResolveEvent($this->ord);
-        $stt->canSave($e);
-        self::assertFalse($e->isHaveSaveAction());
+        self::assertFalse($stt->canSave($this->ord));
     }
 }

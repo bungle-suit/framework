@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace Bungle\Framework\Tests\StateMachine;
 
 use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
-use Bungle\Framework\StateMachine\Events\SaveEvent;
-use Bungle\Framework\StateMachine\HaveSaveActionResolveEvent;
+use Bungle\Framework\StateMachine\EventListener\AbstractSTT;
 use Bungle\Framework\StateMachine\MarkingStore\StatefulInterfaceMarkingStore;
+use Bungle\Framework\StateMachine\STTLocator\STTLocatorInterface;
 use Bungle\Framework\StateMachine\SyncToDBInterface;
 use Bungle\Framework\StateMachine\Vina;
 use Bungle\Framework\Tests\StateMachine\Entity\Order;
 use Bungle\Framework\Tests\StateMachine\EventListener\FakeAuthorizationChecker;
+use Mockery;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use SplObjectStorage;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,7 +30,7 @@ use Symfony\Component\Workflow\StateMachine;
 use Symfony\Component\Workflow\SupportStrategy\InstanceOfSupportStrategy;
 use Symfony\Component\Workflow\Transition;
 
-final class VinaTest extends TestCase
+final class VinaTest extends MockeryTestCase
 {
     // Return [Vina, RequestStack, EventDispatcher]
     private function createVina(bool $mockDB = false): array
@@ -37,6 +38,7 @@ final class VinaTest extends TestCase
         $reqStack = new RequestStack();
         $dispatcher = new EventDispatcher();
         $syncToDb = $mockDB ? $this->createMock(SyncToDBInterface::class): null;
+        $sttLocator = Mockery::mock(STTLocatorInterface::class);
         $vina = new Vina(
             self::createRegistry($dispatcher),
             new FakeAuthorizationChecker(
@@ -45,11 +47,11 @@ final class VinaTest extends TestCase
                 'Role_prd_new'
             ),
             $reqStack,
-            $dispatcher,
+            $sttLocator,
             $syncToDb
         );
 
-        return [$vina, $reqStack, $dispatcher, $syncToDb];
+        return [$vina, $reqStack, $dispatcher, $syncToDb, $sttLocator];
     }
 
     public function testGetStateTitle(): void
@@ -176,45 +178,46 @@ final class VinaTest extends TestCase
         /** @var SyncToDBInterface|MockObject $syncToDB */
         /** @var Vina $vina */
         /** @var EventDispatcher $dispatcher */
-        list($vina, , $dispatcher, $syncToDB) = $this->createVina(true);
-
-        $log = [];
+        /** @var STTLocatorInterface|Mockery\MockInterface $sttLocator */
+        list($vina, , , ,$sttLocator) = $this->createVina(true);
         $ord = new Order();
         $attrs = ['foo' => 'bar'];
-        $listener = function (SaveEvent $e) use (&$log, $ord, $attrs) {
-            $log[] = ['hit', $e->getSubject()];
-            self::assertSame($ord, $e->getSubject());
-            self::assertEquals($attrs, $e->getAttrs());
-        };
-        $dispatcher->addListener( 'vina.ord.save', $listener );
-        $syncToDB->expects($this->once())->method('syncToDB')->with($ord);
+
+        $stt = Mockery::mock(AbstractSTT::class, StatefulInterface::class);
+        $sttLocator->expects('getSTTForClass')
+            ->with(Order::class)->andReturn($stt);
+        $stt->expects('save')->with($ord, $attrs);
 
         $vina->save($ord, $attrs);
-        self::assertEquals([['hit', $ord]], $log);
     }
 
     public function testHaveSaveAction(): void
     {
-        list($vina, , $dispatcher) = $this->createVina();
+        /** @var Vina $vina */
+        /** @var STTLocatorInterface|Mockery\MockInterface $sttLocator */
+        list($vina, , , , $sttLocator) = $this->createVina();
         $ord = new Order();
-        self::assertFalse($vina->haveSaveAction($ord));
 
-        $dispatcher->addListener(
-            'vina.ord.have_save_action',
-            fn (HaveSaveActionResolveEvent $e) => $e->setHaveSaveAction()
-        );
-        self::assertTrue($vina->haveSaveAction($ord));
+        $stt = Mockery::mock(AbstractSTT::class, StatefulInterface::class);
+        $sttLocator->expects('getSTTForClass')
+            ->with(Order::class)->andReturn($stt);
+        $stt->expects('canSave')->with($ord)->andReturn(false);
+
+        self::assertFalse($vina->haveSaveAction($ord));
     }
 
     public function testCanSave(): void
     {
         /** @var Vina $vina */
-        list($vina, , $dispatcher) = $this->createVina();
+        /** @var STTLocatorInterface|Mockery\MockInterface $sttLocator */
+        list($vina, , , , $sttLocator) = $this->createVina();
         $ord = new Order();
-        $dispatcher->addListener(
-            'vina.ord.have_save_action',
-            fn (HaveSaveActionResolveEvent $e) => $e->setHaveSaveAction()
-        );
+
+        $stt = Mockery::mock(AbstractSTT::class, StatefulInterface::class);
+        $sttLocator->expects('getSTTForClass')->twice()
+            ->with(Order::class)->andReturn($stt);
+        $stt->expects('canSave')->twice()->with($ord)->andReturn(true);
+
         self::assertTrue($vina->canSave($ord));
 
         $ord->setState('checked');

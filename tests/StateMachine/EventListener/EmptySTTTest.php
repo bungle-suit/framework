@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\StateMachine\EventListener;
 
-use Bungle\Framework\StateMachine\Events\SaveEvent;
 use Bungle\Framework\Tests\StateMachine\STT\EmptySTT;
 
 class EmptySTTTest extends TestBase
@@ -28,7 +27,7 @@ class EmptySTTTest extends TestBase
         $this->ord->setState('saved');
         $oldState = $this->ord->getState();
 
-        $stt->save(new SaveEvent($this->ord, []));
+        $stt->save($this->ord, []);
 
         self::assertEquals($oldState, $this->ord->getState());
     }
