@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Bungle\Framework\StateMachine\STT;
 
 use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
+use Bungle\Framework\Entity\EntityRegistry;
 use Bungle\Framework\Exception\Exceptions;
 use Bungle\Framework\StateMachine\SaveStepContext;
 use Bungle\Framework\StateMachine\StepContext;
+use Doctrine\Common\Annotations\Annotation\Required;
 use Symfony\Component\Workflow\Event\TransitionEvent;
 use Symfony\Component\Workflow\Exception\TransitionException;
 
@@ -110,6 +112,40 @@ abstract class AbstractSTT
         return $this->_canSave($subject);
     }
 
+    private EntityRegistry $entityRegistry;
+
+    public function getEntityRegistry(): EntityRegistry
+    {
+        return $this->entityRegistry;
+    }
+
+    /**
+     * @Required
+     */
+    public function setEntityRegistry(EntityRegistry $entityRegistry): void {
+        $this->entityRegistry = $entityRegistry;
+    }
+
+    /**
+     * Create a new instance of current entity object.
+     *
+     * Call default constructor to create entity object.
+     *
+     * If current STT implement InitEntityInterface, call initSteps to initialize
+     * the return value.
+     */
+    public function createNew(): StatefulInterface
+    {
+        $cls = $this->entityRegistry->getEntityByHigh(static::getHigh());
+        $r = new $cls;
+        if ($this instanceof InitEntityInterface) {
+            foreach ($this->initSteps() as $step) {
+                $step($r);
+            }
+        }
+        return $r;
+    }
+
     /**
      * Returns true if entity current state defines save steps.
      */
@@ -135,4 +171,5 @@ abstract class AbstractSTT
         yield from $steps['saveActions'][$curState];
         yield from $steps['afterSave'] ?? [];
     }
+
 }

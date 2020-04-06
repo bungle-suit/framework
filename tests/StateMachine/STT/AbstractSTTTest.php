@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\StateMachine\STT;
 
+use Bungle\Framework\Entity\EntityRegistry;
 use Bungle\Framework\Exception\Exceptions;
+use Bungle\Framework\StateMachine\STT\AbstractSTT;
+use Bungle\Framework\StateMachine\STT\InitEntityInterface;
 use Bungle\Framework\Tests\StateMachine\Entity\Order;
 use Bungle\Framework\Tests\StateMachine\EventListener\TestBase;
+use Mockery;
 use Symfony\Component\Workflow\Exception\TransitionException;
 
 final class AbstractSTTTest extends TestBase
@@ -129,5 +133,52 @@ final class AbstractSTTTest extends TestBase
         // Not configured
         $this->ord->setState('checked');
         self::assertFalse($stt->canSave($this->ord));
+    }
+
+    public function testCreateNewNoInitEntityInterface(): void
+    {
+        $registry = Mockery::mock(EntityRegistry::class);
+        $registry->allows('getEntityByHigh')->with('ord')->andReturn(Order::class);
+        $stt = new OrderSTT();
+        $stt->setEntityRegistry($registry);
+        self::assertEquals(new Order(), $stt->createNew());
+    }
+
+    public function testCreateNewWithInitEntityInterface(): void
+    {
+        $registry = Mockery::mock(EntityRegistry::class);
+        $registry->allows('getEntityByHigh')->with('ord')->andReturn(Order::class);
+        $stt = new Class extends AbstractSTT implements InitEntityInterface {
+            public static function getHigh() {
+                return 'ord';
+            }
+
+            public static function initCode(Order $ord): void
+            {
+                $ord->code = 'xx1234xx';
+            }
+
+            public static function setState(Order $ord): void
+            {
+                $ord->setState('closed');
+            }
+
+            public function initSteps(): array {
+                return [
+                    [self::class, 'initCode'],
+                    [self::class, 'setState'],
+                ];
+            }
+
+            protected function steps(): array {
+                return [];
+            }
+        };
+        $stt->setEntityRegistry($registry);
+
+        $exp = new Order();
+        $exp->code = 'xx1234xx';
+        $exp->setState('closed');
+        self::assertEquals($exp, $stt->createNew());
     }
 }
