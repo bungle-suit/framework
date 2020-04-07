@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Bungle\Framework\Tests\StateMachine;
 
 use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
-use Bungle\Framework\StateMachine\STT\AbstractSTT;
 use Bungle\Framework\StateMachine\MarkingStore\StatefulInterfaceMarkingStore;
+use Bungle\Framework\StateMachine\STT\AbstractSTT;
 use Bungle\Framework\StateMachine\STTLocator\STTLocatorInterface;
 use Bungle\Framework\StateMachine\SyncToDBInterface;
 use Bungle\Framework\StateMachine\Vina;
@@ -222,6 +222,20 @@ final class VinaTest extends MockeryTestCase
 
         $ord->setState('checked');
         self::assertFalse($vina->canSave($ord));
+    }
+
+    public function testCreateNew(): void
+    {
+        /** @var Vina $vina */
+        /** @var STTLocatorInterface|Mockery\MockInterface $sttLocator */
+        list($vina, , , , $sttLocator) = $this->createVina();
+
+        $stt = Mockery::mock(AbstractSTT::class, StatefulInterface::class);
+        $sttLocator->expects('getSTTForClass')
+            ->with(Order::class)->andReturn($stt);
+        $ord = new Order();
+        $stt->expects('createNew')->with()->andReturn($ord);
+        self::assertSame($ord, $vina->createNew(Order::class));
     }
 
     private static function createOrderWorkflow(EventDispatcher $dispatcher): StateMachine

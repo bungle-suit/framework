@@ -196,4 +196,13 @@ class Vina
 
         return boolval($this->getPossibleTransitions($subject));
     }
+
+    /**
+     * Create new instance of specific entity class.
+     */
+    public function createNew(string $entityClass): StatefulInterface
+    {
+        $stt = $this->sttLocator->getSTTForClass($entityClass);
+        return $stt->createNew();
+    }
 }
