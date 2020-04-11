@@ -118,7 +118,56 @@ class FP
      */
     public static function constant($v): callable
     {
-        return fn () => $v;
+        return fn() => $v;
+    }
+
+    /**
+     * Call init function to init variable if not set.
+     * @param $fIsUninitialized callback accept the value to tell the value is unintialized, by default
+     * use `isEmpty().
+     *
+     * @return mixed returns &v
+     */
+    public static function initVariable(&$v, callable $fInit, callable $fIsUninitialized = null)
+    {
+        if ($fIsUninitialized === null ? empty($v) : $fIsUninitialized($v)) {
+            $v = $fInit();
+        }
+        return $v;
+    }
+
+    /**
+     * If property not initialized, call $fInit to init the property.
+     *
+     * @param callable $fIsUninitialized test does the property initialized.
+     *
+     * If the property not set (isset() returns false), always init the property, ignores $fIsUninitialized.
+     *
+     * @return mixed the property value
+     */
+    public static function initProperty(object $o, string $property, callable $fInit, callable $fIsUninitialized = null)
+    {
+        if (!isset($o->$property) || ($fIsUninitialized !== null && $fIsUninitialized($o->$property))) {
+            $o->$property = $fInit();
+        }
+        return $o->$property;
+    }
+
+    /**
+     * If array item at specific $idx not initialized, call $fInit to init the array item.
+     *
+     * @param callable $fIsUninitialized test does the array item initialized.
+     *
+     * If the property not set (isset() returns false), always init the property, ignores $fIsUninitialized.
+     *
+     * @return mixed the array item value.
+     */
+    public static function initArrayItem(array &$arr, $idx, callable $fInit, callable $fIsUninitialized = null)
+    {
+        if (!isset($arr[$idx]) || ($fIsUninitialized !== null && $fIsUninitialized($arr[$idx]))) {
+            $arr[$idx] = $fInit();
+        }
+        return $arr[$idx] = $fInit();
     }
 }
 

@@ -89,4 +89,44 @@ class FPTest extends TestCase
         $foo = FP::constant('foo');
         self::assertEquals('foo', $foo());
     }
+
+    public function testInitVariable(): void
+    {
+        $a = 'foo';
+        self::assertEquals('foo', FP::initVariable($a, FP::constant(0)));
+        self::assertEquals('foo', $a);
+
+        $a = '';
+        self::assertEquals('foo', FP::initVariable($a, FP::constant('foo')));
+        self::assertEquals('foo', $a);
+
+        $a = 'foo';
+        self::assertEquals('bar', FP::initVariable($a, FP::constant('bar'), fn ($v) => $v === 'foo'));
+    }
+
+    public function testInitProperty(): void
+    {
+        $o = (object)[];
+        self::assertEquals('foo', FP::initProperty($o, 'a', FP::constant('foo')));
+        self::assertEquals('foo', $o->a);
+        self::assertEquals('foo', FP::initProperty($o, 'a', FP::constant('foo')));
+        self::assertEquals('foo', $o->a);
+
+        self::assertEquals('bar', FP::initProperty($o, 'a', FP::constant('bar'), fn ($v) => $v === 'foo'));
+        self::assertEquals('bar', $o->a);
+
+        // Ignore fIsUninitialized if the property is unset.
+        self::assertEquals('blah', FP::initProperty($o, 'b', FP::constant('blah'), fn ($v) => $v === 'foo'));
+    }
+
+    public function testInitArrayItem(): void
+    {
+        $arr = [];
+        self::assertEquals('foo', FP::initArrayItem($arr, 3, FP::constant('foo')));
+        self::assertEquals('foo', $arr[3]);
+
+        self::assertEquals('bar', FP::initArrayItem($arr, 'a', FP::constant('bar'), fn ($v) => $v === 'foo'));
+        self::assertEquals(345, FP::initArrayItem($arr, 'a', FP::constant(345), fn ($v) => $v === 'bar'));
+        self::assertEquals('345', $arr['a']);
+    }
 }
