@@ -70,4 +70,23 @@ class FPTest extends TestCase
         self::assertTrue(FP::isEmpty([]));
         self::assertFalse(FP::isEmpty([1]));
     }
+
+    public function testIdentity(): void
+    {
+        self::assertEquals(3, FP::identity(3));
+    }
+
+    public function testZero(): void
+    {
+        self::assertEquals(0, FP::zero());
+    }
+
+    public function testConstant(): void
+    {
+        $one = FP::constant(1);
+        self::assertEquals(1, $one());
+
+        $foo = FP::constant('foo');
+        self::assertEquals('foo', $foo());
+    }
 }

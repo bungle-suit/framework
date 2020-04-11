@@ -92,5 +92,33 @@ class FP
         }
         return true;
     }
+
+    /**
+     * Function that returns argument.
+     *
+     * @param mixed $v
+     * @returns mixed
+     */
+    public static function identity($v)
+    {
+        return $v;
+    }
+
+    /**
+     * Function always returns zero
+     */
+    public static function zero(): int
+    {
+        return 0;
+    }
+
+    /**
+     * Returns function that always returns specific value.
+     * @param mixed $v
+     */
+    public static function constant($v): callable
+    {
+        return fn () => $v;
+    }
 }
 
