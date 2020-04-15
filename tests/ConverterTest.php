@@ -1,20 +1,18 @@
 <?php
 declare(strict_types=1);
 
-namespace Bungle\Framework\Tests\Twig;
+namespace Bungle\Framework\Tests;
 
-use AssertionError;
-use Bungle\Framework\Twig\BungleTwigExtension;
+use Bungle\Framework\Converter;
 use DateTime;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 
-class BungleTwigExtensionTest extends TestCase
+class ConverterTest extends TestCase
 {
     public function testFormat()
     {
-        $f = self::getFilterFunc('bungle_format');
-        $f = fn ($v) => call_user_func($f, $v);
+        $f = [Converter::class, 'format'];
 
         // null
         self::assertEquals('', $f(null));
@@ -42,13 +40,4 @@ class BungleTwigExtensionTest extends TestCase
         self::assertEquals('100', $f(100));
     }
 
-    private static function getFilterFunc(string $name): Callable {
-        $ext = new BungleTwigExtension();
-        foreach ($ext->getFilters() as $filter) {
-            if ($filter->getName() == $name) {
-                return $filter->getCallable();
-            }
-        }
-        throw new AssertionError("$name filter not found");
-    }
 }
