@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\IDName;
 
+use Bungle\Framework\FP;
 use Bungle\Framework\IDName\AbstractIDNameTranslator;
 use LogicException;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -10,10 +11,15 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 class AbstractIDNameTranslatorTest extends MockeryTestCase
 {
-    public function testIdToName()
+    private ArrayAdapter $cache;
+    private AbstractIDNameTranslator $idName;
+
+    protected function setUp(): void
     {
-        $cache = new ArrayAdapter();
-        $idName = new class($cache) extends AbstractIDNameTranslator {
+        parent::setUp();
+
+        $this->cache = new ArrayAdapter();
+        $this->idName = new class('usr', $this->cache) extends AbstractIDNameTranslator {
             public array $callTimes = [];
 
             protected function doIdToName($id): string
@@ -29,11 +35,22 @@ class AbstractIDNameTranslatorTest extends MockeryTestCase
                 throw new LogicException('failed to get name');
             }
         };
-        self::assertEquals('bar', $idName->idToName('foo'));
-        self::assertEquals('bar', $idName->idToName('foo'));
-        self::assertEquals(1, $idName->callTimes['foo']);
+    }
 
-        self::assertEquals('Thirty three', $idName->idToName(33));
-        self::assertEquals('', $idName->idToName('empty'));
+    public function testIdToName()
+    {
+        self::assertEquals('bar', $this->idName->idToName('foo'));
+        self::assertEquals('bar', $this->idName->idToName('foo'));
+        self::assertEquals(1, $this->idName->callTimes['foo']);
+        self::assertEquals('bar', $this->cache->get($this->idName->getCacheKey('foo'), [FP::class, 'identity']));
+
+        self::assertEquals('Thirty three', $this->idName->idToName(33));
+        self::assertEquals('', $this->idName->idToName('empty'));
+    }
+
+    public function testGetCacheKey(): void
+    {
+        self::assertEquals('IdName-usr-1', $this->idName->getCacheKey(1));
+        self::assertEquals('IdName-usr-foo', $this->idName->getCacheKey('foo'));
     }
 }

@@ -10,13 +10,16 @@ use Symfony\Contracts\Cache\ItemInterface;
 abstract class AbstractIDNameTranslator
 {
     private CacheInterface $cache;
+    private string $high;
 
     /**
      * AbstractIDNameTranslator constructor.
+     * @param string $high Part of cache key, such as entity high prefix.
      */
-    public function __construct(CacheInterface $cache)
+    public function __construct(string $high, CacheInterface $cache)
     {
         $this->cache = $cache;
+        $this->high = $high;
     }
 
     /**
@@ -26,10 +29,18 @@ abstract class AbstractIDNameTranslator
      */
     public function idToName($id): string
     {
-        return $this->cache->get('IdName-'.$id, function (ItemInterface $item) use($id) {
+        return $this->cache->get($this->getCacheKey($id), function (ItemInterface $item) use($id) {
             $item->expiresAfter(new DateInterval('PT10M'));
             return $this->doIdToName($id);
         });
+    }
+
+    /**
+     * @param int|string $id
+     */
+    public function getCacheKey($id): string
+    {
+        return "IdName-{$this->high}-$id";
     }
 
     /**
