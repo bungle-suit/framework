@@ -2,15 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Bungle\Framework\Tests\Traits;
+namespace Bungle\Framework\Tests\Model;
 
+use Bungle\Framework\Model\HasAttributes;
 use PHPUnit\Framework\TestCase;
 
-final class AttributesTest extends TestCase
+final class HasAttributesTest extends TestCase
 {
     public function test(): void
     {
-        $ctx = new TestContext();
+        $ctx = new class {
+            use HasAttributes;
+        };
         self::assertEmpty($ctx->all());
 
         self::assertFalse($ctx->has('foo'));
@@ -29,14 +32,16 @@ final class AttributesTest extends TestCase
         self::assertNull($ctx->get('bar', 11));
 
         $this->assertEquals([
-        'foo' => 'bar',
-        'bar' => null,
+            'foo' => 'bar',
+            'bar' => null,
         ], $ctx->all());
     }
 
     public function testRemove(): void
     {
-        $ctx = new TestContext();
+        $ctx = new class {
+            use HasAttributes;
+        };
         $ctx->remove('foo');
 
         $ctx->set('foo', 3);
@@ -48,7 +53,7 @@ final class AttributesTest extends TestCase
         $ctx->remove('foo');
 
         $this->assertEquals([
-        'bar' => 4,
+            'bar' => 4,
         ], $ctx->all());
     }
 }

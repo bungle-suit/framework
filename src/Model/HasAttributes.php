@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Bungle\Framework\Traits;
+namespace Bungle\Framework\Model;
 
 /**
  * Attributes mixin add get/set attribute methods.

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\StateMachine;
 
-use Bungle\Framework\Traits\HasAttributes;
-use Bungle\Framework\Traits\HasAttributesInterface;
+use Bungle\Framework\Model\HasAttributes;
+use Bungle\Framework\Model\HasAttributesInterface;
 
 /**
  * Context for save steps.
