@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Bungle\Framework\Inquiry;
+namespace Bungle\Framework\Ent\Inquiry;
 
 use Bungle\Framework\Traits\Attributes;
 use Bungle\Framework\Traits\HasAttributesInterface;

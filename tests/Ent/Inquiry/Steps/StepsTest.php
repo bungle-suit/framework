@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Bungle\Framework\Tests\Inquiry\Steps;
+namespace Bungle\Framework\Tests\Ent\Inquiry\Steps;
 
-use Bungle\Framework\Inquiry\QueryParams;
-use Bungle\Framework\Inquiry\Steps\Steps;
+use Bungle\Framework\Ent\Inquiry\QueryParams;
+use Bungle\Framework\Ent\Inquiry\Steps\Steps;
 use MongoDB\BSON\Regex;
 
 class StepsTest extends BaseStepTest

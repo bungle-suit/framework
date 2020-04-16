@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Bungle\Framework\Tests\Inquiry;
+namespace Bungle\Framework\Tests\Ent\Inquiry;
 
 class OrderQBE
 {

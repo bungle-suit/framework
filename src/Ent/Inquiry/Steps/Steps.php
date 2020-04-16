@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Bungle\Framework\Inquiry\Steps;
+namespace Bungle\Framework\Ent\Inquiry\Steps;
 
-use Bungle\Framework\Inquiry\QueryParams;
-use Bungle\Framework\Inquiry\StepContext;
+use Bungle\Framework\Ent\Inquiry\QueryParams;
+use Bungle\Framework\Ent\Inquiry\StepContext;
 use MongoDB\BSON\Regex;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 

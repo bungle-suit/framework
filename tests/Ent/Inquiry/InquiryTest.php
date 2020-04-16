@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Bungle\Framework\Tests\Inquiry;
+namespace Bungle\Framework\Tests\Ent\Inquiry;
 
-use Bungle\Framework\Inquiry\ArrayQueryBuilder;
-use Bungle\Framework\Inquiry\Inquiry;
-use Bungle\Framework\Inquiry\PagedData;
-use Bungle\Framework\Inquiry\QueryParams;
-use Bungle\Framework\Inquiry\StepContext;
+use Bungle\Framework\Ent\Inquiry\ArrayQueryBuilder;
+use Bungle\Framework\Ent\Inquiry\Inquiry;
+use Bungle\Framework\Ent\Inquiry\PagedData;
+use Bungle\Framework\Ent\Inquiry\QueryParams;
+use Bungle\Framework\Ent\Inquiry\StepContext;
 use Bungle\Framework\Tests\DBTestable;
 use MongoDB\Collection;
 use PHPUnit\Framework\TestCase;

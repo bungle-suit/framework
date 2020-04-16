@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Bungle\Framework\Tests\Inquiry\Steps;
+namespace Bungle\Framework\Tests\Ent\Inquiry\Steps;
 
-use Bungle\Framework\Inquiry\QueryParams;
-use Bungle\Framework\Inquiry\StepContext;
-use Bungle\Framework\Tests\Inquiry\Order;
+use Bungle\Framework\Ent\Inquiry\QueryParams;
+use Bungle\Framework\Ent\Inquiry\StepContext;
+use Bungle\Framework\Tests\Ent\Inquiry\Order;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

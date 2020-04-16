@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Bungle\Framework\Inquiry;
+namespace Bungle\Framework\Ent\Inquiry;
 
 /**
  * Parameters of current query, such as QBE values.
