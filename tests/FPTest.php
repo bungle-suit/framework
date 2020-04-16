@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests;
 
+use ArrayIterator;
 use Bungle\Framework\FP;
 use PHPUnit\Framework\TestCase;
 
@@ -11,14 +12,15 @@ class FPTest extends TestCase
     public function testAttr()
     {
         $f = FP::attr('name');
-        $o = (object)['id'=>1,'name'=>'foo'];
+        $o = (object)['id' => 1, 'name' => 'foo'];
         self::assertEquals('foo', $f($o));
     }
 
     public function testGetter(): void
     {
         $o = new class {
-            public function getName() {
+            public function getName()
+            {
                 return 'bar';
             }
         };
@@ -44,7 +46,7 @@ class FPTest extends TestCase
         self::assertEquals([
             0 => [0, 2, 4, 6, 8, 10],
             1 => [1, 3, 5, 7, 9],
-        ], FP::group(fn (int $v) => $v % 2, $arr));
+        ], FP::group(fn(int $v) => $v % 2, $arr));
     }
 
     public function testAny(): void
@@ -52,8 +54,8 @@ class FPTest extends TestCase
         // empty always return false
         self::assertFalse(FP::any(FP::t(), []));
 
-        self::assertTrue(FP::any(fn (int $v) => $v % 2 === 0, [1, 3, 6, 9]));
-        self::assertFalse(FP::any(fn (int $v) => $v % 2 === 0, [1, 9, 111]));
+        self::assertTrue(FP::any(fn(int $v) => $v % 2 === 0, [1, 3, 6, 9]));
+        self::assertFalse(FP::any(fn(int $v) => $v % 2 === 0, [1, 9, 111]));
     }
 
     public function testAll(): void
@@ -61,8 +63,8 @@ class FPTest extends TestCase
         // empty always return true
         self::assertTrue(FP::all(FP::f(), []));
 
-        self::assertFalse(FP::all(fn (int $v) => $v % 2 === 0, [1, 3, 6, 9]));
-        self::assertTrue(FP::all(fn (int $v) => $v % 2 === 1, [1, 9, 111]));
+        self::assertFalse(FP::all(fn(int $v) => $v % 2 === 0, [1, 3, 6, 9]));
+        self::assertTrue(FP::all(fn(int $v) => $v % 2 === 1, [1, 9, 111]));
     }
 
     public function testIsEmpty(): void
@@ -101,7 +103,7 @@ class FPTest extends TestCase
         self::assertEquals('foo', $a);
 
         $a = 'foo';
-        self::assertEquals('bar', FP::initVariable($a, FP::constant('bar'), fn ($v) => $v === 'foo'));
+        self::assertEquals('bar', FP::initVariable($a, FP::constant('bar'), fn($v) => $v === 'foo'));
     }
 
     public function testInitProperty(): void
@@ -112,11 +114,11 @@ class FPTest extends TestCase
         self::assertEquals('foo', FP::initProperty($o, 'a', FP::constant('foo')));
         self::assertEquals('foo', $o->a);
 
-        self::assertEquals('bar', FP::initProperty($o, 'a', FP::constant('bar'), fn ($v) => $v === 'foo'));
+        self::assertEquals('bar', FP::initProperty($o, 'a', FP::constant('bar'), fn($v) => $v === 'foo'));
         self::assertEquals('bar', $o->a);
 
         // Ignore fIsUninitialized if the property is unset.
-        self::assertEquals('blah', FP::initProperty($o, 'b', FP::constant('blah'), fn ($v) => $v === 'foo'));
+        self::assertEquals('blah', FP::initProperty($o, 'b', FP::constant('blah'), fn($v) => $v === 'foo'));
     }
 
     public function testInitArrayItem(): void
@@ -125,8 +127,55 @@ class FPTest extends TestCase
         self::assertEquals('foo', FP::initArrayItem($arr, 3, FP::constant('foo')));
         self::assertEquals('foo', $arr[3]);
 
-        self::assertEquals('bar', FP::initArrayItem($arr, 'a', FP::constant('bar'), fn ($v) => $v === 'foo'));
-        self::assertEquals(345, FP::initArrayItem($arr, 'a', FP::constant(345), fn ($v) => $v === 'bar'));
+        self::assertEquals('bar', FP::initArrayItem($arr, 'a', FP::constant('bar'), fn($v) => $v === 'foo'));
+        self::assertEquals(345, FP::initArrayItem($arr, 'a', FP::constant(345), fn($v) => $v === 'bar'));
         self::assertEquals('345', $arr['a']);
+    }
+
+    public function testToKeyed(): void
+    {
+        self::assertEquals([], FP::toKeyed(fn($v) => $v, []));
+
+        $arr = [['foo', 1], ['bar', 2]];
+        self::assertEquals([
+            'foo' => ['foo', 1],
+            'bar' => ['bar', 2],
+        ], FP::toKeyed(fn($v) => $v[0], $arr));
+    }
+
+    public function testGetOrCreate(): void
+    {
+        $arr = [];
+        $f = fn(int $k) => (string)$k;
+        self::assertEquals('3', FP::getOrCreate($arr, 3, $f));
+        self::assertEquals([3 => '3'], $arr);
+        self::assertEquals('3', FP::getOrCreate($arr, 3, $f));
+        self::assertEquals([3 => '3'], $arr);
+    }
+
+    public function testFirstIterator(): void
+    {
+        $emptyIter = new ArrayIterator([]);
+        self::assertNull(FP::first(FP::t(), $emptyIter));
+        self::assertEquals(33, FP::first(FP::t(), $emptyIter, 33));
+        self::assertEquals(4,
+            FP::first(
+                fn($v) => $v === 4,
+                new ArrayIterator(range(1, 10))
+            )
+        );
+        self::assertNull(FP::first(FP::f(), range(1, 10)));
+    }
+
+    public function testFirstArray(): void
+    {
+        self::assertNull(FP::first(FP::t(), []));
+        self::assertEquals(33, FP::first(FP::t(), [], 33));
+        self::assertEquals(4,
+            FP::first(
+                fn($v) => $v === 4,
+                range(1, 10)
+            )
+        );
     }
 }
