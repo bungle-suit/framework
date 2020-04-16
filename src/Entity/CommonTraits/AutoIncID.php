@@ -18,7 +18,7 @@ trait AutoIncID
      *
      * @ODM\Id(strategy="INCREMENT", type="int")
      */
-    protected ?int $id = null;
+    protected int $id = 0;
 
     public function getId(): int
     {
