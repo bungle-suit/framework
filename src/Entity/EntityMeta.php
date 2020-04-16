@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Entity;
 
-use Bungle\Framework\Exception\Exceptions;
+use Bungle\Framework\Exceptions;
 
 class EntityMeta
 {

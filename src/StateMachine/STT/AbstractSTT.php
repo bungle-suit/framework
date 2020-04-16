@@ -6,7 +6,7 @@ namespace Bungle\Framework\StateMachine\STT;
 
 use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
 use Bungle\Framework\Entity\EntityRegistry;
-use Bungle\Framework\Exception\Exceptions;
+use Bungle\Framework\Exceptions;
 use Bungle\Framework\StateMachine\SaveStepContext;
 use Bungle\Framework\StateMachine\StepContext;
 use Doctrine\Common\Annotations\Annotation\Required;

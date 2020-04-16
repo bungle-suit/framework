@@ -6,7 +6,7 @@ namespace Bungle\Framework\Tests\Entity;
 
 use Bungle\Framework\Entity\EntityMeta;
 use Bungle\Framework\Entity\EntityPropertyMeta;
-use Bungle\Framework\Exception\Exceptions;
+use Bungle\Framework\Exceptions;
 use PHPUnit\Framework\TestCase;
 
 final class EntityMetaTest extends TestCase
@@ -20,8 +20,8 @@ final class EntityMetaTest extends TestCase
     public function testGetProperty(): void
     {
         $meta = new EntityMeta(self::class, 'foobar', [
-        $p1 = new EntityPropertyMeta('id', 'ID', 'int'),
-        $p2 = new EntityPropertyMeta('name', 'Name', 'string'),
+            $p1 = new EntityPropertyMeta('id', 'ID'),
+            $p2 = new EntityPropertyMeta('name', 'Name'),
         ]);
 
         self::assertSame($p1, $meta->getProperty('id'));

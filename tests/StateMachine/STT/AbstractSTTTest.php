@@ -1,11 +1,11 @@
-<?php
+<?php /** @noinspection PhpParamsInspection */
 
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\StateMachine\STT;
 
 use Bungle\Framework\Entity\EntityRegistry;
-use Bungle\Framework\Exception\Exceptions;
+use Bungle\Framework\Exceptions;
 use Bungle\Framework\StateMachine\STT\AbstractSTT;
 use Bungle\Framework\StateMachine\STT\InitEntityInterface;
 use Bungle\Framework\Tests\StateMachine\Entity\Order;

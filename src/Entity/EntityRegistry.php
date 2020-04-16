@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Bungle\Framework\Entity;
 
 use Bungle\Framework\Collection\CollectionUtil;
-use Bungle\Framework\Exception\Exceptions;
+use Bungle\Framework\Exceptions;
+use function in_array;
 
 class EntityRegistry
 {
@@ -41,7 +42,7 @@ class EntityRegistry
         }
 
         if (!($r = array_search($clsName, $this->highClsMap))) {
-            if (!\in_array($clsName, $this->entities)) {
+            if (!in_array($clsName, $this->entities)) {
                 return '';
             }
         }

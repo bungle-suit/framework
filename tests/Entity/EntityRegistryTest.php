@@ -9,7 +9,7 @@ use Bungle\Framework\Entity\ArrayEntityMetaResolver;
 use Bungle\Framework\Entity\ArrayHighResolver;
 use Bungle\Framework\Entity\EntityMeta;
 use Bungle\Framework\Entity\EntityRegistry;
-use Bungle\Framework\Exception\Exceptions;
+use Bungle\Framework\Exceptions;
 use PHPUnit\Framework\TestCase;
 
 final class EntityRegistryTest extends TestCase
