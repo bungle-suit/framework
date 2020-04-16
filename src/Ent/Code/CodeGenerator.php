@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Bungle\Framework\Code;
+namespace Bungle\Framework\Ent\Code;
 
 use DateTimeInterface;
 use Doctrine\ODM\MongoDB\DocumentManager;

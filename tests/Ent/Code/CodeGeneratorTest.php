@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Bungle\Framework\Tests\Code;
+namespace Bungle\Framework\Tests\Ent\Code;
 
-use Bungle\Framework\Code\CodeGenerator;
+use Bungle\Framework\Ent\Code\CodeGenerator;
 use Bungle\Framework\Tests\DBTestable;
 use DateTime;
 use PHPUnit\Framework\TestCase;
