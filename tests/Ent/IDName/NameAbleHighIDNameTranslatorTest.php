@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Bungle\Framework\Tests\IDName;
+namespace Bungle\Framework\Tests\Ent\IDName;
 
+use Bungle\Framework\Ent\IDName\NameAbleHighIDNameTranslator;
 use Bungle\Framework\Entity\CommonTraits\NameAble;
 use Bungle\Framework\Entity\CommonTraits\NameAbleInterface;
-use Bungle\Framework\IDName\NameAbleHighIDNameTranslator;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;

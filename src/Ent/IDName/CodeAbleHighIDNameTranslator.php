@@ -1,18 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Bungle\Framework\IDName;
+namespace Bungle\Framework\Ent\IDName;
 
-use Bungle\Framework\Entity\CommonTraits\NameAbleInterface;
+use Bungle\Framework\Entity\CommonTraits\CodeAbleInterface;
 use Doctrine\ODM\MongoDB\DocumentManager;
 
-/**
- * If entity class implement NameAbleInterface, use name field as name.
- *
- * BungleBundle registered this translator by lower priority, create your
- * Translator with normal priority override it.
- */
-class NameAbleHighIDNameTranslator implements HighIDNameTranslatorInterface
+class CodeAbleHighIDNameTranslator implements HighIDNameTranslatorInterface
 {
     private DocumentManager $dm;
 
@@ -24,14 +18,14 @@ class NameAbleHighIDNameTranslator implements HighIDNameTranslatorInterface
     public function supports(string $high, string $entityClass, $id): bool
     {
         $interfaces = class_implements($entityClass);
-        return $interfaces !== false && in_array(NameAbleInterface::class, $interfaces);
+        return $interfaces !== false && in_array(CodeAbleInterface::class, $interfaces);
     }
 
     public function translate(string $high, string $entityClass, $id): string
     {
         $qb = $this->dm
             ->createQueryBuilder($entityClass)
-            ->select(['name'])
+            ->select(['code'])
             ->readOnly(true)
             ->hydrate(false)
             ->field('_id')
@@ -39,7 +33,7 @@ class NameAbleHighIDNameTranslator implements HighIDNameTranslatorInterface
         $rs = $qb->getQuery()->getIterator();
 
         foreach ($rs as $rec) {
-            return $rec['name'];
+            return $rec['code'];
         }
         return strval($id);
     }

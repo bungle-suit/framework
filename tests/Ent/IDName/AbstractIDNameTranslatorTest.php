@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Bungle\Framework\Tests\IDName;
+namespace Bungle\Framework\Tests\Ent\IDName;
 
+use Bungle\Framework\Ent\IDName\AbstractIDNameTranslator;
 use Bungle\Framework\FP;
-use Bungle\Framework\IDName\AbstractIDNameTranslator;
 use LogicException;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;

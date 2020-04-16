@@ -2,10 +2,10 @@
 /** @noinspection PhpParamsInspection */
 declare(strict_types=1);
 
-namespace Bungle\Framework\Tests\IDName;
+namespace Bungle\Framework\Tests\Ent\IDName;
 
-use Bungle\Framework\IDName\HighIDNameTranslator;
-use Bungle\Framework\IDName\HighIDNameTranslatorChain;
+use Bungle\Framework\Ent\IDName\HighIDNameTranslator;
+use Bungle\Framework\Ent\IDName\HighIDNameTranslatorChain;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;

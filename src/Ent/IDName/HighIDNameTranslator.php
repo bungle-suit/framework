@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Bungle\Framework\IDName;
+namespace Bungle\Framework\Ent\IDName;
 
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Bungle\Framework\IDName;
+namespace Bungle\Framework\Ent\IDName;
 
 use DateInterval;
 use Symfony\Contracts\Cache\CacheInterface;

@@ -2,11 +2,11 @@
 /** @noinspection PhpParamsInspection */
 declare(strict_types=1);
 
-namespace Bungle\Framework\Tests\IDName;
+namespace Bungle\Framework\Tests\Ent\IDName;
 
+use Bungle\Framework\Ent\IDName\HighIDNameTranslatorChain;
+use Bungle\Framework\Ent\IDName\HighIDNameTranslatorInterface;
 use Bungle\Framework\Entity\EntityRegistry;
-use Bungle\Framework\IDName\HighIDNameTranslatorChain;
-use Bungle\Framework\IDName\HighIDNameTranslatorInterface;
 use Bungle\Framework\Tests\Entity\Order;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
