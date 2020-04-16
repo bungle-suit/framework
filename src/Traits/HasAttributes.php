@@ -9,9 +9,9 @@ namespace Bungle\Framework\Traits;
  *
  * Useful for context classes.
  */
-trait Attributes
+trait HasAttributes
 {
-    private $attributes = [];
+    private array $attributes = [];
 
     /**
      * Returns attribute value, returns default if not exist.

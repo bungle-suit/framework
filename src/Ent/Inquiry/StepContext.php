@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Ent\Inquiry;
 
-use Bungle\Framework\Traits\Attributes;
+use Bungle\Framework\Traits\HasAttributes;
 use Bungle\Framework\Traits\HasAttributesInterface;
 use Doctrine\ODM\MongoDB\Query\Builder;
 
@@ -13,7 +13,7 @@ use Doctrine\ODM\MongoDB\Query\Builder;
  */
 class StepContext implements HasAttributesInterface
 {
-    use Attributes;
+    use HasAttributes;
 
     private bool $buildForCount;
 

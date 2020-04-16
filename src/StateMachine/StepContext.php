@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\StateMachine;
 
-use Bungle\Framework\Traits\Attributes;
+use Bungle\Framework\Traits\HasAttributes;
 use Bungle\Framework\Traits\HasAttributesInterface;
 use Symfony\Component\Workflow\Transition;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 final class StepContext implements HasAttributesInterface
 {
-    use Attributes;
+    use HasAttributes;
 
     private $transition;
     private $workflow;
