@@ -16,7 +16,7 @@ class HighIDNameTranslatorChainTest extends MockeryTestCase
     public function testTranslate()
     {
         $entityRegistry = Mockery::mock(EntityRegistry::class);
-        $entityRegistry->allows('getHigh')->with(Order::class)->andReturn('ord');
+        $entityRegistry->allows('getEntityByHigh')->with('ord')->andReturn(Order::class);
         $t1 = Mockery::mock(HighIDNameTranslatorInterface::class);
         $t2 = Mockery::mock(HighIDNameTranslatorInterface::class);
         $t1->expects('supports')->with('ord', Order::class, 123)->andReturn(true);
@@ -26,18 +26,18 @@ class HighIDNameTranslatorChainTest extends MockeryTestCase
         $t2->expects('translate')->with('ord', Order::class, 456)->andReturn('bar');
 
         $chain = new HighIDNameTranslatorChain($entityRegistry, [$t1, $t2]);
-        self::assertEquals('foo', $chain->translate(Order::class, 123));
-        self::assertEquals('bar', $chain->translate(Order::class, 456));
+        self::assertEquals('foo', $chain->translate('ord', 123));
+        self::assertEquals('bar', $chain->translate('ord', 456));
     }
 
     public function testNoSupportedTranslator(): void
     {
         $entityRegistry = Mockery::mock(EntityRegistry::class);
-        $entityRegistry->allows('getHigh')->with(Order::class)->andReturn('ord');
+        $entityRegistry->allows('getEntityByHigh')->with('ord')->andReturn(Order::class);
         $t1 = Mockery::mock(HighIDNameTranslatorInterface::class);
         $t1->allows('supports')->andReturn(false);
 
         $chain = new HighIDNameTranslatorChain($entityRegistry, [$t1]);
-        self::assertEquals('123', $chain->translate(Order::class, 123));
+        self::assertEquals('123', $chain->translate('ord', 123));
     }
 }

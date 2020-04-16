@@ -25,9 +25,9 @@ class HighIDNameTranslatorChain
     /**
      * @param int|string $id
      */
-    public function translate(string $entityClass, $id): string
+    public function translate(string $high, $id): string
     {
-        $high = $this->entityRegistry->getHigh($entityClass);
+        $entityClass = $this->entityRegistry->getEntityByHigh($high);
         foreach ($this->translators as $translator) {
             if ($translator->supports($high, $entityClass, $id)) {
                 return $translator->translate($high, $entityClass, $id);
