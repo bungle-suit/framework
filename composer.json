@@ -13,7 +13,8 @@
     "doctrine/mongodb-odm-bundle": "^4.1",
     "symfony/form": "^5.0",
     "symfony/yaml": "^5.0",
-    "symfony/validator": "^5.0"
+    "symfony/validator": "^5.0",
+    "ext-json": "*"
   },
   "autoload": {
     "psr-4": { "Bungle\\Framework\\": "src/" }
