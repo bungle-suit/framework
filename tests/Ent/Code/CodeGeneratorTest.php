@@ -40,6 +40,5 @@ class CodeGeneratorTest extends MockeryTestCase
 
         $g  = new CodeGenerator([$g1]);
         self::assertEquals('foo', $g->generate($o1));
-
     }
 }
