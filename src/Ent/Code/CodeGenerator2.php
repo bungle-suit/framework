@@ -11,7 +11,7 @@ use RangeException;
 /**
  * Service generate entity code, or helps to generate entity code.
  */
-class CodeGenerator
+class CodeGenerator2
 {
     public const ID_COLLECTION = 'bungle.code_gen';
 

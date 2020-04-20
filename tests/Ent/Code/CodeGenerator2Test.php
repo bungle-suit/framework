@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Ent\Code;
 
-use Bungle\Framework\Ent\Code\CodeGenerator;
+use Bungle\Framework\Ent\Code\CodeGenerator2;
 use Bungle\Framework\Tests\DBTestable;
 use DateTime;
 use PHPUnit\Framework\TestCase;
 use RangeException;
 
-class CodeGeneratorTest extends TestCase
+class CodeGenerator2Test extends TestCase
 {
     use DBTestable {
         setUp as baseSetup;
@@ -18,13 +18,13 @@ class CodeGeneratorTest extends TestCase
     protected function setUp(): void
     {
         $this->baseSetup();
-        $coll = $this->db->selectCollection(CodeGenerator::ID_COLLECTION);
+        $coll = $this->db->selectCollection(CodeGenerator2::ID_COLLECTION);
         $coll->drop();
     }
 
     public function testNextPrefixedCode()
     {
-        $gen = new CodeGenerator($this->dm);
+        $gen = new CodeGenerator2($this->dm);
         self::assertEquals('foo001', $gen->nextPrefixedCode('foo', 3));
         self::assertEquals('bar1', $gen->nextPrefixedCode('bar', 1));
         self::assertEquals('foo002', $gen->nextPrefixedCode('foo', 3));
@@ -33,8 +33,8 @@ class CodeGeneratorTest extends TestCase
 
     public function testNextPrefixedCodeOutOfRange(): void
     {
-        $gen = new CodeGenerator($this->dm);
-        for ($i = 0; $i < 9 ; $i++) {
+        $gen = new CodeGenerator2($this->dm);
+        for ($i = 0; $i < 9; $i++) {
             $gen->nextPrefixedCode('foo', 1);
         }
 
@@ -52,7 +52,7 @@ class CodeGeneratorTest extends TestCase
         ];
         foreach ($recs as $sd => $exp) {
             $d = new DateTime($sd);
-            self::assertEquals($exp, CodeGenerator::compactYearMonth($d));
+            self::assertEquals($exp, CodeGenerator2::compactYearMonth($d));
         }
     }
 }
