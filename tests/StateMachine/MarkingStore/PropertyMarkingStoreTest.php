@@ -5,18 +5,20 @@ declare(strict_types=1);
 namespace Bungle\Framework\Tests\StateMachine\MarkingStore;
 
 use Bungle\Framework\StateMachine\MarkingStore\PropertyMarkingStore;
+use LogicException;
 use PHPUnit\Framework\TestCase;
+use StdClass;
 use Symfony\Component\Workflow\Marking;
 
 final class PropertyMarkingStoreTest extends TestCase
 {
     private PropertyMarkingStore $store;
-    private \StdClass $obj;
+    private StdClass $obj;
 
     public function setUp(): void
     {
         $this->store = new PropertyMarkingStore('state');
-        $this->obj = new \StdClass();
+        $this->obj = new StdClass();
     }
 
     public function testGetMarking(): void
@@ -28,7 +30,8 @@ final class PropertyMarkingStoreTest extends TestCase
 
     public function testGetMarkingWrongProperty(): void
     {
-        self::expectException(\AssertionError::class);
+        self::expectException(LogicException::class);
+
         $this->obj->state = null;
         $this->store->getMarking($this->obj);
     }

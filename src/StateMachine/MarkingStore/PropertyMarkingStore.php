@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\StateMachine\MarkingStore;
 
+use LogicException;
 use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
 
@@ -28,11 +29,13 @@ class PropertyMarkingStore implements MarkingStoreInterface
     {
         $cur = $subject->{$this->property};
         if (!is_string($cur)) {
-            assert(false, sprintf(
-                "Workspace object '%s' state property '%s' should returns string",
-                \get_class($subject),
-                $this->property
-            ));
+            throw new LogicException(
+                sprintf(
+                    'Workspace object "%s" state property "%s" should returns string',
+                    get_class($subject),
+                    $this->property
+                )
+            );
         }
 
         return new Marking([$cur => 1]);

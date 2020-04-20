@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpParamsInspection */
 
 declare(strict_types=1);
 
@@ -108,7 +108,6 @@ final class VinaTest extends MockeryTestCase
         });
         $vina->applyTransition($ord, 'save', $attrs);
         self::assertEquals(1, $hit);
-
     }
 
     public function testApplyTransitionSyncToDB(): void
@@ -179,7 +178,7 @@ final class VinaTest extends MockeryTestCase
         /** @var Vina $vina */
         /** @var EventDispatcher $dispatcher */
         /** @var STTLocatorInterface|Mockery\MockInterface $sttLocator */
-        list($vina, , , ,$sttLocator) = $this->createVina(true);
+        list($vina, , , , $sttLocator) = $this->createVina(true);
         $ord = new Order();
         $attrs = ['foo' => 'bar'];
 

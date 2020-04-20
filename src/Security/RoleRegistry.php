@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\Security;
 
 use Bungle\Framework\FP;
+use LogicException;
 
 class RoleRegistry
 {
@@ -24,10 +25,9 @@ class RoleRegistry
 
     private function add(RoleDefinition $roleDef): void
     {
-        assert(
-            !self::roleExists($this->defs, $roleDef),
-            "Duplicate role name: {$roleDef->name()}"
-        );
+        if (self::roleExists($this->defs, $roleDef)) {
+            throw new LogicException("Duplicate role name: {$roleDef->name()}");
+        }
 
         $this->defs[] = $roleDef;
     }

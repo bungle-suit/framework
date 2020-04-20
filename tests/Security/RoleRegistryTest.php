@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Security;
 
-use AssertionError;
 use Bungle\Framework\Security\ArrayRoleDefinitionProvider;
 use Bungle\Framework\Security\RoleDefinition;
 use Bungle\Framework\Security\RoleRegistry;
+use LogicException;
 use PHPUnit\Framework\TestCase;
 
 final class RoleRegistryTest extends TestCase
@@ -44,8 +44,13 @@ final class RoleRegistryTest extends TestCase
      */
     public function testAddCheckDupName(RoleRegistry $reg): void
     {
-        $this->expectException(AssertionError::class);
-        $reg->adds([new RoleDefinition('ROLE_1_1', 'a', 'b', '')]);
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage("Duplicate role name: ROLE_1_1");
+
+        $reg->adds([
+            new RoleDefinition('ROLE_1_1', 'a', 'b', ''),
+            new RoleDefinition('ROLE_1_1', 'a', 'b', ''),
+        ]);
     }
 
     /**
