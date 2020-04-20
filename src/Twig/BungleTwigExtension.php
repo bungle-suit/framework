@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\Twig;
 
 use Bungle\Framework\Converter;
+use Bungle\Framework\Ent\IDName\HighIDNameTranslator;
 use Symfony\Component\Serializer\Encoder\JsonDecode;
 use Symfony\Component\Serializer\Encoder\JsonEncode;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
@@ -14,6 +15,13 @@ use Twig\TwigFilter;
 
 class BungleTwigExtension extends AbstractExtension
 {
+    private HighIDNameTranslator $highIDNameTranslator;
+
+    public function __construct(HighIDNameTranslator $highIDNameTranslator)
+    {
+        $this->highIDNameTranslator = $highIDNameTranslator;
+    }
+
     /**
      * @return TwigFilter[]
      */
@@ -26,6 +34,10 @@ class BungleTwigExtension extends AbstractExtension
                 self::class.'::odmEncodeJson',
                 ['is_safe' => ['js']]
             ),
+            new TwigFilter(
+                'id_name',
+                [$this, 'highIdName'],
+            )
         ];
     }
 
@@ -45,5 +57,15 @@ class BungleTwigExtension extends AbstractExtension
 
         $serializer = new Serializer($normalizers, $encoders);
         return $serializer->serialize($v, 'json');
+    }
+
+    /**
+     * Use HighIDNameTranslator convert id to name.
+     *
+     * @param int|string|null $v
+     */
+    public function highIdName($v, string $high): string
+    {
+        return $this->highIDNameTranslator->idToName($high, $v);
     }
 }

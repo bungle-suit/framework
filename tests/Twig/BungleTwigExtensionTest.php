@@ -1,19 +1,25 @@
 <?php
+/** @noinspection PhpParamsInspection */
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Twig;
 
 use AssertionError;
+use Bungle\Framework\Ent\IDName\HighIDNameTranslator;
 use Bungle\Framework\Twig\BungleTwigExtension;
-use PHPUnit\Framework\TestCase;
+use Mockery;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Twig\Node\Node;
 use Twig\TwigFilter;
 
-class BungleTwigExtensionTest extends TestCase
+class BungleTwigExtensionTest extends MockeryTestCase
 {
+    /** @var Mockery\MockInterface | Mockery\LegacyMockInterface | HighIDNameTranslator */
+    private $highIDNameTranslator;
+
     public function testFormat()
     {
-        $f = self::getFilterFunc('bungle_format');
+        $f = $this->getFilterFunc('bungle_format');
 
         // bool
         self::assertEquals('是', $f(true));
@@ -22,7 +28,7 @@ class BungleTwigExtensionTest extends TestCase
 
     public function testOdmEncodeJson(): void
     {
-        $filter = self::getFilter('odm_encode_json');
+        $filter = $this->getFilter('odm_encode_json');
         self::assertEquals(['js'], $filter->getSafe($this->createMock(Node::class)));
 
         $f = $filter->getCallable();
@@ -31,9 +37,20 @@ class BungleTwigExtensionTest extends TestCase
         self::assertEquals('[1,"汉字"]', BungleTwigExtension::odmEncodeJson([1, '汉字']));
     }
 
-    private static function getFilter(string $name): TwigFilter
+    public function testIDName(): void
     {
-        $ext = new BungleTwigExtension();
+        $filter = $this->getFilterFunc('id_name');
+        $this->highIDNameTranslator->expects('idToName')->with('ord', 33)->andReturn('foo');
+
+        self::assertEquals('foo', $filter(33, 'ord'));
+
+    }
+
+    private function getFilter(string $name): TwigFilter
+    {
+        $this->highIDNameTranslator = Mockery::mock(HighIDNameTranslator::class);
+        $ext = new BungleTwigExtension($this->highIDNameTranslator);
+
         foreach ($ext->getFilters() as $filter) {
             if ($filter->getName() == $name) {
                 return $filter;
@@ -42,8 +59,8 @@ class BungleTwigExtensionTest extends TestCase
         throw new AssertionError("$name filter not found");
     }
 
-    private static function getFilterFunc(string $name): callable
+    private function getFilterFunc(string $name): callable
     {
-        return self::getFilter($name)->getCallable();
+        return $this->getFilter($name)->getCallable();
     }
 }
