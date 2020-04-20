@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Ent\Code;
 
-use DateTimeInterface;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use MongoDB\Operation\FindOneAndUpdate;
 use RangeException;
@@ -63,29 +62,5 @@ class CodeGenerator2
             throw new RangeException("Max code reached: $r, n: $nchar");
         }
         return $r;
-    }
-
-    /**
-     * Returns compacted year month code:
-     *
-     * Year preserve two digits, such as '20' for '2020', month is one char:
-     * 123456789XYZ, X for 10, Y for 11, Z for 12.
-     */
-    public static function compactYearMonth(DateTimeInterface $d): string
-    {
-        $y = $d->format('y');
-        $m = $d->format('n');
-        switch ($m) {
-            case '10':
-                $m = 'X';
-                break;
-            case '11':
-                $m = 'Y';
-                break;
-            case '12':
-                $m = 'Z';
-                break;
-        }
-        return $y.$m;
     }
 }

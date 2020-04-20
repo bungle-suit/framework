@@ -5,7 +5,6 @@ namespace Bungle\Framework\Tests\Ent\Code;
 
 use Bungle\Framework\Ent\Code\CodeGenerator2;
 use Bungle\Framework\Tests\DBTestable;
-use DateTime;
 use PHPUnit\Framework\TestCase;
 use RangeException;
 
@@ -40,19 +39,5 @@ class CodeGenerator2Test extends TestCase
 
         $this->expectException(RangeException::class);
         $gen->nextPrefixedCode('foo', 1);
-    }
-
-    public function testCompactYearMonth(): void
-    {
-        $recs = [
-            '2019-01-02' => '191',
-            '2020-10-02' => '20X',
-            '2020-11-02' => '20Y',
-            '2020-12-02' => '20Z',
-        ];
-        foreach ($recs as $sd => $exp) {
-            $d = new DateTime($sd);
-            self::assertEquals($exp, CodeGenerator2::compactYearMonth($d));
-        }
     }
 }
