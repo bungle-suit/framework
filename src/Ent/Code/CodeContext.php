@@ -21,4 +21,12 @@ class CodeContext implements HasAttributesInterface
      * @var string[]
      */
     public array $sections = [];
+
+    /**
+     * Append $section to $sections
+     */
+    public function addSection(string $section): void
+    {
+        $this->sections[] = $section;
+    }
 }
