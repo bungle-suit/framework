@@ -18,29 +18,8 @@ use Symfony\Component\Workflow\Exception\TransitionException;
  *
  * Sub class must also implement STTInterface.
  *
- * TODO: remove fowling comment if Symfony/Flex implemented to auto
- * update config/services.yaml file.
- *
- * Recommend config/services.yaml to make STT services work:
- *
- *   # config/services.yml
- *   services:
- *       _defaults:
- *           autowire: true
- *
- *       _instanceof:
- *           Bungle\Framework\StateMachine\EventListener\AbstractSTT:
- *               tags: ['bungle.stt']
- *
- * Or use location based, maybe more applicable:
- *   # config/services.yml
- *   services:
- *       _defaults:
- *           autowire: true
- *
- *       App\STT\:
- *           resource: '../src/STT'
- *           tags: ['bungle.stt']
+ * Because of auto wiring, services implement STTInterface
+ * auto tagged with 'bungle.stt', and enabled.
  */
 abstract class AbstractSTT
 {
@@ -122,7 +101,8 @@ abstract class AbstractSTT
     /**
      * @Required
      */
-    public function setEntityRegistry(EntityRegistry $entityRegistry): void {
+    public function setEntityRegistry(EntityRegistry $entityRegistry): void
+    {
         $this->entityRegistry = $entityRegistry;
     }
 
@@ -171,5 +151,4 @@ abstract class AbstractSTT
         yield from $steps['saveActions'][$curState];
         yield from $steps['afterSave'] ?? [];
     }
-
 }
