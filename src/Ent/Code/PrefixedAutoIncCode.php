@@ -4,38 +4,42 @@ declare(strict_types=1);
 namespace Bungle\Framework\Ent\Code;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
+use LogicException;
 use MongoDB\Operation\FindOneAndUpdate;
 use RangeException;
 
 /**
- * Service generate entity code, or helps to generate entity code.
+ * Code Generate step use current $result as prefix, append
+ * with auto inc code, such as:
+ *
+ *      (new PrefixedAutoIncCode($dm, 3))(3);
+ *
+ * will return 'foo001' for the first time, then 'foo002' next time.
+ *
+ * Raise an Exception if current code is 'foo999'.
  */
-class CodeGenerator2
+class PrefixedAutoIncCode
 {
     public const ID_COLLECTION = 'bungle.code_gen';
-
-    /**
-     * @var DocumentManager
-     */
     private DocumentManager $dm;
+    private int $n;
 
-    public function __construct(DocumentManager $dm)
+    public function __construct(DocumentManager $dm, int $n)
     {
         $this->dm = $dm;
+        $this->n = $n;
     }
 
     /**
-     * Return auto-inced prefixed code, such as:
-     *
-     *     nextPrefixedCode('foo', 3);
-     *
-     * will return 'foo001' for the first time, then 'foo002' next time.
-     *
-     * Raise an Exception if current code is 'foo999'.
-     *
+     * Code generate step callback.
      */
-    public function nextPrefixedCode(string $prefix, int $nchar): string
+    public function __invoke(object $subject, CodeContext $ctx): void
     {
+        $prefix = $ctx->result;
+        if (!$prefix) {
+            throw new LogicException('PrefixedCodeAutoIncCode prefix/$result should not be empty');
+        }
+
         $db = $this->dm->getConfiguration()->getDefaultDB();
         $coll = $this->dm->getClient()->selectCollection($db, self::ID_COLLECTION);
         $query   = ['_id' => $prefix, 'current_id' => ['$exists' => true]];
@@ -57,10 +61,10 @@ class CodeGenerator2
             $result = ['current_id' => 1];
         }
 
-        $r = $prefix.sprintf("%0${nchar}d", $result['current_id']);
-        if (strlen($r) > strlen($prefix) + $nchar) {
-            throw new RangeException("Max code reached: $r, n: $nchar");
+        $r = $prefix.sprintf("%0{$this->n}d", $result['current_id']);
+        if (strlen($r) > strlen($prefix) + $this->n) {
+            throw new RangeException("Max code reached: $r, n: $this->n");
         }
-        return $r;
+        $ctx->result = $r;
     }
 }
