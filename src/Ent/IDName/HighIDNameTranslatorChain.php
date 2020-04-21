@@ -11,6 +11,7 @@ use Bungle\Framework\Entity\EntityRegistry;
 class HighIDNameTranslatorChain
 {
     private EntityRegistry $entityRegistry;
+    /** @var HighIDNameTranslatorInterface[]  */
     private array $translators;
 
     /**
@@ -35,5 +36,13 @@ class HighIDNameTranslatorChain
         }
 
         return strval($id);
+    }
+
+    /**
+     * @return HighIDNameTranslatorInterface[]
+     */
+    public function getTranslators(): array
+    {
+        return $this->translators;
     }
 }

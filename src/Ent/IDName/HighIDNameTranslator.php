@@ -54,7 +54,7 @@ class HighIDNameTranslator
 
         return $this->cache->get(
             $this->getCacheKey($high, $id),
-            fn (ItemInterface $item) => $this->translatorChain->translate($high, $id)
+            fn (ItemInterface $item) => $this->translatorChain->translate($high, $id),
         );
     }
 
@@ -64,5 +64,10 @@ class HighIDNameTranslator
     public function getCacheKey(string $high, $id): string
     {
         return "highIDName-$high-$id";
+    }
+
+    public function getTranslatorChain(): HighIDNameTranslatorChain
+    {
+        return $this->translatorChain;
     }
 }
