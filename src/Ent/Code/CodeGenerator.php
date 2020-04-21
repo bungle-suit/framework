@@ -7,6 +7,7 @@ use LogicException;
 
 class CodeGenerator
 {
+    /** @var GeneratorInterface[] */
     private array $generators;
 
     /**
@@ -30,5 +31,13 @@ class CodeGenerator
 
         $cls = get_class($entity);
         throw new LogicException("No code generator support class '$cls'");
+    }
+
+    /**
+     * @return GeneratorInterface[]
+     */
+    public function getGenerators()
+    {
+        return $this->generators;
     }
 }
