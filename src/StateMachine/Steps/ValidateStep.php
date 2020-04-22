@@ -32,7 +32,7 @@ class ValidateStep
 
         $act = $context->getTransitionName();
         $errors = $this->validator->validate($entity, null, ['Default', $act]);
-        if ( count($errors)) {
+        if (count($errors)) {
             return (string)$errors;
         }
         return null;
