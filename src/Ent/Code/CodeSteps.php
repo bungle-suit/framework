@@ -19,6 +19,7 @@ class CodeSteps
     /**
      * Year preserve two digits, such as '20' for '2020', month is one char:
      * 123456789XYZ, X for 10, Y for 11, Z for 12.
+     * @noinspection PhpUnusedParameterInspection
      */
     public static function compactYearMonth(object $subject, CodeContext $ctx, DateTimeInterface $d = null): void
     {
@@ -37,5 +38,13 @@ class CodeSteps
                 break;
         }
         $ctx->addSection($y.$m);
+    }
+
+    /**
+     * Returns step callable appends literal string section.
+     */
+    public static function literal(string $s): callable
+    {
+        return fn (object $subject, CodeContext $ctx) => $ctx->addSection($s);
     }
 }

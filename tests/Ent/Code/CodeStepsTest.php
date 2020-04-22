@@ -32,4 +32,15 @@ class CodeStepsTest extends TestCase
         $f($o, $ctx);
         self::assertNotEmpty($ctx->sections);
     }
+
+    public function testLiteral(): void
+    {
+        $s1 = CodeSteps::literal('Foo');
+        $s2 = CodeSteps::literal('Bar');
+        $ctx = new CodeContext();
+        $s1((object)[], $ctx);
+        $s2((object)[], $ctx);
+
+        self::assertEquals(['Foo', 'Bar'], $ctx->sections);
+    }
 }
