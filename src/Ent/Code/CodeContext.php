@@ -24,9 +24,13 @@ class CodeContext implements HasAttributesInterface
 
     /**
      * Append $section to $sections
+     *
+     * If $ignoreEmpty, section not added if $section is empty.
      */
-    public function addSection(string $section): void
+    public function addSection(string $section, bool $ignoreEmpty = false): void
     {
-        $this->sections[] = $section;
+        if (!$ignoreEmpty || $section !== '') {
+            $this->sections[] = $section;
+        }
     }
 }
