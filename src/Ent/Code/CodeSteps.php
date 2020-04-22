@@ -47,4 +47,12 @@ class CodeSteps
     {
         return fn (object $subject, CodeContext $ctx) => $ctx->addSection($s);
     }
+
+    /**
+     * Returns step callable join sections into result.
+     */
+    public static function join(string $sep): callable
+    {
+        return fn (object $subject, CodeContext $ctx) => $ctx->result = implode($sep, $ctx->sections);
+    }
 }

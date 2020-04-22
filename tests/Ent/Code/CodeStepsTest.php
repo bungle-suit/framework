@@ -43,4 +43,24 @@ class CodeStepsTest extends TestCase
 
         self::assertEquals(['Foo', 'Bar'], $ctx->sections);
     }
+
+    public function testJoin(): void
+    {
+        $ctx = new CodeContext();
+        $ctx->addSection('foo');
+        $ctx->addSection('bar');
+        $ctx->addSection('123');
+
+        $j = CodeSteps::join('');
+        $j((object)[], $ctx);
+        self::assertEquals('foobar123', $ctx->result);
+
+        // join always replace result, not append
+        $j((object)[], $ctx);
+        self::assertEquals('foobar123', $ctx->result);
+
+        $j = CodeSteps::join('-');
+        $j((object)[], $ctx);
+        self::assertEquals('foo-bar-123', $ctx->result);
+    }
 }
