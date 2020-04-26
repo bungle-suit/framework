@@ -81,8 +81,14 @@ final class LogicName
         foreach ($cls->getMethods(ReflectionMethod::IS_PUBLIC) as $m) {
             if (self::isGetter($m)) {
                 $annotation = $reader->getMethodAnnotation($m, LogicName::class);
-                $r[self::getPropertyNameFromGetter($m->getName())] = $annotation ? $annotation->value
-                    : self::getPropertyNameFromGetter($m->getName());
+                $propName = self::getPropertyNameFromGetter($m->getName());
+                if ($annotation === null) {
+                    if (!key_exists($propName, $r)) {
+                        $r[$propName] = $propName;
+                    }
+                } else {
+                    $r[$propName] = $annotation->value;
+                }
             }
         }
 

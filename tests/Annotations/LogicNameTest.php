@@ -68,20 +68,33 @@ final class LogicNameTest extends TestCase
     public function testResolveGetterNames(): void
     {
         $obj = new class() {
+            /** @LogicName("fooName") */
+            private string $foo = '';
+
             /**
              * @LogicName("blah")
              */
             public function getFoo(): string
             {
-                return '';
+                return $this->foo;
             }
 
+            /** @LogicName("barName") */
+            private string $bar = '';
+
             public function getBar(): string
+            {
+                return $this->bar;
+            }
+
+            public function getGetterOnly(): string
             {
                 return '';
             }
         };
 
-        self::assertEquals(['foo' => 'blah', 'bar' => 'bar'], LogicName::resolvePropertyNames(get_class($obj)));
+        self::assertEquals([
+            'foo' => 'blah', 'bar' => 'barName', 'getterOnly' => 'getterOnly',
+        ], LogicName::resolvePropertyNames(get_class($obj)));
     }
 }
