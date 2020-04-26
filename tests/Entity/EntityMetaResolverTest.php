@@ -33,9 +33,27 @@ final class EntityMetaResolverTest extends TestCase // phpcs:ignore
             Order::class,
             '订单',
             [
-              new EntityPropertyMeta('id', '编号'),
-              new EntityPropertyMeta('name', 'name'),
+                new EntityPropertyMeta('id', '编号'),
+                new EntityPropertyMeta('name', 'name'),
             ],
+        ), $meta);
+    }
+
+    public function testGetter(): void
+    {
+        $obj = new class {
+            public function getFoo(): int
+            {
+                return 0;
+            }
+        };
+
+        $resolver = new EntityMetaResolver();
+        $meta = $resolver->resolveEntityMeta(get_class($obj));
+        self::assertEquals(new EntityMeta(
+            get_class($obj),
+            $meta->name(),
+            [new EntityPropertyMeta('foo', 'foo')]
         ), $meta);
     }
 }
