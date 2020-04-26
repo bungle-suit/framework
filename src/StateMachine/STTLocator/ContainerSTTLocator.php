@@ -20,7 +20,7 @@ class ContainerSTTLocator implements STTLocatorInterface, ContainerAwareInterfac
 
         $words = explode('\\', $entityClass);
         $words[1] = 'STT';
-        $sttClass = implode('\\', $words).'Service';
+        $sttClass = implode('\\', $words).'STT';
         /** @var AbstractSTT $r */
         $r = $this->container->get($sttClass);
         return $r;

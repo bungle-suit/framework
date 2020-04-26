@@ -1,4 +1,5 @@
 <?php
+/** @noinspection PhpParamsInspection */
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\StateMachine\STTLocator;
@@ -22,11 +23,11 @@ class ContainerSTTLocatorTest extends MockeryTestCase
         $locator->setContainer($container);
         $container
             ->expects('get')
-            ->with('App\STT\GoodsService')
+            ->with('App\STT\GoodsSTT')
             ->andReturn($goodsStt = Mockery::mock(AbstractSTT::class));
         $container
             ->expects('get')
-            ->with('App\STT\Goods\OrderService')
+            ->with('App\STT\Goods\OrderSTT')
             ->andReturn($orderStt = Mockery::mock(AbstractSTT::class));
 
         self::assertEquals($goodsStt, $locator->getSTTForClass($entityGoods));
