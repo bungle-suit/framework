@@ -29,11 +29,11 @@ final class LogicNameTest extends TestCase
     {
         self::assertEquals(
             [
-              'id' => 'ID',
-              'count' => 'Counter',
-              'name' => 'name',
-              'includePrivate' => 'private_is_ok',
-              'includeProtected' => 'includeProtected',
+                'id' => 'ID',
+                'count' => 'Counter',
+                'name' => 'name',
+                'includePrivate' => 'private_is_ok',
+                'includeProtected' => 'includeProtected',
             ],
             LogicName::resolvePropertyNames(Entity::class),
         );
@@ -43,11 +43,11 @@ final class LogicNameTest extends TestCase
     {
         self::assertEquals(
             [
-              'id' => 'ID',
-              'count' => 'New Counter',
-              'name' => 'name',
-              'address' => '地址',
-              'includeProtected' => 'includeProtected',
+                'id' => 'ID',
+                'count' => 'New Counter',
+                'name' => 'name',
+                'address' => '地址',
+                'includeProtected' => 'includeProtected',
             ],
             LogicName::resolvePropertyNames(Derived::class)
         );
@@ -57,11 +57,31 @@ final class LogicNameTest extends TestCase
     {
         self::assertEquals(
             [
-            'count' => '数量',
-            'modifier' => '修改人',
-            'modifyTime' => '修改时间',
+                'count' => '数量',
+                'modifier' => '修改人',
+                'modifyTime' => '修改时间',
             ],
             LogicName::resolvePropertyNames(MixedTraits::class),
         );
+    }
+
+    public function testResolveGetterNames(): void
+    {
+        $obj = new class() {
+            /**
+             * @LogicName("blah")
+             */
+            public function getFoo(): string
+            {
+                return '';
+            }
+
+            public function getBar(): string
+            {
+                return '';
+            }
+        };
+
+        self::assertEquals(['foo' => 'blah', 'bar' => 'bar'], LogicName::resolvePropertyNames(get_class($obj)));
     }
 }

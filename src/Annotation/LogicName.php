@@ -8,12 +8,15 @@ use Doctrine\Common\Annotations\Annotation;
 use Doctrine\Common\Annotations\Annotation\Required;
 use Doctrine\Common\Annotations\Annotation\Target;
 use Doctrine\Common\Annotations\AnnotationReader;
+use ReflectionClass;
+use ReflectionMethod;
+use ReflectionProperty;
 
 /**
  * Apply logic name to class and/or property.
  *
  * @Annotation
- * @Target({"CLASS","PROPERTY"})
+ * @Target({"CLASS","PROPERTY","METHOD"})
  */
 final class LogicName
 {
@@ -34,12 +37,12 @@ final class LogicName
          */
         require_once __DIR__.'/High.php';
 
-        $cls = new \ReflectionClass($clsName);
+        $cls = new ReflectionClass($clsName);
 
         $reader = new AnnotationReader();
-        $anno = $reader->getClassAnnotation($cls, LogicName::class);
+        $annotation = $reader->getClassAnnotation($cls, LogicName::class);
 
-        return $anno ? $anno->value : self::getShortClassName($clsName);
+        return $annotation ? $annotation->value : self::getShortClassName($clsName);
     }
 
     /**
@@ -61,22 +64,40 @@ final class LogicName
          */
         require_once __DIR__.'/High.php';
 
-        $cls = new \ReflectionClass($clsName);
+        $cls = new ReflectionClass($clsName);
         $reader = new AnnotationReader();
 
         $r = [];
-        $flag = \ReflectionProperty::IS_PUBLIC +
-          \ReflectionProperty::IS_PRIVATE +
-          \ReflectionProperty::IS_PROTECTED;
+        $flag = ReflectionProperty::IS_PUBLIC +
+          ReflectionProperty::IS_PRIVATE +
+          ReflectionProperty::IS_PROTECTED;
         foreach ($cls->getProperties($flag) as $p) {
             if ($p->isStatic()) {
                 continue;
             }
-            $anno = $reader->getPropertyAnnotation($p, LogicName::class);
-            $r[$p->getName()] = $anno ? $anno->value : $p->getName();
+            $annotation = $reader->getPropertyAnnotation($p, LogicName::class);
+            $r[$p->getName()] = $annotation ? $annotation->value : $p->getName();
+        }
+        foreach ($cls->getMethods(ReflectionMethod::IS_PUBLIC) as $m) {
+            if (self::isGetter($m)) {
+                $annotation = $reader->getMethodAnnotation($m, LogicName::class);
+                $r[self::getPropertyNameFromGetter($m->getName())] = $annotation ? $annotation->value
+                    : self::getPropertyNameFromGetter($m->getName());
+            }
         }
 
         return $r;
+    }
+
+    private static function isGetter(ReflectionMethod $method): bool
+    {
+        $name = $method->getName();
+        return strlen($name) > 3 && strpos($name, 'get') === 0;
+    }
+
+    private static function getPropertyNameFromGetter(string $name): string
+    {
+        return lcfirst(substr($name, 3));
     }
 
     /**
