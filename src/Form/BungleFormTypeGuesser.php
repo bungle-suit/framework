@@ -57,7 +57,7 @@ class BungleFormTypeGuesser implements FormTypeGuesserInterface
         } elseif (DateTimeType::class == $inner->getType()) {
             $options['widget'] = 'single_text';
         }
-        $options = $inner->getOptions() + $options;
+        $options = array_merge($inner->getOptions(), $options);
 
         return new TypeGuess($inner->getType(), $options, $inner->getConfidence());
     }
