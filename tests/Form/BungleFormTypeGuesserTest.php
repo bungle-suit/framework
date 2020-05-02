@@ -1,4 +1,5 @@
 <?php
+/** @noinspection PhpParamsInspection */
 
 declare(strict_types=1);
 
@@ -47,7 +48,13 @@ final class BungleFormTypeGuesserTest extends TestCase
         $this
             ->inner
             ->allows('guessType')
-            ->andReturn(new TypeGuess(ColorType::class, [], Guess::MEDIUM_CONFIDENCE));
+            ->andReturn(
+                new TypeGuess(
+                    ColorType::class,
+                    ['label' => 'Exist', 'foo' => 'opt'],
+                    Guess::MEDIUM_CONFIDENCE
+                )
+            );
         $this->entityRegistry
             ->allows('getEntityMeta')
             ->andReturn(new EntityMeta(
@@ -60,7 +67,7 @@ final class BungleFormTypeGuesserTest extends TestCase
             ));
 
         self::assertEquals(
-            new TypeGuess(ColorType::class, ['label' => 'No'], Guess::MEDIUM_CONFIDENCE),
+            new TypeGuess(ColorType::class, ['label' => 'No', 'foo' => 'opt'], Guess::MEDIUM_CONFIDENCE),
             $this->guesser->guessType('Some\Entity', 'id')
         );
     }
