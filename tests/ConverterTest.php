@@ -40,4 +40,19 @@ class ConverterTest extends TestCase
         self::assertEquals('100', $f(100));
     }
 
+    public function testMinLength(): void
+    {
+        self::assertEquals("", Converter::justifyAlign("", 2));
+        // 对于一个字，在前面插入一个全角空格，达到右对齐效果
+        self::assertEquals("　a", Converter::justifyAlign("a", 2));
+        self::assertEquals("abc", Converter::justifyAlign("abc", 1));
+        self::assertEquals("abc", Converter::justifyAlign("abc", 0));
+        self::assertEquals("姓　名", Converter::justifyAlign("姓名", 3));
+        self::assertEquals("姓　　　　名", Converter::justifyAlign("姓名", 6));
+        self::assertEquals("销 售 单", Converter::justifyAlign("销售单", 4));
+        self::assertEquals("销售 入 库", Converter::justifyAlign("销售入库", 5));
+        self::assertEquals("现款 销售 单", Converter::justifyAlign("现款销售单", 6));
+        self::assertEquals("现 款 销 售 单", Converter::justifyAlign("现款销售单", 7));
+        self::assertEquals("现 款　销 售　单", Converter::justifyAlign("现款销售单", 8));
+    }
 }
