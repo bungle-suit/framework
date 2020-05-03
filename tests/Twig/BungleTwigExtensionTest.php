@@ -43,7 +43,12 @@ class BungleTwigExtensionTest extends MockeryTestCase
         $this->highIDNameTranslator->expects('idToName')->with('ord', 33)->andReturn('foo');
 
         self::assertEquals('foo', $filter(33, 'ord'));
+    }
 
+    public function testJustify(): void
+    {
+        $filter = $this->getFilterFunc('justify');
+        self::assertEquals('订　单', $filter('订单', 3));
     }
 
     private function getFilter(string $name): TwigFilter

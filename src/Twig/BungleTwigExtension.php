@@ -37,7 +37,8 @@ class BungleTwigExtension extends AbstractExtension
             new TwigFilter(
                 'id_name',
                 [$this, 'highIdName'],
-            )
+            ),
+            new TwigFilter('justify', Converter::class.'::justifyAlign'),
         ];
     }
 
