@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\Form;
 
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -31,7 +32,7 @@ class PropertyInfoTypeGuesser implements FormTypeGuesserInterface
         }
 
         if ($types[0]->isCollection()) {
-            return null;
+            return new TypeGuess(ChoiceType::class, [], Guess::LOW_CONFIDENCE);
         }
 
         switch ($types[0]->getBuiltinType()) {

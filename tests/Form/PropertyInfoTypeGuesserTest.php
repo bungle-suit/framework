@@ -8,6 +8,7 @@ use Bungle\Framework\Form\PropertyInfoTypeGuesser;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -62,14 +63,13 @@ class PropertyInfoTypeGuesserTest extends MockeryTestCase
 
     public function guessTypeProvider(): array
     {
-        $collType = new Type(Type::BUILTIN_TYPE_INT, false, null, true);
         return [
             [new Type(Type::BUILTIN_TYPE_NULL), 'null', []],
             [new Type(Type::BUILTIN_TYPE_INT), IntegerType::class, []],
             [new Type(Type::BUILTIN_TYPE_FLOAT), NumberType::class, []],
             [new Type(Type::BUILTIN_TYPE_STRING), TextType::class, []],
             [new Type(Type::BUILTIN_TYPE_BOOL), CheckboxType::class, []],
-            [$collType, 'null', []],
+            [new Type(Type::BUILTIN_TYPE_BOOL, false, null, true), ChoiceType::class, []],
         ];
     }
 }
