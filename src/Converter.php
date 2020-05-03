@@ -77,7 +77,6 @@ class Converter
                 $sb = $sb->append(self::HALF_SPACE);
             }
 
-            echo $s->slice($i + 1, 1)->toString();
             $sb = $sb->append($s->slice($i + 1, 1)->toString());
         }
 
