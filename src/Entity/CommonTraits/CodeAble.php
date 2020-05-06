@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Entity\CommonTraits;
 
+use Bungle\Framework\Annotation\LogicName;
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 
 trait CodeAble
@@ -12,6 +13,7 @@ trait CodeAble
      *
      * @ODM\Field(type="string")
      * @ODM\Index(unique=true)
+     * @LogicName("编号")
      */
     protected string $code = '';
 
