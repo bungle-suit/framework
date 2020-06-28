@@ -27,9 +27,9 @@ class AbstractIDNameTranslatorTest extends MockeryTestCase
                 $this->callTimes[$id] = $this->callTimes[$id] ?? 0 + 1;
                 if ($id === 'foo') {
                     return 'bar';
-                } else if ($id === 33) {
+                } elseif ($id === 33) {
                     return 'Thirty three';
-                } else if ($id === 'empty') {
+                } elseif ($id === 'empty') {
                     return '';
                 }
                 throw new LogicException('failed to get name');

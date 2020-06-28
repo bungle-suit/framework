@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Ent\Inquiry;
 
-use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
-
-/**
- * @ODM\Document
- */
 class Order
 {
-    public static function create(string $id, string $name): self {
+    public static function create(string $id, string $name): self
+    {
         $r = new self();
         $r->id = $id;
         $r->setName($name);
@@ -19,9 +15,6 @@ class Order
         return $r;
     }
 
-    /**
-     * @ODM\Id(strategy="NONE")
-     */
     private string $id;
 
     public function getId(): string
@@ -29,9 +22,6 @@ class Order
         return $this->id;
     }
 
-    /**
-     * @ODM\Field(type="string")
-     */
     protected string $name;
 
     public function getName(): string

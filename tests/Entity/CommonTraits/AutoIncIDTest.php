@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Bungle\Framework\Entity\CommonTraits;
+namespace Bungle\Framework\Tests\Entity\CommonTraits;
 
+use Bungle\Framework\Entity\CommonTraits\AutoIncID;
 use PHPUnit\Framework\TestCase;
 
 class AutoIncIDTest extends TestCase

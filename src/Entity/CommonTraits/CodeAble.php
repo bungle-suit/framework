@@ -3,17 +3,15 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Entity\CommonTraits;
 
-use Bungle\Framework\Annotation\LogicName;
-use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
+use Doctrine\ORM\Mapping as ORM;
 
 trait CodeAble
 {
     /**
-     * Is undef for a new document.
+     * 编号
      *
-     * @ODM\Field(type="string")
-     * @ODM\Index(unique=true)
-     * @LogicName("编号")
+     * @ORM\Column(type="string")
+     * @ORM\Index(unique=true)
      */
     protected string $code = '';
 
