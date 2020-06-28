@@ -24,14 +24,13 @@ class STTLocator implements STTLocatorInterface
     public function getSTTForClass(string $entityClass): AbstractSTT
     {
         $high = $this->entityRegistry->getHigh($entityClass);
-        $sttClass = $this->sttClassesByHigh[$high];
-        if (!isset($sttClass)) {
+        if (!isset($this->sttClassesByHigh[$high])) {
             throw new LogicException("STT service for $entityClass not found") ;
         }
 
         /** @var AbstractSTT $r */
         // No need to check result is AbstractSTT, $sttClassesByHigh array is scanned from AbstractSTT.
-        $r = $this->container->get($sttClass);
+        $r = $this->container->get($this->sttClassesByHigh[$high]);
         return $r;
     }
 }
