@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class FPTest extends TestCase
 {
-    public function testAttr()
+    public function testAttr(): void
     {
         $f = FP::attr('name');
         $o = (object)['id' => 1, 'name' => 'foo'];
@@ -19,7 +19,7 @@ class FPTest extends TestCase
     public function testGetter(): void
     {
         $o = new class {
-            public function getName()
+            public function getName(): string
             {
                 return 'bar';
             }
@@ -49,10 +49,22 @@ class FPTest extends TestCase
         ], FP::group(fn(int $v) => $v % 2, $arr));
     }
 
+    public function testEqualGroup(): void
+    {
+        $arr = range(1, 10);
+        self::assertEquals([
+            [1, 6],
+            [2, 7],
+            [3, 8],
+            [4, 9],
+            [5, 10],
+        ], FP::equalGroup(fn(int $a, int $b) => $a + 5 === $b, $arr));
+    }
+
     public function testAny(): void
     {
         // empty always return false
-        self::assertFalse(FP::any(FP::t(), []));
+        self::assertFalse(FP::any(fn (int $v) => true, []));
 
         self::assertTrue(FP::any(fn(int $v) => $v % 2 === 0, [1, 3, 6, 9]));
         self::assertFalse(FP::any(fn(int $v) => $v % 2 === 0, [1, 9, 111]));
@@ -61,7 +73,7 @@ class FPTest extends TestCase
     public function testAll(): void
     {
         // empty always return true
-        self::assertTrue(FP::all(FP::f(), []));
+        self::assertTrue(FP::all(fn (int $v) => false, []));
 
         self::assertFalse(FP::all(fn(int $v) => $v % 2 === 0, [1, 3, 6, 9]));
         self::assertTrue(FP::all(fn(int $v) => $v % 2 === 1, [1, 9, 111]));
@@ -134,7 +146,7 @@ class FPTest extends TestCase
 
     public function testToKeyed(): void
     {
-        self::assertEquals([], FP::toKeyed(fn($v) => $v, []));
+        self::assertEquals([], FP::toKeyed(fn(int $v): int => $v, []));
 
         $arr = [['foo', 1], ['bar', 2]];
         self::assertEquals([
@@ -156,23 +168,25 @@ class FPTest extends TestCase
     public function testFirstIterator(): void
     {
         $emptyIter = new ArrayIterator([]);
-        self::assertNull(FP::first(FP::t(), $emptyIter));
+        self::assertNull(FP::firstOrNull(FP::t(), $emptyIter));
         self::assertEquals(33, FP::first(FP::t(), $emptyIter, 33));
-        self::assertEquals(4,
-            FP::first(
+        self::assertEquals(
+            4,
+            FP::firstOrNull(
                 fn($v) => $v === 4,
                 new ArrayIterator(range(1, 10))
             )
         );
-        self::assertNull(FP::first(FP::f(), range(1, 10)));
+        self::assertNull(FP::firstOrNull(FP::f(), range(1, 10)));
     }
 
     public function testFirstArray(): void
     {
-        self::assertNull(FP::first(FP::t(), []));
+        self::assertNull(FP::firstOrNull(fn (int $v) => true, []));
         self::assertEquals(33, FP::first(FP::t(), [], 33));
-        self::assertEquals(4,
-            FP::first(
+        self::assertEquals(
+            4,
+            FP::firstOrNull(
                 fn($v) => $v === 4,
                 range(1, 10)
             )

@@ -43,8 +43,15 @@ class FP
 
     /**
      * Group array/iterator, key returned by $fKey.
+     *
+     * @phpstan-template T
+     * @phpstan-template K
+     * @phpstan-param callable(T): K $fKey
+     * @phpstan-param iterable<T> $values
+     * @phpstan-return array<K, T[]>
      */
-    public static function group(callable $fKey, iterable $values): array {
+    public static function group(callable $fKey, iterable $values): array
+    {
         $r = [];
         foreach ($values as $value) {
             $key = $fKey($value);
@@ -54,8 +61,40 @@ class FP
     }
 
     /**
+     * Group by $fEqual, items that equals will grouped together
+     *
+     * @phpstan-template T
+     * @phpstan-param callable(T, T): bool $fEqual
+     * @phpstan-param iterable<T> $values
+     * @phpstan-return array<T[]>
+     */
+    public static function equalGroup(callable $fEqual, iterable $values): array
+    {
+        $groups = [];
+        foreach ($values as $v) {
+            $groupExist = false;
+            foreach ($groups as $key => $g) {
+                if ($fEqual($g[0], $v)) {
+                    $groupExist = true;
+                    $g[] = $v;
+                    $groups[$key] = $g;
+                    break;
+                }
+            }
+            if (!$groupExist) {
+                $groups[] = [$v];
+            }
+        }
+        return $groups;
+    }
+
+    /**
      * Call $fCheck on item of $values, returns true if any callback result is true.
      * Returns false if $values is empty.
+     *
+     * @phpstan-template T
+     * @phpstan-param callable(T): bool $fCheck
+     * @phpstan-param iterable<T> $values
      */
     public static function any(callable $fCheck, iterable $values): bool
     {
@@ -70,6 +109,10 @@ class FP
     /**
      * Call fCheck on item of $values, returns false if any callback result is false.
      * Return true if $values is empty.
+     *
+     * @phpstan-template T
+     * @phpstan-param callable(T): bool $fCheck
+     * @phpstan-param iterable<T> $values
      */
     public static function all(callable $fCheck, iterable $values): bool
     {
@@ -83,6 +126,8 @@ class FP
 
     /**
      * Returns true if iterable is empty.
+     *
+     * @phpstan-param iterable<mixed> $values
      */
     public static function isEmpty(iterable $values): bool
     {
@@ -96,8 +141,9 @@ class FP
     /**
      * Function that returns argument.
      *
-     * @param mixed $v
-     * @returns mixed
+     * @phpstan-template T
+     * @phpstan-param T $v
+     * @phpstan-return T
      */
     public static function identity($v)
     {
@@ -123,8 +169,12 @@ class FP
 
     /**
      * Call init function to init variable if not set.
-     * @param $fIsUninitialized callback accept the value to tell the value is unintialized, by default
-     * use `isEmpty().
+     *
+     * @phpstan-template T
+     * @phpstan-param T $v
+     * @phpstan-param callable(): T $fInit
+     * @phpstan-param (callable(T): bool)|null $fIsUninitialized accept the value to tell the value
+     * is uninitialized, by default use `isEmpty().
      *
      * @return mixed returns &v
      */
@@ -156,11 +206,16 @@ class FP
     /**
      * If array item at specific $idx not initialized, call $fInit to init the array item.
      *
-     * @param callable $fIsUninitialized test does the array item initialized.
-     *
      * If the property not set (isset() returns false), always init the property, ignores $fIsUninitialized.
      *
-     * @return mixed the array item value.
+     * @phpstan-template K
+     * @phpstan-template T
+     *
+     * @phpstan-param T[] $arr
+     * @phpstan-param K $idx
+     * @phpstan-param callable(): T $fInit
+     * @phpstan-param callable(T): bool $fIsUninitialized test does the array item initialized.
+     * @phpstan-return T[] the array item value.
      */
     public static function initArrayItem(array &$arr, $idx, callable $fInit, callable $fIsUninitialized = null)
     {
@@ -171,23 +226,34 @@ class FP
     }
 
     /**
-     * @param callable $fKey, accept one argument: array item, returns key normally string.
+     * @phpstan-template K
+     * @phpstan-template V
+     * @phpstan-param callable(V): K $fKey, accept one argument: array item, returns key normally string.
+     * @phpstan-param V[] $arr
+     * @phpstan-return array<K, V>
      *
      * Returns associated array key is $fKey result, value is array value.
      */
     public static function toKeyed(callable $fKey, array $arr): array
     {
         $keys = array_map($fKey, $arr);
-        return array_combine($keys, $arr);
+        /** @phpstan-var array<K, V>|false $r */
+        $r = array_combine($keys, $arr);
+        assert($r !== false);
+        return $r;
     }
 
     /**
      * Test array or iterator, returns first item the $test callback returns true.
      * Returns $default value if no item matched.
      *
-     * @return mixed
+     * @phpstan-template T
+     * @phpstan-param callable(T): bool $test
+     * @phpstan-param iterable<T> $items
+     * @phpstan-param T $default
+     * @phpstan-return T
      */
-    public static function first(callable $test, iterable $items, $default = null)
+    public static function first(callable $test, iterable $items, $default)
     {
         foreach ($items as $item) {
             if ($test($item)) {
@@ -198,9 +264,32 @@ class FP
     }
 
     /**
-     * @param int|string $key
-     * @param callable $fCreate , called if $key not exist in $arr, accept one argument $key, and returns value.
-     * @return mixed
+     * Test array or iterator, returns first item the $test callback returns true.
+     * Returns null value if no item matched.
+     *
+     * @phpstan-template T
+     * @phpstan-param callable(T): bool $test
+     * @phpstan-param iterable<T> $items
+     * @phpstan-return T|null
+     */
+    public static function firstOrNull(callable $test, iterable $items)
+    {
+        foreach ($items as $item) {
+            if ($test($item)) {
+                return $item;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @phpstan-template T
+     * @phpstan-template K
+     * @phpstan-param array<K, T> $arr
+     * @phpstan-param K $key
+     * @phpstan-param callable(K): T $fCreate, called if $key not exist in $arr,
+     * accept one argument $key, and returns value.
+     * @phpstan-return T
      */
     public static function getOrCreate(array &$arr, $key, callable $fCreate)
     {
@@ -210,4 +299,3 @@ class FP
         return $arr[$key];
     }
 }
-
