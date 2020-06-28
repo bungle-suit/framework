@@ -7,7 +7,7 @@ use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
 
 class EmptySyncToDB implements SyncToDBInterface
 {
-    function syncToDB(StatefulInterface $entity): void
+    public function syncToDB(StatefulInterface $entity): void
     {
     }
 }

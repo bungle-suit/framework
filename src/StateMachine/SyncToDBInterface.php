@@ -11,5 +11,5 @@ use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
  */
 interface SyncToDBInterface
 {
-    function syncToDB(StatefulInterface $entity): void;
+    public function syncToDB(StatefulInterface $entity): void;
 }
