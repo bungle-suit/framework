@@ -5,7 +5,6 @@
   "license": "MIT",
   "require": {
     "doctrine/annotations": "^1.8",
-    "beberlei/assert": "^3.2",
     "symfony/dependency-injection": "^5.0",
     "symfony/config": "^5.0",
     "symfony/workflow": "^5.0",
@@ -14,7 +13,6 @@
     "symfony/yaml": "^5.0",
     "symfony/validator": "^5.0",
     "ext-json": "*",
-    "ext-mongodb": "*",
     "symfony/string": "^5.0",
     "doctrine/orm": "^2.7"
   },
