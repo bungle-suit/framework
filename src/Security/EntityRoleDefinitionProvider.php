@@ -23,7 +23,7 @@ final class EntityRoleDefinitionProvider implements RoleDefinitionProviderInterf
 
     public function getRoleDefinitions(): Iterator
     {
-        foreach ($this->entityRegistry->entities as $entity) {
+        foreach ($this->entityRegistry->getEntities() as $entity) {
             $high = $this->entityRegistry->getHigh($entity);
             /** @var Definition $def */
             /** @var string[] $actionTitles */

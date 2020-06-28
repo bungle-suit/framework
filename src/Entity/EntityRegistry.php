@@ -12,7 +12,7 @@ class EntityRegistry
 {
     // array of entities full class name.
     /** @var string[] $entities */
-    public array $entities;
+    private array $entities;
     private HighResolverInterface $highResolver;
     /** @var string[] */
     private array $highClsMap;
@@ -20,15 +20,16 @@ class EntityRegistry
     /** @var array EntityMeta[] */
     private array $metaByClass = [];
     private EntityMetaResolverInterface $metaResolver;
+    private EntityDiscovererInterface $discoverer;
 
     public function __construct(
         EntityDiscovererInterface $discoverer,
         HighResolverInterface $highResolver,
-    EntityMetaResolverInterface $metaResolver
+        EntityMetaResolverInterface $metaResolver
     ) {
         $this->highResolver = $highResolver;
-        $this->entities = iterator_to_array($discoverer->getAllEntities(), false);
         $this->metaResolver = $metaResolver;
+        $this->discoverer = $discoverer;
     }
 
     /**
@@ -38,11 +39,11 @@ class EntityRegistry
     public function getHighSafe(string $clsName): string
     {
         if (!isset($this->highClsMap)) {
-            $this->highClsMap = $this->scanMap($this->entities);
+            $this->highClsMap = $this->scanMap($this->getEntities());
         }
 
         if (!($r = array_search($clsName, $this->highClsMap))) {
-            if (!in_array($clsName, $this->entities)) {
+            if (!in_array($clsName, $this->getEntities())) {
                 return '';
             }
         }
@@ -70,7 +71,7 @@ class EntityRegistry
     public function getEntityByHigh(string $high): string
     {
         if (!isset($this->highClsMap)) {
-            $this->highClsMap = $this->scanMap($this->entities);
+            $this->highClsMap = $this->scanMap($this->getEntities());
         }
 
         if (!($r = $this->highClsMap[$high] ?? '')) {
@@ -97,7 +98,7 @@ class EntityRegistry
         return FP::getOrCreate(
             $this->metaByClass,
             $class,
-            fn(string $class) => $this->metaResolver->resolveEntityMeta($class)
+            fn (string $class) => $this->metaResolver->resolveEntityMeta($class)
         );
     }
 
@@ -117,5 +118,13 @@ class EntityRegistry
         }
 
         return $r;
+    }
+
+    public function getEntities(): array
+    {
+        if (!isset($this->entities)) {
+            $this->entities = iterator_to_array($this->discoverer->getAllEntities(), false);
+        }
+        return $this->entities;
     }
 }

@@ -17,16 +17,16 @@ final class EntityRegistryTest extends TestCase
     const ORDER = 'order\\order';
     const ORDER_LINE = 'order\\orderLine';
 
-    public function testEntites(): void
+    public function testEntities(): void
     {
         $dis = new ArrayEntityDiscovery(
-            $entites = [
+            $entities = [
               self::ORDER,
               self::ORDER_LINE,
             ]
         );
         $reg = new EntityRegistry($dis, new ArrayHighResolver([]), new ArrayEntityMetaResolver([]));
-        self::assertEquals($entites, $reg->entities);
+        self::assertEquals($entities, $reg->getEntities());
     }
 
     public function testGetHigh(): void
