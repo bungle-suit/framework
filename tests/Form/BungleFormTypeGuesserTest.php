@@ -5,9 +5,6 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Form;
 
-use Bungle\Framework\Entity\EntityMeta;
-use Bungle\Framework\Entity\EntityPropertyMeta;
-use Bungle\Framework\Entity\EntityRegistry;
 use Bungle\Framework\Form\BungleFormTypeGuesser;
 use Mockery;
 use Mockery\MockInterface;
@@ -19,22 +16,23 @@ use Symfony\Component\Form\FormTypeGuesserInterface;
 use Symfony\Component\Form\Guess\Guess;
 use Symfony\Component\Form\Guess\TypeGuess;
 use Symfony\Component\Form\Guess\ValueGuess;
+use Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface;
 
 final class BungleFormTypeGuesserTest extends TestCase
 {
     use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
-    /** @var EntityRegistry|MockInterface */
-    private $entityRegistry;
     /** @var MockInterface|FormTypeGuesserInterface */
     private $inner;
     private BungleFormTypeGuesser $guesser;
+    /** @var MockInterface|PropertyInfoExtractorInterface  */
+    private $propertyInfo;
 
     public function setUp(): void
     {
-        $this->entityRegistry = Mockery::mock(EntityRegistry::class);
+        $this->propertyInfo = Mockery::mock(PropertyInfoExtractorInterface::class);
         $this->inner = Mockery::mock(FormTypeGuesserInterface::class);
-        $this->guesser = new BungleFormTypeGuesser($this->inner, $this->entityRegistry);
+        $this->guesser = new BungleFormTypeGuesser($this->inner, $this->propertyInfo);
     }
 
     public function testGuessTypeInnerNull(): void
@@ -55,16 +53,7 @@ final class BungleFormTypeGuesserTest extends TestCase
                     Guess::MEDIUM_CONFIDENCE
                 )
             );
-        $this->entityRegistry
-            ->allows('getEntityMeta')
-            ->andReturn(new EntityMeta(
-                'Some\Entity',
-                'Wow',
-                [
-                    new EntityPropertyMeta('id', 'No'),
-                    new EntityPropertyMeta('name', 'Foo'),
-                ]
-            ));
+        $this->propertyInfo->expects('getShortDescription')->with('Some\Entity', 'id')->andReturn('No');
 
         self::assertEquals(
             new TypeGuess(ColorType::class, ['label' => 'No', 'foo' => 'opt'], Guess::MEDIUM_CONFIDENCE),
@@ -77,16 +66,7 @@ final class BungleFormTypeGuesserTest extends TestCase
         $this->inner
             ->allows('guessType')
             ->andReturn(new TypeGuess(TextType::class, [], Guess::MEDIUM_CONFIDENCE));
-        $this->entityRegistry
-            ->allows('getEntityMeta')
-            ->andReturn(new EntityMeta(
-                'Some\Entity',
-                'Wow',
-                [
-                    new EntityPropertyMeta('id', 'No'),
-                    new EntityPropertyMeta('name', 'Foo'),
-                ]
-            ));
+        $this->propertyInfo->expects('getShortDescription')->with('Some\Entity', 'name')->andReturn('Foo');
         self::assertEquals(
             new TypeGuess(TextType::class, [
                 'label' => 'Foo',
@@ -101,13 +81,7 @@ final class BungleFormTypeGuesserTest extends TestCase
         $this->inner
             ->allows('guessType')
             ->andReturn(new TypeGuess(DateTimeType::class, [], Guess::MEDIUM_CONFIDENCE));
-        $this->entityRegistry
-            ->allows('getEntityMeta')
-            ->andReturn(new EntityMeta(
-                'Some\Entity',
-                'Wow',
-                [new EntityPropertyMeta('name', 'No')]
-            ));
+        $this->propertyInfo->expects('getShortDescription')->with('Some\Entity', 'name')->andReturn('No');
         self::assertEquals(
             new TypeGuess(DateTimeType::class, [
                 'label' => 'No',

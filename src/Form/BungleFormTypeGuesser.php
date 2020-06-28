@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Form;
 
-use Bungle\Framework\Entity\EntityRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormTypeGuesserInterface;
 use Symfony\Component\Form\Guess\TypeGuess;
 use Symfony\Component\Form\Guess\ValueGuess;
+use Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface;
 
 /**
  * BungleFormTypeGuesser add logic name as label of inner Guesser result.
@@ -18,20 +18,20 @@ use Symfony\Component\Form\Guess\ValueGuess;
 class BungleFormTypeGuesser implements FormTypeGuesserInterface
 {
     private FormTypeGuesserInterface $inner;
-    private EntityRegistry $entityRegistry;
     private ?LoggerInterface $logger;
+    private PropertyInfoExtractorInterface $propertyInfoExtractor;
 
     /**
      * @param $inner, normally should use ValidatorTypeGuesser
      */
     public function __construct(
         FormTypeGuesserInterface $inner,
-        EntityRegistry $entityRegistry,
+        PropertyInfoExtractorInterface $propertyInfoExtractor,
         LoggerInterface $logger = null
     ) {
         $this->inner = $inner;
-        $this->entityRegistry = $entityRegistry;
         $this->logger = $logger;
+        $this->propertyInfoExtractor = $propertyInfoExtractor;
     }
 
     /**
@@ -44,8 +44,7 @@ class BungleFormTypeGuesser implements FormTypeGuesserInterface
             return $inner;
         }
 
-        $meta = $this->entityRegistry->getEntityMeta($class);
-        $logicName = $meta->getProperty($property)->logicName;
+        $logicName = $this->propertyInfoExtractor->getShortDescription($class, $property);
         if (null !== $this->logger) {
             $this->logger->debug("guess label for $class property $property: $logicName");
         }
