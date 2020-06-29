@@ -5,15 +5,15 @@
   "license": "MIT",
   "require": {
     "doctrine/annotations": "^1.8",
-    "symfony/dependency-injection": "^5.0",
-    "symfony/config": "^5.0",
-    "symfony/workflow": "^5.0",
-    "symfony/security-core": "^5.0",
-    "symfony/form": "^5.0",
-    "symfony/yaml": "^5.0",
-    "symfony/validator": "^5.0",
+    "symfony/dependency-injection": "^5.1",
+    "symfony/config": "^5.1",
+    "symfony/workflow": "^5.1",
+    "symfony/security-core": "^5.1",
+    "symfony/form": "^5.1",
+    "symfony/yaml": "^5.1",
+    "symfony/validator": "^5.1",
     "ext-json": "*",
-    "symfony/string": "^5.0",
+    "symfony/string": "^5.1",
     "doctrine/orm": "^2.7"
   },
   "autoload": {
