@@ -5,6 +5,7 @@ namespace Bungle\Framework\Tests;
 
 use ArrayIterator;
 use Bungle\Framework\FP;
+use LogicException;
 use PHPUnit\Framework\TestCase;
 
 class FPTest extends TestCase
@@ -191,5 +192,15 @@ class FPTest extends TestCase
                 range(1, 10)
             )
         );
+    }
+
+    public function testNotNull(): void
+    {
+        self::assertEquals(1, FP::notNull(1));
+
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('Expect value not null');
+
+        FP::notNull(null);
     }
 }

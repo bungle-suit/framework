@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Bungle\Framework;
 
+use LogicException;
+
 /**
  * Common functional program functions
  */
@@ -297,5 +299,21 @@ class FP
             $arr[$key] = $fCreate($key);
         }
         return $arr[$key];
+    }
+
+    /**
+     * Assert that the value is not null.
+     *
+     * @phpstan-template T
+     * @phpstan-param T|null $v
+     * @phpstanreturn T
+     */
+    public static function notNull($v)
+    {
+        if ($v === null) {
+            throw new LogicException("Expect value not null");
+        }
+
+        return $v;
     }
 }
