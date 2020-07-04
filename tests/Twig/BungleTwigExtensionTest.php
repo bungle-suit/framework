@@ -6,9 +6,11 @@ namespace Bungle\Framework\Tests\Twig;
 
 use AssertionError;
 use Bungle\Framework\Ent\IDName\HighIDNameTranslator;
+use Bungle\Framework\Ent\ObjectName;
 use Bungle\Framework\Twig\BungleTwigExtension;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Twig\Node\Node;
 use Twig\TwigFilter;
 
@@ -16,6 +18,8 @@ class BungleTwigExtensionTest extends MockeryTestCase
 {
     /** @var Mockery\MockInterface | Mockery\LegacyMockInterface | HighIDNameTranslator */
     private $highIDNameTranslator;
+    private ArrayAdapter $cache;
+    private ObjectName $objectName;
 
     public function testFormat()
     {
@@ -51,10 +55,18 @@ class BungleTwigExtensionTest extends MockeryTestCase
         self::assertEquals('订　单', $filter('订单', 3));
     }
 
+    public function testObjectName(): void
+    {
+        $filter = $this->getFilterFunc('object_name');
+        self::assertEquals('BungleTwigExtensionTest', $filter($this));
+    }
+
     private function getFilter(string $name): TwigFilter
     {
+        $this->cache = new ArrayAdapter();
+        $this->objectName = new ObjectName($this->cache);
         $this->highIDNameTranslator = Mockery::mock(HighIDNameTranslator::class);
-        $ext = new BungleTwigExtension($this->highIDNameTranslator);
+        $ext = new BungleTwigExtension($this->highIDNameTranslator, $this->objectName);
 
         foreach ($ext->getFilters() as $filter) {
             if ($filter->getName() == $name) {

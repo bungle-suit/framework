@@ -5,6 +5,7 @@ namespace Bungle\Framework\Twig;
 
 use Bungle\Framework\Converter;
 use Bungle\Framework\Ent\IDName\HighIDNameTranslator;
+use Bungle\Framework\Ent\ObjectName;
 use Symfony\Component\Serializer\Encoder\JsonDecode;
 use Symfony\Component\Serializer\Encoder\JsonEncode;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
@@ -16,10 +17,12 @@ use Twig\TwigFilter;
 class BungleTwigExtension extends AbstractExtension
 {
     private HighIDNameTranslator $highIDNameTranslator;
+    private ObjectName $objectName;
 
-    public function __construct(HighIDNameTranslator $highIDNameTranslator)
+    public function __construct(HighIDNameTranslator $highIDNameTranslator, ObjectName $objectName)
     {
         $this->highIDNameTranslator = $highIDNameTranslator;
+        $this->objectName = $objectName;
     }
 
     /**
@@ -39,6 +42,7 @@ class BungleTwigExtension extends AbstractExtension
                 [$this, 'highIdName'],
             ),
             new TwigFilter('justify', Converter::class.'::justifyAlign'),
+            new TwigFilter('object_name', [$this->objectName, 'getName']),
         ];
     }
 
