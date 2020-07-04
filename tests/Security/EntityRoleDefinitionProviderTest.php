@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Security;
 
+use Bungle\Framework\Ent\ObjectName;
 use Bungle\Framework\Entity\ArrayEntityDiscovery;
-use Bungle\Framework\Entity\ArrayEntityMetaResolver;
 use Bungle\Framework\Entity\ArrayHighResolver;
-use Bungle\Framework\Entity\EntityMeta;
-use Bungle\Framework\Entity\EntityMetaResolverInterface;
 use Bungle\Framework\Entity\EntityRegistry;
 use Bungle\Framework\Security\EntityRoleDefinitionProvider;
 use Bungle\Framework\Security\RoleDefinition;
@@ -19,6 +17,7 @@ use Bungle\Framework\Tests\StateMachine\Entity\Product;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Workflow\Definition;
 use Symfony\Component\Workflow\Exception\InvalidArgumentException;
 use Symfony\Component\Workflow\Transition;
@@ -27,19 +26,6 @@ use function iterator_to_array;
 final class EntityRoleDefinitionProviderTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
-    private EntityMeta $productMeta;
-    private EntityMeta $orderMeta;
-    private EntityMetaResolverInterface $metaResolver;
-
-    protected function setUp(): void
-    {
-        $this->productMeta = new EntityMeta(Product::class, 'Product', []);
-        $this->orderMeta = new EntityMeta(Order::class, 'Order', []);
-        $this->metaResolver = new ArrayEntityMetaResolver([
-            Order::class => $this->orderMeta,
-            Product::class => $this->productMeta,
-        ]);
-    }
 
     public function testRoles(): void
     {
@@ -80,9 +66,12 @@ final class EntityRoleDefinitionProviderTest extends TestCase
                 Order::class => 'ord',
                 Product::class => 'prd',
             ]),
-            $this->metaResolver
         );
-        $entityRoleDefProvider = new EntityRoleDefinitionProvider($entityReg, $workflowResolver);
+        $entityRoleDefProvider = new EntityRoleDefinitionProvider(
+            $entityReg,
+            $workflowResolver,
+            new ObjectName(new ArrayAdapter())
+        );
 
         self::assertEquals([
             new RoleDefinition('ROLE_ord_view', '查看', '', 'Order'),
@@ -104,12 +93,15 @@ final class EntityRoleDefinitionProviderTest extends TestCase
         $entityReg = new EntityRegistry(
             new ArrayEntityDiscovery([ Order::class ]),
             new ArrayHighResolver([ Order::class => 'ord' ]),
-            new ArrayEntityMetaResolver([])
         );
         $workflowResolver = Mockery::mock(EntityWorkflowDefinitionResolverInterface::class);
         $workflowResolver->allows('resolveDefinition')
             ->andThrow(InvalidArgumentException::class);
-        $entityRoleDefProvider = new EntityRoleDefinitionProvider($entityReg, $workflowResolver);
+        $entityRoleDefProvider = new EntityRoleDefinitionProvider(
+            $entityReg,
+            $workflowResolver,
+            new ObjectName(new ArrayAdapter()),
+        );
         self::assertEmpty(iterator_count($entityRoleDefProvider->getRoleDefinitions()));
     }
 }

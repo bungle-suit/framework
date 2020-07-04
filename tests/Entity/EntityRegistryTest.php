@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\Tests\Entity;
 
 use Bungle\Framework\Entity\ArrayEntityDiscovery;
-use Bungle\Framework\Entity\ArrayEntityMetaResolver;
 use Bungle\Framework\Entity\ArrayHighResolver;
-use Bungle\Framework\Entity\EntityMeta;
 use Bungle\Framework\Entity\EntityRegistry;
 use Bungle\Framework\Exceptions;
 use PHPUnit\Framework\TestCase;
@@ -25,7 +23,7 @@ final class EntityRegistryTest extends TestCase
               self::ORDER_LINE,
             ]
         );
-        $reg = new EntityRegistry($dis, new ArrayHighResolver([]), new ArrayEntityMetaResolver([]));
+        $reg = new EntityRegistry($dis, new ArrayHighResolver([]));
         self::assertEquals($entities, $reg->getEntities());
     }
 
@@ -39,7 +37,7 @@ final class EntityRegistryTest extends TestCase
           $ord => 'ord',
           $ordLine => 'oln',
         ]);
-        $reg = new EntityRegistry($dis, $resolver, new ArrayEntityMetaResolver([]));
+        $reg = new EntityRegistry($dis, $resolver);
 
         self::assertEquals('ord', $reg->getHigh($ord));
     }
@@ -52,7 +50,7 @@ final class EntityRegistryTest extends TestCase
         $resolver = new ArrayHighResolver([
           Entities\Order::class => 'ord',
         ]);
-        $reg = new EntityRegistry($dis, $resolver, new ArrayEntityMetaResolver([]));
+        $reg = new EntityRegistry($dis, $resolver);
         self::assertInstanceOf(
             Entities\Order::class,
             $reg->createEntity('ord')
@@ -65,8 +63,7 @@ final class EntityRegistryTest extends TestCase
         $this->expectExceptionObject(Exceptions::entityNotDefined($order));
         $reg = new EntityRegistry(
             new ArrayEntityDiscovery([]),
-            new ArrayHighResolver([]),
-            new ArrayEntityMetaResolver([])
+            new ArrayHighResolver([])
         );
         $reg->getHigh($order);
     }
@@ -76,8 +73,7 @@ final class EntityRegistryTest extends TestCase
         $this->expectExceptionObject(Exceptions::entityNotDefined(self::class));
         $reg = new EntityRegistry(
             new ArrayEntityDiscovery([]),
-            new ArrayHighResolver([]),
-            new ArrayEntityMetaResolver([])
+            new ArrayHighResolver([])
         );
         $reg->getHigh(self::class);
     }
@@ -88,7 +84,7 @@ final class EntityRegistryTest extends TestCase
         $this->expectExceptionObject(Exceptions::highNotDefinedOn($order));
 
         $dis = new ArrayEntityDiscovery([$order]);
-        $reg = new EntityRegistry($dis, new ArrayHighResolver([]), new ArrayEntityMetaResolver([]));
+        $reg = new EntityRegistry($dis, new ArrayHighResolver([]));
         $reg->getHigh($order);
     }
 
@@ -104,7 +100,7 @@ final class EntityRegistryTest extends TestCase
           self::ORDER => 'ord',
           self::ORDER_LINE => 'ord',
         ]);
-        $reg = new EntityRegistry($dis, $resolver, new ArrayEntityMetaResolver([]));
+        $reg = new EntityRegistry($dis, $resolver);
         $reg->getHigh(self::ORDER);
     }
 
@@ -118,7 +114,7 @@ final class EntityRegistryTest extends TestCase
           self::ORDER => 'ord',
           self::ORDER_LINE => 'oln',
         ]);
-        $reg = new EntityRegistry($dis, $resolver, new ArrayEntityMetaResolver([]));
+        $reg = new EntityRegistry($dis, $resolver);
         self::assertEquals(self::ORDER, $reg->getEntityByHigh('ord'));
     }
 
@@ -128,22 +124,7 @@ final class EntityRegistryTest extends TestCase
 
         $dis = new ArrayEntityDiscovery([]);
         $resolver = new ArrayHighResolver([]);
-        $reg = new EntityRegistry($dis, $resolver, new ArrayEntityMetaResolver([]));
+        $reg = new EntityRegistry($dis, $resolver);
         $reg->getEntityByHigh('ord');
-    }
-
-    public function testGetEntityMeta(): void
-    {
-
-        $rep = new EntityRegistry(
-            new ArrayEntityDiscovery([]),
-            new ArrayHighResolver([]),
-            new ArrayEntityMetaResolver([
-                self::class => ($meta = new EntityMeta(self::class, 'foo', [])),
-            ]),
-        );
-
-        self::assertSame($meta, $rep->getEntityMeta(self::class));
-        self::assertSame($meta, $rep->getEntityMeta(self::class)); // does cache works
     }
 }

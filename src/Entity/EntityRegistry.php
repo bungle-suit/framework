@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Bungle\Framework\Entity;
 
 use Bungle\Framework\Exceptions;
-use Bungle\Framework\FP;
 use function in_array;
 
 class EntityRegistry
@@ -17,18 +16,13 @@ class EntityRegistry
     /** @var string[] */
     private array $highClsMap;
 
-    /** @var array EntityMeta[] */
-    private array $metaByClass = [];
-    private EntityMetaResolverInterface $metaResolver;
     private EntityDiscovererInterface $discoverer;
 
     public function __construct(
         EntityDiscovererInterface $discoverer,
-        HighResolverInterface $highResolver,
-        EntityMetaResolverInterface $metaResolver
+        HighResolverInterface $highResolver
     ) {
         $this->highResolver = $highResolver;
-        $this->metaResolver = $metaResolver;
         $this->discoverer = $discoverer;
     }
 
@@ -90,16 +84,6 @@ class EntityRegistry
         $cls = $this->getEntityByHigh($high);
 
         return EntityUtils::create($cls);
-    }
-
-    // Get entity meta
-    public function getEntityMeta(string $class): EntityMeta
-    {
-        return FP::getOrCreate(
-            $this->metaByClass,
-            $class,
-            fn (string $class) => $this->metaResolver->resolveEntityMeta($class)
-        );
     }
 
     private function scanMap(array $entities): array

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Security;
 
+use Bungle\Framework\Ent\ObjectName;
 use Bungle\Framework\Entity\EntityRegistry;
 use Bungle\Framework\StateMachine\EntityWorkflowDefinitionResolverInterface as WorkflowResolver;
 use Iterator;
@@ -14,11 +15,16 @@ final class EntityRoleDefinitionProvider implements RoleDefinitionProviderInterf
 {
     private EntityRegistry $entityRegistry;
     private WorkflowResolver $workflowResolver;
+    private ObjectName $objectName;
 
-    public function __construct(EntityRegistry $entityRegistry, WorkflowResolver $workflowResolver)
-    {
+    public function __construct(
+        EntityRegistry $entityRegistry,
+        WorkflowResolver $workflowResolver,
+        ObjectName $objectName
+    ) {
         $this->entityRegistry = $entityRegistry;
         $this->workflowResolver = $workflowResolver;
+        $this->objectName = $objectName;
     }
 
     public function getRoleDefinitions(): Iterator
@@ -35,7 +41,7 @@ final class EntityRoleDefinitionProvider implements RoleDefinitionProviderInterf
             }
 
             $actions = [];
-            $group = $this->entityRegistry->getEntityMeta($entity)->logicName;
+            $group = $this->objectName->getName($entity);
             yield new RoleDefinition(
                 RoleDefinition::newActionRole($high, 'view'),
                 '查看',

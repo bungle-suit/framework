@@ -8,6 +8,8 @@ use Doctrine\Common\Annotations\Annotation;
 use Doctrine\Common\Annotations\Annotation\Required;
 use Doctrine\Common\Annotations\Annotation\Target;
 use Doctrine\Common\Annotations\AnnotationReader;
+use ReflectionClass;
+use UnexpectedValueException;
 
 /**
  * Define high of a entity class.
@@ -29,12 +31,7 @@ final class High
      */
     public static function resolveHigh(string $clsName): ?string
     {
-        /*
-         * Doctrine annotations lib will failed if some annotations class not loaded,
-         */
-        require_once __DIR__.'/LogicName.php';
-
-        $cls = new \ReflectionClass($clsName);
+        $cls = new ReflectionClass($clsName);
         $reader = new AnnotationReader();
         $anno = $reader->getClassAnnotation($cls, High::class);
         if (!$anno) {
@@ -43,7 +40,7 @@ final class High
 
         $high = $anno->value;
         if (0 === preg_match('/^[a-z]{3}$/', $high)) {
-            throw new \UnexpectedValueException("Invalid format of high value '$high' of Entity '$clsName'");
+            throw new UnexpectedValueException("Invalid format of high value '$high' of Entity '$clsName'");
         }
 
         return $high;
