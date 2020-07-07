@@ -203,4 +203,12 @@ class FPTest extends TestCase
 
         FP::notNull(null);
     }
+
+    public function testNotNullWithMessage(): void
+    {
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('foo');
+
+        FP::notNull(null, 'foo');
+    }
 }

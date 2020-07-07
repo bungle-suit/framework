@@ -308,10 +308,10 @@ class FP
      * @phpstan-param T|null $v
      * @phpstanreturn T
      */
-    public static function notNull($v)
+    public static function notNull($v, string $message = '')
     {
         if ($v === null) {
-            throw new LogicException("Expect value not null");
+            throw new LogicException($message ?: "Expect value not null");
         }
 
         return $v;
