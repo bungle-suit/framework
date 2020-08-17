@@ -24,8 +24,8 @@ class ParsersTest extends MockeryTestCase
     {
         parent::setUp();
 
-        $this->parsers = new Parsers();
-        $this->parsers->basal = $this->basal = Mockery::mock(BasalInfoService::class);
+        $this->basal = Mockery::mock(BasalInfoService::class);
+        $this->parsers = new Parsers($this->basal);
         $this->ctx = new ExportContext(new Request());
     }
 

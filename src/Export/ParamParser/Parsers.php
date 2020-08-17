@@ -15,7 +15,12 @@ class Parsers
     public const PARAM_CURRENT_USER = 'current_user';
 
     /** @required */
-    public BasalInfoService $basal;
+    private BasalInfoService $basal;
+
+    public function __construct(BasalInfoService $basal)
+    {
+        $this->basal = $basal;
+    }
 
     /**
      * Create value parser that checks $attrName attribute exist in context.
