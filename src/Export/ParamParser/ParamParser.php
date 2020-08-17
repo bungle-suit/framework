@@ -11,10 +11,13 @@ use RuntimeException;
 class ParamParser
 {
     /**
-     * @phpstan-var QBEValueParseInterface|callable(QBEParseContext): ?string
+     * @phpstan-var Array<ParamValueParserInterface|callable(ExportContext): ?string>
      */
     private array $parsers;
 
+    /**
+     * @phpstan-param Array<ParamValueParserInterface|callable(ExportContext): ?string> $parsers
+     */
     public function __construct(array $parsers)
     {
         $this->parsers = $parsers;

@@ -25,7 +25,7 @@ class Parsers
     /**
      * Create value parser that checks $attrName attribute exist in context.
      *
-     * @return callable(FlowContext): string
+     * @return callable(ExportContext): ?string
      */
     public static function ensureAttrExist(string $attrName): callable
     {
@@ -53,7 +53,7 @@ class Parsers
      * @param string $startName name for begin of the date range
      * @param string $endName name for the end of the date range
      * @param bool $mustInThreeMonth failed if parsed data range out of three months.
-     * @return callable(FlowContext): mixed[]|string
+     * @return callable(ExportContext): ?string
      */
     public function parseDateRange(
         string $paramName,
@@ -85,7 +85,7 @@ class Parsers
     /**
      * Create value parser that split query/post param into array
      *
-     * @return callable(FlowContext): string
+     * @return callable(ExportContext): ?string
      */
     public static function explode(string $attrName, string $sep = ','): callable
     {

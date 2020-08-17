@@ -11,10 +11,15 @@ namespace Bungle\Framework\Model;
  */
 trait HasAttributes
 {
+    /**
+     * @var mixed[]
+     */
     private array $attributes = [];
 
     /**
      * Returns attribute value, returns default if not exist.
+     *
+     * @return mixed
      */
     public function get(string $name, $default = null)
     {
@@ -47,6 +52,7 @@ trait HasAttributes
 
     /**
      * Returns all attributes.
+     * @return mixed[]
      */
     public function all(): array
     {

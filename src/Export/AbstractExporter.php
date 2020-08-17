@@ -24,9 +24,6 @@ abstract class AbstractExporter
     abstract public function buildFilename(array $params): string;
 
     /**
-     * @param mixed[] $qbes
-     * @return string file path of where generated content stored.
-     *
      * If runtime error occurred during export, will save error messages
      * in a text file, logic name is 'error.txt'.
      */
@@ -49,7 +46,7 @@ abstract class AbstractExporter
     }
 
     /**
-     * @phpstan-return Traversable<QBEValueParserInterface|callable(ParamValueParserInterface): mixed[]|string>
+     * @phpstan-return  Traversable<ParamValueParserInterface|callable(ExportContext): ?string>
      * @return Traversable<ParamValueParserInterface|callable>
      */
     abstract protected function buildParamParser(): Traversable;

@@ -27,5 +27,8 @@ abstract class AbstractExcelExporter extends AbstractExporter
         return $r;
     }
 
-    abstract protected function generate(ExcelWriter $writer, array $params);
+    /**
+     * @param mixed[] $params
+     */
+    abstract protected function generate(ExcelWriter $writer, array $params): void;
 }

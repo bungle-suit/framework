@@ -32,7 +32,7 @@ abstract class AbstractSingleTableExporter extends AbstractExcelExporter
         $this->title = $title;
     }
 
-    protected function generate(ExcelWriter $writer, array $params)
+    protected function generate(ExcelWriter $writer, array $params): void
     {
         $cols = iterator_to_array($this->createColumns(), false);
         $writer->writeTitle($this->buildTitle(), count($cols));
