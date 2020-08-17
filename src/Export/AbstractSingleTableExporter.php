@@ -89,6 +89,9 @@ abstract class AbstractSingleTableExporter extends AbstractExcelExporter
         return $this->title;
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function buildParamParser(): Traversable
     {
         return new ArrayIterator();

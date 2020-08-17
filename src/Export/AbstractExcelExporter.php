@@ -9,6 +9,9 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 abstract class AbstractExcelExporter extends AbstractExporter
 {
+    /**
+     * @inheritDoc
+     */
     protected function doBuild(string $fn, array $params): void
     {
         $sheet = $this->createSpreadsheet();

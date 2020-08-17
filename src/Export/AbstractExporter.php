@@ -54,6 +54,9 @@ abstract class AbstractExporter
      */
     abstract protected function buildParamParser(): Traversable;
 
+    /**
+     * @param mixed[] $params
+     */
     abstract protected function doBuild(string $fn, array $params): void;
 
     /**
