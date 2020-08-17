@@ -100,6 +100,22 @@ class ParsersTest extends MockeryTestCase
         self::assertEquals(['foo' => ['a', 'b', 'c']], $this->successParse($p));
     }
 
+    public function testFromRequest(): void
+    {
+        // case 1: not exist in request, fill with default value
+        $p = Parsers::fromRequest('foo', 'blah');
+        self::assertEquals(['foo' => 'blah'], $this->successParse($p));
+
+        // case 2: use default converter
+        $this->ctx->getRequest()->request->set('foo', 'bar');
+        self::assertEquals(['foo' => 'bar'], $this->successParse($p));
+
+        // case 3: use converter
+        $p = Parsers::fromRequest('foo', null, 'intval');
+        $this->ctx->getRequest()->request->set('foo', '100.10');
+        self::assertEquals(['foo' => 100], $this->successParse($p));
+    }
+
     /**
      * @phpstan-param callable(FlowContext): mixed[]|string $parser
      */

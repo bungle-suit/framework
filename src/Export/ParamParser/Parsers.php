@@ -5,6 +5,7 @@ namespace Bungle\Framework\Export\ParamParser;
 
 use Bungle\Framework\Ent\BasalInfoService;
 use Bungle\Framework\Export\DateRange;
+use Bungle\Framework\FP;
 use DateTime;
 
 class Parsers
@@ -33,6 +34,31 @@ class Parsers
             if (!$context->has($attrName)) {
                 return "Required \"$attrName\" attribute";
             }
+            return null;
+        };
+    }
+
+    /**
+     * Create value converter that get param from request argument (query string or post).
+     *
+     * If $paramName not exist in request, null value saved into context.
+     *
+     * @param mixed $default use default if param not exist.
+     * @param callable(string): mixed $converter, by default use identity, raise RuntimeException on
+     * error.
+     */
+    public static function fromRequest(string $paramName, $default = null, callable $converter = null): callable
+    {
+        return function (ExportContext $ctx) use ($default, $paramName, $converter): ?string {
+            $f = $converter ?? [FP::class, 'identity'];
+            $request = $ctx->getRequest();
+            $v = $request->get($paramName);
+            if ($v === null) {
+                $v = $default;
+            } else {
+                $v = $f($v);
+            }
+            $ctx->set($paramName, $v);
             return null;
         };
     }
