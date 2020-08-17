@@ -49,7 +49,7 @@ abstract class AbstractExporter
     }
 
     /**
-     * @phpstan-return Traversable<QBEValueParserInterface|callable(QBEParseContext): mixed[]|string>
+     * @phpstan-return Traversable<QBEValueParserInterface|callable(ParamValueParserInterface): mixed[]|string>
      * @return Traversable<ParamValueParserInterface|callable>
      */
     abstract protected function buildParamParser(): Traversable;
