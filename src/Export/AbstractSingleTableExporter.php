@@ -67,10 +67,7 @@ abstract class AbstractSingleTableExporter extends AbstractExcelExporter
     abstract protected function createColumns(): Traversable;
 
     /**
-     * Return the filename should be, use it in such as file download http header.
-     *
-     * Note: the physical filename returned by @see self::export() method
-     * is random unique.
+     * @inheritDoc
      */
     public function buildFilename(array $params): string
     {
