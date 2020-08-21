@@ -40,13 +40,13 @@ class ParsersTest extends MockeryTestCase
     public function testParseDateRangeInThreeMonths(): void
     {
         $this->basal->allows('today')->andReturn(new DateTime('2020-08-15'));
-        $p = $this->parsers->parseDateRange('range', 'start', 'end');
+        $p = $this->parsers->parseDateRange('range', 'start', 'end', 92);
         $request = $this->ctx->getRequest();
 
         // case 1: out of range
         $request->request->set('start', '2020-01-02');
         $request->request->set('end', '2020-04-04');
-        $this->failedPass('只能导出三个月内的数据', $p);
+        $this->failedPass('只能导出92天内的数据', $p);
 
         // case 2: in range
         $request->request->set('start', '2020-01-02');
@@ -58,7 +58,8 @@ class ParsersTest extends MockeryTestCase
 
     public function testParseDateRangeWithoutThreeMonths(): void
     {
-        $p = $this->parsers->parseDateRange('range', 'start', 'end', false);
+        $this->basal->allows('today')->andReturn(new DateTime('2020-08-15'));
+        $p = $this->parsers->parseDateRange('range', 'start', 'end', 0);
         $request = $this->ctx->getRequest();
 
         $request->request->set('start', '2020-01-02');

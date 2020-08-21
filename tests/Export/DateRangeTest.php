@@ -15,27 +15,31 @@ class DateRangeTest extends MockeryTestCase
 
         // case 1: both start/end exist and in three months
         $range = self::newRange('2020-01-02', '2020-04-02');
-        self::assertFalse($range->outOfRange($today));
+        self::assertFalse($range->outOfRange(92, $today));
 
         // case 2: both start/end exist but out of three months
         $range = self::newRange('2020-01-02', '2020-04-04');
-        self::assertTrue($range->outOfRange($today));
+        self::assertTrue($range->outOfRange(92, $today));
 
         // case 3: end not exist in three months
         $range = self::newRange('2020-07-15', '');
-        self::assertFalse($range->outOfRange($today));
+        self::assertFalse($range->outOfRange(92, $today));
 
         // case 4: end not exist out of three months
         $range = self::newRange('2020-04-15', '');
-        self::assertTrue($range->outOfRange($today));
+        self::assertTrue($range->outOfRange(92, $today));
 
         // case 5: no start implicit out of three months.
         $range = self::newRange('', '2020-08-01');
-        self::assertTrue($range->outOfRange($today));
+        self::assertTrue($range->outOfRange(92, $today));
 
         // case 6: both start/end not exist
         $range = self::newRange('', '');
-        self::assertTrue($range->outOfRange($today));
+        self::assertTrue($range->outOfRange(92, $today));
+
+        // case 7: disabled if $maxDays is 0
+        $range = self::newRange('', '');
+        self::assertFalse($range->outOfRange(0, $today));
     }
 
     private static function newRange(string $start, string $end): DateRange

@@ -78,21 +78,21 @@ class Parsers
      * @param string $paramName name for parsed DateRange param.
      * @param string $startName name for begin of the date range
      * @param string $endName name for the end of the date range
-     * @param bool $mustInThreeMonth failed if parsed data range out of three months.
+     * @param int $maxDateRange if not 0, failed if the data range out of specific days.
      * @return callable(ExportContext): ?string
      */
     public function parseDateRange(
         string $paramName,
         string $startName,
         string $endName,
-        bool $mustInThreeMonth = true
+        int $maxDateRange = 0
     ): callable {
-        return function (ExportContext $context) use ($paramName, $mustInThreeMonth, $endName, $startName): ?string {
+        return function (ExportContext $context) use ($maxDateRange, $paramName, $endName, $startName): ?string {
             $start = self::parseDate($context->getRequest()->get($startName));
             $end = self::parseDate($context->getRequest()->get($endName));
             $range = new DateRange($start, $end);
-            if ($mustInThreeMonth && $range->outOfRange($this->basal->today())) {
-                return '只能导出三个月内的数据';
+            if ($range->outOfRange($maxDateRange, $this->basal->today())) {
+                return "只能导出{$maxDateRange}天内的数据";
             }
             $context->set($paramName, $range);
             return null;
