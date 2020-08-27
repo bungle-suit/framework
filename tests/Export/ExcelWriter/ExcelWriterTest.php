@@ -25,21 +25,7 @@ class ExcelWriterTest extends MockeryTestCase
 
         $this->sheet = new Spreadsheet();
         $this->workSheet = $this->sheet->getActiveSheet();
-        $this->writer = new ExcelWriter($this->workSheet);
-    }
-
-    public function testRowManipulate(): void
-    {
-        $this->assertRow(1);
-
-        $this->writer->setRow(100);
-        $this->assertRow(100);
-
-        $this->writer->nextRow();
-        $this->assertRow(101);
-
-        $this->writer->nextRow(10);
-        $this->assertRow(111);
+        $this->writer = new ExcelWriter($this->sheet);
     }
 
     public function testWriteTitle(): void

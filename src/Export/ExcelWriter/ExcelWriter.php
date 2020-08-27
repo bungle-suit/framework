@@ -7,32 +7,13 @@ use Bungle\Framework\FP;
 use LogicException;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
-class ExcelWriter
+class ExcelWriter extends ExcelOperator
 {
-    private ?Spreadsheet $book = null;
-    private Worksheet $sheet;
-    private int $row = 1;
-
-    /**
-     * @param Worksheet|Spreadsheet $sheetOrWorkSheet
-     */
-    public function __construct($sheetOrWorkSheet)
-    {
-        if ($sheetOrWorkSheet instanceof Spreadsheet) {
-            $this->book = $sheetOrWorkSheet;
-            $this->sheet = $sheetOrWorkSheet->getActiveSheet();
-        } else {
-            $this->sheet = $sheetOrWorkSheet;
-        }
-    }
-
     /**
      * Create a new work sheet as current sheet, $name as its text/title.
      */
@@ -45,35 +26,6 @@ class ExcelWriter
         $this->sheet = $this->book->createSheet();
         $this->sheet->setTitle($name);
         $this->row = 1;
-    }
-
-    /**
-     * @return int current row no start from 1
-     */
-    public function getRow(): int
-    {
-        return $this->row;
-    }
-
-    /**
-     * Goto specific $row.
-     */
-    public function setRow(int $row): void
-    {
-        $this->row = $row;
-    }
-
-    /**
-     * Goto next row.
-     */
-    public function nextRow(int $n = 1): void
-    {
-        $this->row += $n;
-    }
-
-    public function getSheet(): Worksheet
-    {
-        return $this->sheet;
     }
 
     public const TITLE_STYLE_H1 = 'h1';
