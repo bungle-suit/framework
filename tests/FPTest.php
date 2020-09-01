@@ -211,4 +211,43 @@ class FPTest extends TestCase
 
         FP::notNull(null, 'foo');
     }
+
+    public function testAnd(): void
+    {
+        list($aHit, $bHit) = [0, 0];
+        $a = function (int $a, int $b) use (&$aHit) {
+            $aHit ++;
+            self::assertEquals(1, $a);
+            self::assertEquals(2, $b);
+
+            return true;
+        };
+
+        $b = function (int $a, int $b) use (&$bHit) {
+            $bHit ++;
+            self::assertEquals(1, $a);
+            self::assertEquals(2, $b);
+
+            return true;
+        };
+
+        $a1 = function (int $a, int $b) use (&$aHit) {
+            $aHit ++;
+            self::assertEquals(1, $a);
+            self::assertEquals(2, $b);
+
+            return false;
+        };
+
+        // case 1: $a is true, returns $b
+        $f = FP::and($a, $b);
+        self::assertTrue($f(1, 2));
+
+        // case 2: $a is false, $b not called.
+        $f = FP::and($a1, $b);
+        self::assertFalse($f(1, 2));
+
+        self::assertEquals(2, $aHit);
+        self::assertEquals(1, $bHit);
+    }
 }

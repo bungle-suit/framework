@@ -316,4 +316,16 @@ class FP
 
         return $v;
     }
+
+    /**
+     * @param callable(mixed...): mixed $a
+     * @param callable(mixed...): mixed $b
+     * @return callable(mixed...): mixed
+     */
+    public static function and(callable $a, callable $b): callable
+    {
+        return function (...$args) use ($b, $a) {
+            return $a(...$args) && $b(...$args);
+        };
+    }
 }
