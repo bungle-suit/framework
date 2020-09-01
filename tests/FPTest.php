@@ -287,4 +287,19 @@ class FPTest extends TestCase
         self::assertEquals(2, $aHit);
         self::assertEquals(1, $bHit);
     }
+
+    public function testNot(): void
+    {
+        $aHit = 0;
+        $a = function (int $v) use (&$aHit) {
+            $aHit ++;
+            self::assertEquals(200, $v);
+
+            return true;
+        };
+
+        $f = FP::not($a);
+        self::assertFalse($f(200));
+        self::assertEquals(1, $aHit);
+    }
 }

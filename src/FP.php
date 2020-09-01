@@ -318,9 +318,9 @@ class FP
     }
 
     /**
-     * @param callable(mixed...): mixed $a
-     * @param callable(mixed...): mixed $b
-     * @return callable(mixed...): mixed
+     * @param callable(mixed...): bool $a
+     * @param callable(mixed...): bool $b
+     * @return callable(mixed...): bool
      */
     public static function and(callable $a, callable $b): callable
     {
@@ -330,14 +330,25 @@ class FP
     }
 
     /**
-     * @param callable(mixed...): mixed $a
-     * @param callable(mixed...): mixed $b
-     * @return callable(mixed...): mixed
+     * @param callable(mixed...): bool $a
+     * @param callable(mixed...): bool $b
+     * @return callable(mixed...): bool
      */
     public static function or(callable $a, callable $b): callable
     {
         return function (...$args) use ($b, $a) {
             return $a(...$args) || $b(...$args);
+        };
+    }
+
+    /**
+     * @param callable(mixed...): bool $a
+     * @return callable(mixed...): bool
+     */
+    public static function not(callable $a): callable
+    {
+        return function (...$args) use ($a) {
+            return !$a(...$args);
         };
     }
 }
