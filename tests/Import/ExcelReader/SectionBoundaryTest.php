@@ -72,4 +72,22 @@ class SectionBoundaryTest extends MockeryTestCase
         $this->reader->nextRow();
         self::assertTrue($f($this->reader));
     }
+
+    public function testRowAfter(): void
+    {
+        $f = SectionBoundary::rowAfter(10);
+
+        // row before 10
+        self::assertFalse($f($this->reader));
+        $this->reader->setRow(9);
+        self::assertFalse($f($this->reader));
+
+        // row equals 10
+        $this->reader->setRow(10);
+        self::assertFalse($f($this->reader));
+
+        // row after 10
+        $this->reader->setRow(11);
+        self::assertTrue($f($this->reader));
+    }
 }

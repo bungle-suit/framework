@@ -62,4 +62,14 @@ class SectionBoundary implements SectionBoundaryInterface
     {
         return fn(ExcelReader $reader): bool => in_array($reader->getCellValue($colIdx.$reader->getRow()), $keywords);
     }
+
+    /**
+     * Section start detect function, matched if current row index > $rowIdx.
+     *
+     * @return callable(ExcelReader): bool
+     */
+    public static function rowAfter(int $rowIdx): callable
+    {
+        return fn (ExcelReader $reader): bool => $reader->getRow() > $rowIdx;
+    }
 }
