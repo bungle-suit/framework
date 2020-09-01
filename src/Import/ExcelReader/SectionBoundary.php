@@ -30,4 +30,12 @@ class SectionBoundary implements SectionBoundaryInterface
     public function onReadComplete(ExcelReader $reader): void
     {
     }
+
+    /**
+     * Shortcut of `new MatchFirstBoundary($boundary)`
+     */
+    public static function matchFirst(SectionBoundaryInterface $boundary): SectionBoundaryInterface
+    {
+        return new MatchFirstSectionBoundary($boundary);
+    }
 }
