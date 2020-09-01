@@ -7,6 +7,7 @@ use Bungle\Framework\Import\ExcelReader\ExcelReader;
 use Bungle\Framework\Import\ExcelReader\SectionBoundary;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 class SectionBoundaryTest extends MockeryTestCase
 {
@@ -33,5 +34,20 @@ class SectionBoundaryTest extends MockeryTestCase
 
         self::assertTrue($b->isSectionEnd($reader));
         self::assertEquals(1, $endHit);
+    }
+
+    public function testSheetNameIs(): void
+    {
+        $sheet = new Spreadsheet();
+        $reader = new ExcelReader($sheet);
+        $f = SectionBoundary::sheetNameIs('foo', 'bar');
+
+        // current sheet not specific
+        $reader->getSheet()->setTitle('foobar');
+        self::assertFalse($f($reader));
+
+        // current sheet is one of specific
+        $reader->getSheet()->setTitle('bar');
+        self::assertTrue($f($reader));
     }
 }

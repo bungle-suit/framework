@@ -38,4 +38,16 @@ class SectionBoundary implements SectionBoundaryInterface
     {
         return new MatchFirstSectionBoundary($boundary);
     }
+
+    /**
+     * Returns callable that returns true if current sheet name is one of $sheetNames
+     *
+     * @return callable(ExcelReader): bool
+     */
+    public static function sheetNameIs(string ...$sheetNames): callable
+    {
+        return function (ExcelReader $reader) use ($sheetNames): bool {
+            return in_array($reader->getSheet()->getTitle(), $sheetNames);
+        };
+    }
 }
