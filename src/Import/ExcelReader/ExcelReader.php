@@ -17,6 +17,9 @@ use RuntimeException;
  */
 class ExcelReader extends ExcelOperator
 {
+    /** @var SectionReader[] */
+    private array $sections;
+
     /**
      * Switch current work sheet, reset current row counter.
      *
@@ -37,5 +40,54 @@ class ExcelReader extends ExcelOperator
         $this->sheet = $sheet;
         $this->row = 1;
         return true;
+    }
+
+    /**
+     * @param SectionReader[] $sections
+     */
+    public function setupSections(array $sections): void
+    {
+        $this->sections = $sections;
+    }
+
+    public function read(): void
+    {
+        $sheet = $this->getSheet();
+        $curSection = null;
+        for ($maxRow = $sheet->getHighestDataRow(); $this->row <= $maxRow; $this->nextRow()) {
+            if ($curSection === null) {
+                foreach ($this->sections as $section) {
+                    if ($section->getBoundary()->isSectionStart($this)) {
+                        $curSection = $section;
+                        $curSection->getContentReader()->onSectionStart($this);
+                        break;
+                    }
+                }
+                if ($curSection === null) {
+                    continue;
+                }
+            }
+
+            if ($curSection->getBoundary()->isSectionEnd($this)) {
+                $curSection->getContentReader()->onSectionEnd($this);
+                $curSection = null;
+                $this->nextRow(-1);
+                continue;
+            }
+
+            if (!($curSection->getIsEmptyRow())($this)) {
+                $curSection->getContentReader()->readRow($this);
+            }
+        }
+        $this->nextRow(-1); // fix row to last data row.
+
+        if ($curSection !== null) {
+            $curSection->getContentReader()->onSectionEnd($this);
+            $curSection = null;
+        }
+
+        foreach ($this->sections as $section) {
+            $section->getBoundary()->onReadComplete($this);
+        }
     }
 }
