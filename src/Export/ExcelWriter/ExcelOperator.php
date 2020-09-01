@@ -57,4 +57,20 @@ class ExcelOperator
     {
         return $this->book;
     }
+
+    /**
+     * Return the value of cell at $loc.
+     * If cell not exist, returns null, and not auto created.
+     *
+     * @return mixed
+     */
+    public function getCellValue(string $loc)
+    {
+        $cell = $this->sheet->getCell($loc, false);
+        if ($cell === null) {
+            return null;
+        }
+
+        return $cell->getValue();
+    }
 }
