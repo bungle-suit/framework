@@ -90,4 +90,32 @@ class SectionBoundaryTest extends MockeryTestCase
         $this->reader->setRow(11);
         self::assertTrue($f($this->reader));
     }
+
+    public function testIsEmptyRow(): void
+    {
+        $sheet = $this->reader->getSheet();
+        $f = SectionBoundary::isEmptyRow(2);
+
+        // row after the last data row, no new cell created
+        $sheet->setCellValue('A10', '');
+        self::assertEquals(10, $sheet->getHighestDataRow());
+        $this->reader->setRow(20);
+        self::assertTrue($f($this->reader));
+        self::assertEquals(10, $sheet->getHighestDataRow());
+
+        // row before the last data row, but empty, no new cell created
+        $this->reader->setRow(9);
+        self::assertTrue($f($this->reader));
+        self::assertNull($sheet->getCell('A9', false));
+        self::assertNull($sheet->getCell('B9', false));
+
+        // row looks like empty, not empty after $colDetects cols.
+        $sheet->setCellValue('C9', 'blah');
+        $sheet->setCellValue('A9', '');
+        self::assertTrue($f($this->reader));
+
+        // cell value 0 not empty
+        $sheet->setCellValue('A9', 0);
+        $sheet->setCellValue('B9', false);
+    }
 }

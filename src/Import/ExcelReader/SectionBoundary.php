@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Import\ExcelReader;
 
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+
 /**
  * Callback based SectionBoundaryInterface
  */
@@ -71,5 +73,25 @@ class SectionBoundary implements SectionBoundaryInterface
     public static function rowAfter(int $rowIdx): callable
     {
         return fn (ExcelReader $reader): bool => $reader->getRow() > $rowIdx;
+    }
+
+    /**
+     * Returns function tells that current row is empty row, by looking up
+     * first $colDetects cells is empty.
+     *
+     * @param int $colDetects
+     */
+    public static function isEmptyRow(int $colDetects = 10): callable
+    {
+        return function (ExcelReader $reader) use ($colDetects): bool {
+            for ($i = 1; $i <= $colDetects; $i++) {
+                $addr = Coordinate::stringFromColumnIndex($i).$reader->getRow();
+                $v = $reader->getCellValue($addr);
+                if ($v !== null && $v !== '') {
+                    return false;
+                }
+            }
+            return true;
+        };
     }
 }
