@@ -11,6 +11,9 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 class SectionBoundaryTest extends MockeryTestCase
 {
+    private Spreadsheet $sheet;
+    private ExcelReader $reader;
+
     public function test(): void
     {
         $reader = Mockery::Mock(ExcelReader::class);
@@ -36,18 +39,37 @@ class SectionBoundaryTest extends MockeryTestCase
         self::assertEquals(1, $endHit);
     }
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->sheet = new Spreadsheet();
+        $this->reader = new ExcelReader($this->sheet);
+    }
+
     public function testSheetNameIs(): void
     {
-        $sheet = new Spreadsheet();
-        $reader = new ExcelReader($sheet);
         $f = SectionBoundary::sheetNameIs('foo', 'bar');
 
         // current sheet not specific
-        $reader->getSheet()->setTitle('foobar');
-        self::assertFalse($f($reader));
+        $this->reader->getSheet()->setTitle('foobar');
+        self::assertFalse($f($this->reader));
 
         // current sheet is one of specific
-        $reader->getSheet()->setTitle('bar');
-        self::assertTrue($f($reader));
+        $this->reader->getSheet()->setTitle('bar');
+        self::assertTrue($f($this->reader));
+    }
+
+    public function testColIs(): void
+    {
+        $this->reader->getSheet()->setCellValue('B2', 'bar');
+        $f = SectionBoundary::colIs(['foo', 'bar'], 'B');
+
+        // cell not one of keywords
+        self::assertFalse($f($this->reader));
+
+        // cell is one of keywords.
+        $this->reader->nextRow();
+        self::assertTrue($f($this->reader));
     }
 }

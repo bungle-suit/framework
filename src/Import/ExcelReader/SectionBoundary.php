@@ -50,4 +50,16 @@ class SectionBoundary implements SectionBoundaryInterface
             return in_array($reader->getSheet()->getTitle(), $sheetNames);
         };
     }
+
+    /**
+     * Section start detect function, matched if one of $keywords exist in $colIdx cell.
+     *
+     * @param string[] $keywords
+     * @param string $col Which column to read, such as 'A' means first column.
+     * @return callable(ExcelReader): bool
+     */
+    public static function colIs(array $keywords, string $colIdx = 'A'): callable
+    {
+        return fn(ExcelReader $reader): bool => in_array($reader->getCellValue($colIdx.$reader->getRow()), $keywords);
+    }
 }
