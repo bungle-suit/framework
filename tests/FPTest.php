@@ -250,4 +250,41 @@ class FPTest extends TestCase
         self::assertEquals(2, $aHit);
         self::assertEquals(1, $bHit);
     }
+
+    public function testOr(): void
+    {
+        list($aHit, $bHit) = [0, 0];
+        $a = function (array $v) use (&$aHit) {
+            $aHit ++;
+            self::assertEquals([1, 2], $v);
+
+            return true;
+        };
+
+        $b = function (array $v) use (&$bHit) {
+            $bHit ++;
+            self::assertEquals([1, 2], $v);
+
+            return true;
+        };
+
+        $a1 = function (array $v) use (&$aHit) {
+            $aHit ++;
+            self::assertEquals([1, 2], $v);
+
+            return false;
+        };
+
+        // case 1: $a is true, returns $a, $b not called
+        $f = FP::or($a, $b);
+        self::assertTrue($f([1, 2]));
+        self::assertEquals(0, $bHit);
+
+        // case 2: $a is false, return $b result.
+        $f = FP::or($a1, $b);
+        self::assertTrue($f([1, 2]));
+
+        self::assertEquals(2, $aHit);
+        self::assertEquals(1, $bHit);
+    }
 }
