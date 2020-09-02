@@ -8,6 +8,7 @@ use Bungle\Framework\Import\ExcelReader\SectionContentReaderInterface;
 use Bungle\Framework\Import\ExcelReader\SkipHeadRowContentReader;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Mockery\Matcher\Closure;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 class SkipHeadRowContentReaderTest extends MockeryTestCase
@@ -20,7 +21,6 @@ class SkipHeadRowContentReaderTest extends MockeryTestCase
         $reader = new ExcelReader($book);
 
         $reader->setRow(10);
-        $inner->expects('onSectionStart')->with($reader);
         $r->onSectionStart($reader);
 
         // first two rows skipped
@@ -30,11 +30,17 @@ class SkipHeadRowContentReaderTest extends MockeryTestCase
         $reader->nextRow();
 
         // fowling rows passed to inner
-        $inner->expects('readRow')->with(Mockery::on(fn (ExcelReader $reader) => $reader->getRow() === 12));
+        $inner->expects('onSectionStart')->with(self::expectRowIdx(12));
+        $inner->expects('readRow')->with(self::expectRowIdx(12));
         $r->readRow($reader);
         $reader->nextRow();
 
-        $inner->expects('readRow')->with(Mockery::on(fn (ExcelReader $reader) => $reader->getRow() === 13));
+        $inner->expects('readRow')->with(self::expectRowIdx(13));
         $r->readRow($reader);
+    }
+
+    private static function expectRowIdx(int $exp): Closure
+    {
+        return Mockery::on(fn (ExcelReader $reader) => $reader->getRow() === $exp);
     }
 }
