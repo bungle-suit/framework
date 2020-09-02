@@ -15,10 +15,10 @@ class ColumnTest extends MockeryTestCase
         $ctx = Mockery::mock(Context::class);
         // case 1 without converter
         $col = new Column('path', 'lbl');
-        self::assertEquals('foo', $col->read('foo', $ctx));
+        self::assertSame('foo', $col->read('foo', $ctx));
 
         // case 2 with converter
         $col->setConverter(fn ($val, Context $ctx) => intval($val));
-        self::assertEquals(123, $col->read('123', $ctx));
+        self::assertSame(123, $col->read('123', $ctx));
     }
 }

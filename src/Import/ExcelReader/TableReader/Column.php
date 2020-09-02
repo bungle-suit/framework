@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Import\ExcelReader\TableReader;
 
+use Bungle\Framework\FP;
+
 class Column implements ColumnInterface
 {
     private string $path;
@@ -14,6 +16,7 @@ class Column implements ColumnInterface
     {
         $this->path = $path;
         $this->title = $title;
+        $this->converter = [FP::class, 'identity'];
     }
 
     public function getPath(): string
@@ -28,7 +31,7 @@ class Column implements ColumnInterface
 
     public function read($val, Context $context)
     {
-        return $val;
+        return ($this->converter)($val, $context);
     }
 
     /**
