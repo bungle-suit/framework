@@ -21,8 +21,11 @@ class SectionReader
     /** @var callable(ExcelReader): bool */
     private $isEmptyRow;
 
-    public function __construct(string $name, SectionBoundaryInterface $boundary, SectionContentReaderInterface $contentReader)
-    {
+    public function __construct(
+        string $name,
+        SectionBoundaryInterface $boundary,
+        SectionContentReaderInterface $contentReader
+    ) {
         $this->isEmptyRow = FP::f();
         $this->name = $name;
         $this->boundary = $boundary;
@@ -58,8 +61,9 @@ class SectionReader
      *
      * @param callable(ExcelReader): bool
      */
-    public function setIsEmptyRow(callable $isEmptyRow): void
+    public function setIsEmptyRow(callable $isEmptyRow): self
     {
         $this->isEmptyRow = $isEmptyRow;
+        return $this;
     }
 }
