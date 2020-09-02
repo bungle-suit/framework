@@ -76,6 +76,17 @@ class SectionBoundary implements SectionBoundaryInterface
     }
 
     /**
+     * Returns callback that returns true if specific column of current row is head of merged cell.
+     */
+    public static function colIsMergedStart(string $col = 'A'): callable
+    {
+        return function (ExcelReader $reader) use ($col): bool {
+            $cell = $reader->getSheet()->getCell($col.$reader->getRow());
+            return $cell->isMergeRangeValueCell();
+        };
+    }
+
+    /**
      * Returns function tells that current row is empty row, by looking up
      * first $colDetects cells is empty.
      *

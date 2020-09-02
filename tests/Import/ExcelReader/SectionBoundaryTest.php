@@ -118,4 +118,20 @@ class SectionBoundaryTest extends MockeryTestCase
         $sheet->setCellValue('A9', 0);
         $sheet->setCellValue('B9', false);
     }
+
+    public function testColIsMergedStart(): void
+    {
+        $sheet = $this->reader->getSheet();
+        $f = SectionBoundary::colIsMergedStart('B');
+        $sheet->getCell('B1');
+        $sheet->mergeCells('B1:C1');
+        self::assertTrue($f($this->reader));
+        $this->reader->nextRow();
+        self::assertFalse($f($this->reader));
+
+        $sheet->getCell('B4');
+        $sheet->mergeCells('A4:C4');
+        $this->reader->setRow(4);
+        self::assertFalse($f($this->reader));
+    }
 }
