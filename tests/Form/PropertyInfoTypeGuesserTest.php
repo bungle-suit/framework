@@ -10,7 +10,6 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Guess\Guess;
 use Symfony\Component\Form\Guess\TypeGuess;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractorInterface;
@@ -55,7 +54,7 @@ class PropertyInfoTypeGuesserTest extends MockeryTestCase
         if ($formType === "null") {
             self::assertNull($this->guesser->guessType(self::class, 'foo'));
         } else {
-            $exp = new TypeGuess($formType, $formOptions, Guess::LOW_CONFIDENCE);
+            $exp = new TypeGuess($formType, $formOptions, Guess::HIGH_CONFIDENCE);
             self::assertEquals($exp, $this->guesser->guessType(self::class, 'foo'));
         }
     }
@@ -67,7 +66,6 @@ class PropertyInfoTypeGuesserTest extends MockeryTestCase
             [new Type(Type::BUILTIN_TYPE_NULL), 'null', []],
             [new Type(Type::BUILTIN_TYPE_INT), IntegerType::class, []],
             [new Type(Type::BUILTIN_TYPE_FLOAT), NumberType::class, []],
-            [new Type(Type::BUILTIN_TYPE_STRING), TextType::class, []],
             [new Type(Type::BUILTIN_TYPE_BOOL), CheckboxType::class, []],
             [$collType, 'null', []],
         ];

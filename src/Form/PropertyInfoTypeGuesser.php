@@ -6,7 +6,6 @@ namespace Bungle\Framework\Form;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormTypeGuesserInterface;
 use Symfony\Component\Form\Guess\Guess;
 use Symfony\Component\Form\Guess\TypeGuess;
@@ -35,14 +34,12 @@ class PropertyInfoTypeGuesser implements FormTypeGuesserInterface
         }
 
         switch ($types[0]->getBuiltinType()) {
-            case Type::BUILTIN_TYPE_STRING:
-                return new TypeGuess(TextType::class, [], Guess::LOW_CONFIDENCE);
             case Type::BUILTIN_TYPE_INT:
-                return new TypeGuess(IntegerType::class, [], Guess::LOW_CONFIDENCE);
+                return new TypeGuess(IntegerType::class, [], Guess::HIGH_CONFIDENCE);
             case Type::BUILTIN_TYPE_FLOAT:
-                return new TypeGuess(NumberType::class, [], Guess::LOW_CONFIDENCE);
+                return new TypeGuess(NumberType::class, [], Guess::HIGH_CONFIDENCE);
             case Type::BUILTIN_TYPE_BOOL:
-                return new TypeGuess(CheckboxType::class, [], Guess::LOW_CONFIDENCE);
+                return new TypeGuess(CheckboxType::class, [], Guess::HIGH_CONFIDENCE);
         }
 
         return null;
