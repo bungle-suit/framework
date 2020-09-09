@@ -39,7 +39,7 @@ class BoolAttribute implements AttributeDefinitionInterface
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add($this->getName(), CheckBoxType::class, ['label' => $this->getLabel()]);
+        $builder->add($this->getName(), CheckBoxType::class, ['label' => $this->getLabel(), 'required' => false]);
     }
 
     public function createDefault()

@@ -29,7 +29,7 @@ class BoolAttributeTest extends MockeryTestCase
     public function testBuildForm(): void
     {
         $builder = Mockery::mock(FormBuilderInterface::class);
-        $builder->expects('add')->with('foo', CheckBoxType::class, ['label' => 'lbl']);
+        $builder->expects('add')->with('foo', CheckBoxType::class, ['label' => 'lbl', 'required' => false]);
         $this->def->buildForm($builder, []);
     }
 
