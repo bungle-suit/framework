@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Model\ExtAttribute;
 
+use Bungle\Framework\Model\ExtAttribute\AttributeDefinitionInterface;
 use Bungle\Framework\Model\ExtAttribute\AttributeInterface;
 use Bungle\Framework\Model\ExtAttribute\AttributeSet;
 use Bungle\Framework\Model\ExtAttribute\AttributeTrait;

@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Model\ExtAttribute;
 
-use Bungle\Framework\Tests\Model\ExtAttribute\AttributeDefinitionInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 

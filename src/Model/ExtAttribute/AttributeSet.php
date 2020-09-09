@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Bungle\Framework\Model\ExtAttribute;
 
 use Bungle\Framework\FP;
-use Bungle\Framework\Tests\Model\ExtAttribute\AttributeDefinitionInterface;
 use LogicException;
 use Symfony\Component\Form\FormBuilderInterface;
 

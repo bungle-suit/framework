@@ -1,9 +1,8 @@
 <?php
 declare(strict_types=1);
 
-namespace Bungle\Framework\Tests\Model\ExtAttribute;
+namespace Bungle\Framework\Model\ExtAttribute;
 
-use Bungle\Framework\Model\ExtAttribute\AttributeInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
