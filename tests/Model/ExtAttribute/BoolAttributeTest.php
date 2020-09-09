@@ -29,8 +29,25 @@ class BoolAttributeTest extends MockeryTestCase
     public function testBuildForm(): void
     {
         $builder = Mockery::mock(FormBuilderInterface::class);
-        $builder->expects('add')->with('foo', CheckBoxType::class, ['label' => 'lbl', 'required' => false]);
-        $this->def->buildForm($builder, []);
+        // no description
+        $def = new BoolAttribute('foo', 'lbl');
+        $builder->expects('add')
+            ->with(
+                'foo',
+                CheckBoxType::class,
+                ['label' => 'lbl', 'required' => false]
+            );
+        $def->buildForm($builder, []);
+
+        // has description
+        $def = new BoolAttribute('foo', 'lbl', 'description');
+        $builder->expects('add')
+            ->with(
+                'foo',
+                CheckBoxType::class,
+                ['label' => 'lbl', 'required' => false, 'help' => 'description']
+            );
+        $def->buildForm($builder, []);
     }
 
     public function testCreateDefault(): void

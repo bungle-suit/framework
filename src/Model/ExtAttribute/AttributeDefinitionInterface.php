@@ -14,6 +14,8 @@ interface AttributeDefinitionInterface
 
     public function getName(): string;
 
+    public function getDescription(): string;
+
     public function buildForm(FormBuilderInterface $formBuilder, array $options): void;
 
     /**

@@ -10,11 +10,13 @@ class BoolAttribute implements AttributeDefinitionInterface
 {
     private string $label;
     private string $name;
+    private string $description;
 
-    public function __construct(string $name, string $label)
+    public function __construct(string $name, string $label, string $description = '')
     {
         $this->name = $name;
         $this->label = $label;
+        $this->description = $description;
     }
 
     public function getLabel(): string
@@ -39,7 +41,17 @@ class BoolAttribute implements AttributeDefinitionInterface
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add($this->getName(), CheckBoxType::class, ['label' => $this->getLabel(), 'required' => false]);
+        $attrs = [
+            'label' => $this->getLabel(), 'required' => false,
+        ];
+        if ($this->description) {
+            $attrs['help'] = $this->description;
+        }
+        $builder->add(
+            $this->getName(),
+            CheckBoxType::class,
+            $attrs,
+        );
     }
 
     public function createDefault()
@@ -55,5 +67,10 @@ class BoolAttribute implements AttributeDefinitionInterface
     public function saveValue(AttributeInterface $attribute, $value): void
     {
         $attribute->setBool($value);
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
     }
 }
