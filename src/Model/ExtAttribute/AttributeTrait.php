@@ -54,7 +54,7 @@ trait AttributeTrait
         switch ($this->getValue()) {
             case '1':
                 return true;
-            case '0':
+            case '':
                 return false;
             default:
                 throw new RuntimeException("{$this->getValue()} not valid bool attribute value");
@@ -63,6 +63,6 @@ trait AttributeTrait
 
     public function setBool(bool $v): void
     {
-        $this->setValue($v ? '1' : '0');
+        $this->setValue($v ? '1' : '');
     }
 }

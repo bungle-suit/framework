@@ -121,7 +121,7 @@ class AttributeSetTest extends MockeryTestCase
         self::assertEquals('5', $newAttr->getValue());
     }
 
-    private static function newAttribute(string $attrName, string $value = ''): AttributeInterface
+    public static function newAttribute(string $attrName, string $value = ''): AttributeInterface
     {
         return new class($attrName, $value) implements AttributeInterface {
             use AttributeTrait;

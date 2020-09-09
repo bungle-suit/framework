@@ -21,6 +21,9 @@ class AttributeTraitTest extends MockeryTestCase
 
         $attr->setBool(false);
         self::assertFalse($attr->asBool());
-        self::assertEquals('0', $attr->getValue());
+        self::assertEquals('', $attr->getValue());
+
+        $attr->setValue('');
+        self::assertFalse($attr->asBool());
     }
 }
