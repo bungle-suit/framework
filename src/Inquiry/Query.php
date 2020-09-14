@@ -5,6 +5,7 @@ namespace Bungle\Framework\Inquiry;
 
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use LogicException;
 use Traversable;
 
@@ -51,13 +52,7 @@ class Query
      */
     public function query(QueryParams $params): Traversable
     {
-        $qb = $this->em->createQueryBuilder();
-        $builder = new Builder($qb, $params);
-
-        foreach ($this->getSteps() as $step) {
-            $step($builder);
-        }
-        $this->columns = $builder->getColumns();
+        $qb = $this->prepareQuery($params, false);
         foreach ($qb->getQuery()->iterate(null, AbstractQuery::HYDRATE_ARRAY) as $rows) {
             yield from $rows;
         }
@@ -70,6 +65,32 @@ class Query
      */
     public function pagedQuery(QueryParams $params): PagedData
     {
+        $data = iterator_to_array($this->query($params), false);
+        $count = $this->queryCount($params);
+        return new PagedData($data, $count);
+    }
+
+    private function queryCount(QueryParams $params): int
+    {
+        $qb = $this->prepareQuery($params, true);
+        return $qb->getQuery()->execute(null, AbstractQuery::HYDRATE_SINGLE_SCALAR);
+    }
+
+    private function prepareQuery(QueryParams $params, bool $forCount): QueryBuilder
+    {
+        $qb = $this->em->createQueryBuilder();
+        $builder = new Builder($qb, $params);
+        if ($forCount) {
+            $builder->set(Builder::ATTR_BUILD_FOR_COUNT, true);
+        }
+
+        foreach ($this->getSteps() as $step) {
+            $step($builder);
+        }
+        if (!$forCount) {
+            $this->columns = $builder->getColumns();
+        }
+        return $qb;
     }
 
     /**

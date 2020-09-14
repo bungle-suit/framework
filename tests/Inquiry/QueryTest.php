@@ -67,7 +67,6 @@ class QueryTest extends MockeryTestCase
                 ]
             ),
         );
-        new ArrayIterator([]);
 
         $params = new QueryParams(0, []);
         $step1 = Mockery::mock(QueryStepInterface::class);
@@ -95,6 +94,36 @@ class QueryTest extends MockeryTestCase
 
     public function testPagedQuery(): void
     {
-        $this->markTestIncomplete();
+        $qb1 = Mockery::mock(QueryBuilder::class);
+        $qb2 = Mockery::mock(QueryBuilder::class);
+        $this->em->expects('createQueryBuilder')->andReturn($qb1, $qb2)->twice();
+        $dqlQuery1 = Mockery::mock(AbstractQuery::class);
+        $dqlQuery2 = Mockery::mock(AbstractQuery::class);
+        $qb1->expects('getQuery')->andReturn($dqlQuery1);
+        $qb2->expects('getQuery')->andReturn($dqlQuery2);
+        $dqlQuery1->expects('iterate')->with(null, AbstractQuery::HYDRATE_ARRAY)->andReturn(
+            new ArrayIterator([new ArrayIterator([['line1'], ['line2']])]),
+        );
+        $dqlQuery2->expects('execute')->with(null, AbstractQuery::HYDRATE_SINGLE_SCALAR)->andReturn(2);
+
+        $isBuildForCounts = [];
+        $params = new QueryParams(0, []);
+        $col1 = new ColumnMeta('[id]', 'id', new Type(Type::BUILTIN_TYPE_INT));
+        $this->q->buildSteps(
+            [
+                function (Builder $builder) use ($col1, &$isBuildForCounts) {
+                    $isBuildForCounts[] = $builder->isBuildForCount();
+                    if (!$builder->isBuildForCount()) {
+                        $builder->addColumn($col1, 'foo');
+                    }
+                },
+            ]
+        );
+
+        $pagedData = $this->q->pagedQuery($params);
+        self::assertEquals(2, $pagedData->getCount());
+        self::assertEquals([['line1'], ['line2']], $pagedData->getData());
+        self::assertEquals([false, true], $isBuildForCounts);
+        self::assertEquals(['foo' => $col1], $this->q->getColumns());
     }
 }

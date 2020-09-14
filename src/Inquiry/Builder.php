@@ -20,6 +20,8 @@ class Builder implements HasAttributesInterface
     /** @var ColumnMeta[] */
     private array $columns = [];
 
+    /** Attribute set to true if current is build for count */
+    public const ATTR_BUILD_FOR_COUNT = '__for_count__';
     private const AUTO_COLUMN_PREFIX = '__col_';
     private int $autoColIdx = 0;
 
@@ -66,5 +68,13 @@ class Builder implements HasAttributesInterface
     public function getQueryParams(): QueryParams
     {
         return $this->queryParams;
+    }
+
+    /**
+     * Return true if current query is count total data rows.
+     */
+    public function isBuildForCount(): bool
+    {
+        return $this->get(self::ATTR_BUILD_FOR_COUNT, false);
     }
 }

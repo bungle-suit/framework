@@ -79,4 +79,15 @@ class BuilderTest extends MockeryTestCase
         $this->expectExceptionMessage('Column "col2" already added');
         $this->builder->addColumn($col2, 'col2');
     }
+
+    public function testBuildForCount(): void
+    {
+        self::assertFalse($this->builder->isBuildForCount());
+
+        $this->builder->set(Builder::ATTR_BUILD_FOR_COUNT, true);
+        self::assertTrue($this->builder->isBuildForCount());
+
+        $this->builder->set(Builder::ATTR_BUILD_FOR_COUNT, false);
+        self::assertFalse($this->builder->isBuildForCount());
+    }
 }
