@@ -31,10 +31,13 @@ final class HasAttributesTest extends TestCase
         $ctx->set('bar', null);
         self::assertNull($ctx->get('bar', 11));
 
-        $this->assertEquals([
-            'foo' => 'bar',
-            'bar' => null,
-        ], $ctx->all());
+        $this->assertEquals(
+            [
+                'foo' => 'bar',
+                'bar' => null,
+            ],
+            $ctx->all()
+        );
     }
 
     public function testRemove(): void
@@ -52,8 +55,26 @@ final class HasAttributesTest extends TestCase
         // unset not exist
         $ctx->remove('foo');
 
-        $this->assertEquals([
-            'bar' => 4,
-        ], $ctx->all());
+        $this->assertEquals(
+            [
+                'bar' => 4,
+            ],
+            $ctx->all()
+        );
+    }
+
+    public function testInit(): void
+    {
+        $values = ['foo' => 1, 'bar' => 2];
+        $ctx = new class($values) {
+            use HasAttributes;
+
+            public function __construct(array $values)
+            {
+                $this->initAttributes($values);
+            }
+        };
+
+        self::assertEquals($values, $ctx->all());
     }
 }

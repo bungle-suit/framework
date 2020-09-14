@@ -17,6 +17,15 @@ trait HasAttributes
     private array $attributes = [];
 
     /**
+     * Init attributes with $values
+     * @param array<string, mixed> $values
+     */
+    private function initAttributes(array $values): void
+    {
+        $this->attributes = $values;
+    }
+
+    /**
      * Returns attribute value, returns default if not exist.
      *
      * @return mixed
