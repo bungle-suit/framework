@@ -21,4 +21,18 @@ class QuerySteps
             }
         };
     }
+
+    /**
+     * Change the current query into count:
+     *
+     * 1. replace select list to 'count(0) as "_count"'
+     * 2. remove order by sql part.
+     *
+     * Should wrap in ifBuildForCount()
+     */
+    public static function buildCount(Builder $builder): void
+    {
+        $builder->getQueryBuilder()->add('select', ['count(0) as _count']);
+        $builder->getQueryBuilder()->resetDQLPart('orderBy');
+    }
 }

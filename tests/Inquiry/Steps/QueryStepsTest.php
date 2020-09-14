@@ -7,6 +7,8 @@ use Bungle\Framework\Inquiry\Builder;
 use Bungle\Framework\Inquiry\QueryParams;
 use Bungle\Framework\Inquiry\QueryStepInterface;
 use Bungle\Framework\Inquiry\Steps\QuerySteps;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr\OrderBy;
 use Doctrine\ORM\QueryBuilder;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -27,5 +29,21 @@ class QueryStepsTest extends MockeryTestCase
         $builder->set(Builder::ATTR_BUILD_FOR_COUNT, true);
         $inner->expects('__invoke')->with($builder);
         $step($builder);
+    }
+
+    public function testBuildCount(): void
+    {
+        $em = Mockery::mock(EntityManagerInterface::class);
+        $qb = new QueryBuilder($em);
+        $qb->select(['u.a', 'u.b'])
+            ->addOrderBy('u.a');
+        $builder = new Builder($qb, new QueryParams(0, []));
+        self::assertEquals(['u.a, u.b'], $qb->getDQLPart('select'));
+        self::assertEquals([new OrderBy('u.a')], $qb->getDQLPart('orderBy'));
+
+        QuerySteps::buildCount($builder);
+        self::assertEquals(['count(0) as _count'], $qb->getDQLPart('select'));
+        self::assertEquals([], $qb->getDQLPart('orderBy'));
+        self::assertEquals('SELECT count(0) as _count', $qb->getDQL());
     }
 }
