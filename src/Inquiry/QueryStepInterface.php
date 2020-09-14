@@ -10,5 +10,5 @@ interface QueryStepInterface
     /**
      * @throws RuntimeException encounter user or database error
      */
-    public function build(Builder $builder): void;
+    public function __invoke(Builder $builder): void;
 }

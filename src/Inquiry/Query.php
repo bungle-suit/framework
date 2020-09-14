@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Inquiry;
 
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use LogicException;
+use Traversable;
 
 class Query
 {
@@ -45,10 +47,20 @@ class Query
      * Query data.
      *
      * NOTE: use query step to control weather page no take cared.
-     * @return array<int, mixed[]>
+     * @return Traversable<int, mixed[]>
      */
-    public function query(QueryParams $params): array
+    public function query(QueryParams $params): Traversable
     {
+        $qb = $this->em->createQueryBuilder();
+        $builder = new Builder($qb, $params);
+
+        foreach ($this->getSteps() as $step) {
+            $step($builder);
+        }
+        $this->columns = $builder->getColumns();
+        foreach ($qb->getQuery()->iterate(null, AbstractQuery::HYDRATE_ARRAY) as $rows) {
+            yield from $rows;
+        }
     }
 
     /**
