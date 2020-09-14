@@ -21,27 +21,13 @@ class Query
 
     private EntityManagerInterface $em;
 
-    public function __construct(EntityManagerInterface $em)
+    /**
+     * @phpstan-param QueryStepInterface[] $iterSteps
+     */
+    public function __construct(EntityManagerInterface $em, array $steps)
     {
         $this->em = $em;
-    }
-
-    /**
-     * Build query steps, should be called after construct immediately.
-     * @phpstan-param QueryStepInterface[]|callable(): iterable<QueryStepInterface> $iterSteps
-     *                  steps array or steps builder.
-     */
-    public function buildSteps($stepsOrBuilder): void
-    {
-        if (isset($this->steps)) {
-            throw new LogicException('steps already build');
-        }
-
-        if (is_array($stepsOrBuilder)) {
-            $this->steps = $stepsOrBuilder;
-        } else {
-            $this->steps = iterator_to_array($stepsOrBuilder(), false);
-        }
+        $this->steps = $steps;
     }
 
     /**
@@ -84,24 +70,13 @@ class Query
             $builder->set(Builder::ATTR_BUILD_FOR_COUNT, true);
         }
 
-        foreach ($this->getSteps() as $step) {
+        foreach ($this->steps as $step) {
             $step($builder);
         }
         if (!$forCount) {
             $this->columns = $builder->getColumns();
         }
         return $qb;
-    }
-
-    /**
-     * @return QueryStepInterface[]
-     */
-    public function getSteps(): array
-    {
-        if (!isset($this->steps)) {
-            throw new LogicException('query step not build, call buildSteps() first');
-        }
-        return $this->steps;
     }
 
     /**

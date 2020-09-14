@@ -20,36 +20,12 @@ class QueryTest extends MockeryTestCase
 {
     /** @var EntityManagerInterface|Mockery\MockInterface */
     private $em;
-    private Query $q;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->em = Mockery::mock(EntityManagerInterface::class);
-        $this->q = new Query($this->em);
-    }
-
-    public function testBuildSteps(): void
-    {
-        $step1 = Mockery::mock(QueryStepInterface::class);
-        $step2 = Mockery::mock(QueryStepInterface::class);
-        $step3 = Mockery::mock(QueryStepInterface::class);
-
-        // with steps array
-        $q = new Query($this->em);
-        $q->buildSteps([$step1, $step3]);
-        self::assertEquals([$step1, $step3], $q->getSteps());
-
-        // with callback
-        $q = new Query($this->em);
-        $q->buildSteps(
-            function () use ($step3, $step2) {
-                yield $step2;
-                yield $step3;
-            }
-        );
-        self::assertEquals([$step2, $step3], $q->getSteps());
     }
 
     public function testQuery(): void
@@ -78,18 +54,16 @@ class QueryTest extends MockeryTestCase
         );
         $step2->expects('__invoke')->with(Mockery::type(Builder::class));
         $col1 = new ColumnMeta('[id]', 'id', new Type(Type::BUILTIN_TYPE_INT));
-        $this->q->buildSteps(
-            [
-                $step1,
-                $step2,
-                function (Builder $builder) use ($col1) {
-                    $builder->addColumn($col1, 'foo');
-                },
-            ]
-        );
+        $q = new Query($this->em, [
+            $step1,
+            $step2,
+            function (Builder $builder) use ($col1) {
+                $builder->addColumn($col1, 'foo');
+            },
+        ]);
 
-        self::assertEquals([['line1'], ['line2'], ['line3']], iterator_to_array($this->q->query($params), false));
-        self::assertEquals(['foo' => $col1], $this->q->getColumns());
+        self::assertEquals([['line1'], ['line2'], ['line3']], iterator_to_array($q->query($params), false));
+        self::assertEquals(['foo' => $col1], $q->getColumns());
     }
 
     public function testPagedQuery(): void
@@ -109,21 +83,19 @@ class QueryTest extends MockeryTestCase
         $isBuildForCounts = [];
         $params = new QueryParams(0, []);
         $col1 = new ColumnMeta('[id]', 'id', new Type(Type::BUILTIN_TYPE_INT));
-        $this->q->buildSteps(
-            [
-                function (Builder $builder) use ($col1, &$isBuildForCounts) {
-                    $isBuildForCounts[] = $builder->isBuildForCount();
-                    if (!$builder->isBuildForCount()) {
-                        $builder->addColumn($col1, 'foo');
-                    }
-                },
-            ]
-        );
+        $q = new Query($this->em, [
+            function (Builder $builder) use ($col1, &$isBuildForCounts) {
+                $isBuildForCounts[] = $builder->isBuildForCount();
+                if (!$builder->isBuildForCount()) {
+                    $builder->addColumn($col1, 'foo');
+                }
+            },
+        ]);
 
-        $pagedData = $this->q->pagedQuery($params);
+        $pagedData = $q->pagedQuery($params);
         self::assertEquals(2, $pagedData->getCount());
         self::assertEquals([['line1'], ['line2']], $pagedData->getData());
         self::assertEquals([false, true], $isBuildForCounts);
-        self::assertEquals(['foo' => $col1], $this->q->getColumns());
+        self::assertEquals(['foo' => $col1], $q->getColumns());
     }
 }
