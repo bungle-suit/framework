@@ -39,7 +39,12 @@ class Query
      */
     public function query(QueryParams $params): Traversable
     {
-        $qb = $this->prepareQuery($params, false);
+        return $this->queryData($params, false);
+    }
+
+    private function queryData(QueryParams $params, bool $paging): Traversable
+    {
+        $qb = $this->prepareQuery($params, false, $paging);
         foreach ($qb->getQuery()->iterate(null, AbstractQuery::HYDRATE_ARRAY) as $rows) {
             yield from $rows;
         }
@@ -52,25 +57,28 @@ class Query
      */
     public function pagedQuery(QueryParams $params): PagedData
     {
-        $data = iterator_to_array($this->query($params), false);
+        $data = iterator_to_array($this->queryData($params, true), false);
         $count = $this->queryCount($params);
         return new PagedData($data, $count);
     }
 
     private function queryCount(QueryParams $params): int
     {
-        $qb = $this->prepareQuery($params, true);
+        $qb = $this->prepareQuery($params, true, false);
         return $qb->getQuery()->execute(null, AbstractQuery::HYDRATE_SINGLE_SCALAR);
     }
 
-    private function prepareQuery(QueryParams $params, bool $forCount): QueryBuilder
+    private function prepareQuery(QueryParams $params, bool $forCount, bool $pagedData): QueryBuilder
     {
         $qb = $this->em->createQueryBuilder();
         $builder = new Builder($qb, $params);
         $steps = $this->steps;
         if ($forCount) {
             $builder->set(Builder::ATTR_BUILD_FOR_COUNT, true);
-            $steps += array_merge($steps, $this->createExtraCountSteps());
+            $steps = array_merge($steps, $this->createExtraCountSteps());
+        }
+        if ($pagedData) {
+            $steps = array_merge($steps, $this->createExtraPagingSteps());
         }
 
         foreach ($steps as $step) {
@@ -92,6 +100,19 @@ class Query
     {
         return [
             [QuerySteps::class, 'buildCount'],
+        ];
+    }
+
+    /**
+     * In pagedQuery(), these steps will appended to steps to build data query.
+     *
+     * Normally no need to override, default implementation can handle most cases.
+     * @return QueryStepInterface[]
+     */
+    protected function createExtraPagingSteps(): array
+    {
+        return [
+            [QuerySteps::class, 'buildPaging'],
         ];
     }
 

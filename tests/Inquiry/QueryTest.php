@@ -112,7 +112,8 @@ class QueryTest extends MockeryTestCase
         $isBuildForCounts = [];
         $params = new QueryParams(0, []);
         $col1 = new ColumnMeta('[id]', 'id', new Type(Type::BUILTIN_TYPE_INT));
-        $countStep = Mockery::mock(QueryStepInterface::class);
+        $countStep = Mockery::namedMock('countStep', QueryStepInterface::class);
+        $pagingStep = Mockery::namedMock('pagingStep', QueryStepInterface::class);
         $q = new class(
             $this->em,
             [
@@ -122,27 +123,44 @@ class QueryTest extends MockeryTestCase
                 },
             ],
             $countStep,
+            $pagingStep,
         ) extends Query {
             private QueryStepInterface $countStep;
+            private QueryStepInterface $pagingStep;
 
             public function __construct(
                 EntityManagerInterface $em,
                 array $steps,
-                QueryStepInterface $countStep
+                QueryStepInterface $countStep,
+                QueryStepInterface $pagingStep
             ) {
                 parent::__construct($em, $steps);
                 $this->countStep = $countStep;
+                $this->pagingStep = $pagingStep;
             }
 
             protected function createExtraCountSteps(): array
             {
                 return [$this->countStep];
             }
+
+            protected function createExtraPagingSteps(): array
+            {
+                return [$this->pagingStep];
+            }
         };
         $countStep->expects('__invoke')
                   ->with(
                       Mockery::on(
                           fn(Builder $builder) => $builder->isBuildForCount() &&
+                              count($builder->getColumns()) === 1
+                      )
+                  )
+        ;
+        $pagingStep->expects('__invoke')
+                  ->with(
+                      Mockery::on(
+                          fn(Builder $builder) => !$builder->isBuildForCount() &&
                               count($builder->getColumns()) === 1
                       )
                   )
