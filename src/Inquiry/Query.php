@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Inquiry;
 
+use Bungle\Framework\Inquiry\Steps\QuerySteps;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -66,17 +67,32 @@ class Query
     {
         $qb = $this->em->createQueryBuilder();
         $builder = new Builder($qb, $params);
+        $steps = $this->steps;
         if ($forCount) {
             $builder->set(Builder::ATTR_BUILD_FOR_COUNT, true);
+            $steps += array_merge($steps, $this->createExtraCountSteps());
         }
 
-        foreach ($this->steps as $step) {
+        foreach ($steps as $step) {
             $step($builder);
         }
         if (!$forCount) {
             $this->columns = $builder->getColumns();
         }
         return $qb;
+    }
+
+    /**
+     * In pagedQuery(), these steps will appended to steps to build count query.
+     *
+     * Normally no need to override, default implementation can handle most cases.
+     * @return QueryStepInterface[]
+     */
+    protected function createExtraCountSteps(): array
+    {
+        return [
+            [QuerySteps::class, 'buildCount'],
+        ];
     }
 
     /**

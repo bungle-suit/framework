@@ -31,38 +31,56 @@ class QueryTest extends MockeryTestCase
     public function testQuery(): void
     {
         $qb = Mockery::mock(QueryBuilder::class);
-        $this->em->expects('createQueryBuilder')->andReturn($qb);
+        $this->em->expects('createQueryBuilder')
+                 ->andReturn($qb)
+        ;
         $dqlQuery = Mockery::mock(AbstractQuery::class);
-        $qb->expects('getQuery')->andReturn($dqlQuery);
-        $dqlQuery->expects('iterate')->with(null, AbstractQuery::HYDRATE_ARRAY)->andReturn(
-            new ArrayIterator(
-                [
-                    new ArrayIterator([['line1'], ['line2']]),
-                    new ArrayIterator([['line3']]),
-                    new ArrayIterator([]),
-                ]
-            ),
-        );
+        $qb->expects('getQuery')
+           ->andReturn($dqlQuery)
+        ;
+        $dqlQuery->expects('iterate')
+                 ->with(null, AbstractQuery::HYDRATE_ARRAY)
+                 ->andReturn(
+                     new ArrayIterator(
+                         [
+                             new ArrayIterator([['line1'], ['line2']]),
+                             new ArrayIterator([['line3']]),
+                             new ArrayIterator([]),
+                         ]
+                     ),
+                 )
+        ;
 
         $params = new QueryParams(0, []);
         $step1 = Mockery::mock(QueryStepInterface::class);
         $step2 = Mockery::mock(QueryStepInterface::class);
-        $step1->expects('__invoke')->with(
-            Mockery::on(
-                fn(Builder $builder) => $builder->getQueryParams() === $params && $builder->getQueryBuilder() === $qb
-            )
-        );
-        $step2->expects('__invoke')->with(Mockery::type(Builder::class));
+        $step1->expects('__invoke')
+              ->with(
+                  Mockery::on(
+                      fn(Builder $builder) => $builder->getQueryParams() === $params &&
+                          $builder->getQueryBuilder() === $qb
+                  )
+              )
+        ;
+        $step2->expects('__invoke')
+              ->with(Mockery::type(Builder::class))
+        ;
         $col1 = new ColumnMeta('[id]', 'id', new Type(Type::BUILTIN_TYPE_INT));
-        $q = new Query($this->em, [
-            $step1,
-            $step2,
-            function (Builder $builder) use ($col1) {
-                $builder->addColumn($col1, 'foo');
-            },
-        ]);
+        $q = new Query(
+            $this->em,
+            [
+                $step1,
+                $step2,
+                function (Builder $builder) use ($col1) {
+                    $builder->addColumn($col1, 'foo');
+                },
+            ]
+        );
 
-        self::assertEquals([['line1'], ['line2'], ['line3']], iterator_to_array($q->query($params), false));
+        self::assertEquals(
+            [['line1'], ['line2'], ['line3']],
+            iterator_to_array($q->query($params), false)
+        );
         self::assertEquals(['foo' => $col1], $q->getColumns());
     }
 
@@ -70,27 +88,65 @@ class QueryTest extends MockeryTestCase
     {
         $qb1 = Mockery::mock(QueryBuilder::class);
         $qb2 = Mockery::mock(QueryBuilder::class);
-        $this->em->expects('createQueryBuilder')->andReturn($qb1, $qb2)->twice();
+        $this->em->expects('createQueryBuilder')
+                 ->andReturn($qb1, $qb2)
+                 ->twice()
+        ;
         $dqlQuery1 = Mockery::mock(AbstractQuery::class);
         $dqlQuery2 = Mockery::mock(AbstractQuery::class);
-        $qb1->expects('getQuery')->andReturn($dqlQuery1);
-        $qb2->expects('getQuery')->andReturn($dqlQuery2);
-        $dqlQuery1->expects('iterate')->with(null, AbstractQuery::HYDRATE_ARRAY)->andReturn(
-            new ArrayIterator([new ArrayIterator([['line1'], ['line2']])]),
-        );
-        $dqlQuery2->expects('execute')->with(null, AbstractQuery::HYDRATE_SINGLE_SCALAR)->andReturn(2);
+        $qb1->expects('getQuery')
+            ->andReturn($dqlQuery1)
+        ;
+        $qb2->expects('getQuery')
+            ->andReturn($dqlQuery2)
+        ;
+        $dqlQuery1->expects('iterate')
+                  ->with(null, AbstractQuery::HYDRATE_ARRAY)
+                  ->andReturn(new ArrayIterator([new ArrayIterator([['line1'], ['line2']])]))
+        ;
+        $dqlQuery2->expects('execute')
+                  ->with(null, AbstractQuery::HYDRATE_SINGLE_SCALAR)
+                  ->andReturn(2)
+        ;
 
         $isBuildForCounts = [];
         $params = new QueryParams(0, []);
         $col1 = new ColumnMeta('[id]', 'id', new Type(Type::BUILTIN_TYPE_INT));
-        $q = new Query($this->em, [
-            function (Builder $builder) use ($col1, &$isBuildForCounts) {
-                $isBuildForCounts[] = $builder->isBuildForCount();
-                if (!$builder->isBuildForCount()) {
+        $countStep = Mockery::mock(QueryStepInterface::class);
+        $q = new class(
+            $this->em,
+            [
+                function (Builder $builder) use ($col1, &$isBuildForCounts) {
+                    $isBuildForCounts[] = $builder->isBuildForCount();
                     $builder->addColumn($col1, 'foo');
-                }
-            },
-        ]);
+                },
+            ],
+            $countStep,
+        ) extends Query {
+            private QueryStepInterface $countStep;
+
+            public function __construct(
+                EntityManagerInterface $em,
+                array $steps,
+                QueryStepInterface $countStep
+            ) {
+                parent::__construct($em, $steps);
+                $this->countStep = $countStep;
+            }
+
+            protected function createExtraCountSteps(): array
+            {
+                return [$this->countStep];
+            }
+        };
+        $countStep->expects('__invoke')
+                  ->with(
+                      Mockery::on(
+                          fn(Builder $builder) => $builder->isBuildForCount() &&
+                              count($builder->getColumns()) === 1
+                      )
+                  )
+        ;
 
         $pagedData = $q->pagedQuery($params);
         self::assertEquals(2, $pagedData->getCount());
