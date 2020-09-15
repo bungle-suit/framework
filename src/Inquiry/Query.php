@@ -65,7 +65,7 @@ class Query
     private function queryCount(QueryParams $params): int
     {
         $qb = $this->prepareQuery($params, true, false);
-        return $qb->getQuery()->execute(null, AbstractQuery::HYDRATE_SINGLE_SCALAR);
+        return intval($qb->getQuery()->execute(null, AbstractQuery::HYDRATE_SINGLE_SCALAR));
     }
 
     private function prepareQuery(QueryParams $params, bool $forCount, bool $pagedData): QueryBuilder
