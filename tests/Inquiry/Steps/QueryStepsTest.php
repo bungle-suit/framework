@@ -46,4 +46,22 @@ class QueryStepsTest extends MockeryTestCase
         self::assertEquals([], $qb->getDQLPart('orderBy'));
         self::assertEquals('SELECT count(0) as _count', $qb->getDQL());
     }
+
+    public function testBuildPaging(): void
+    {
+        $em = Mockery::mock(EntityManagerInterface::class);
+        $qb = new QueryBuilder($em);
+        $qb->select(['u.a', 'u.b'])
+            ->from('entityClass', 'u');
+
+        $builder = new Builder($qb, new QueryParams(0, []));
+        QuerySteps::buildPaging($builder);
+        self::assertEquals(0, $qb->getFirstResult());
+        self::assertEquals(QuerySteps::PAGE_RECS, $qb->getMaxResults());
+
+        $builder = new Builder($qb, new QueryParams(2, []));
+        QuerySteps::buildPaging($builder);
+        self::assertEquals(QuerySteps::PAGE_RECS * 2, $qb->getFirstResult());
+        self::assertEquals(QuerySteps::PAGE_RECS, $qb->getMaxResults());
+    }
 }
