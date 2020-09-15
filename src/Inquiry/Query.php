@@ -18,8 +18,8 @@ class Query
      * @var QueryStepInterface[] $steps;
      */
     private array $steps;
-
     private EntityManagerInterface $em;
+    private bool $once = false;
 
     /**
      * @phpstan-param QueryStepInterface[] $iterSteps
@@ -38,6 +38,11 @@ class Query
      */
     public function query(QueryParams $params): Traversable
     {
+        if ($this->once) {
+            throw new LogicException('Can only query once, recreate Query object if needed');
+        }
+
+        $this->once = true;
         $qb = $this->prepareQuery($params, false);
         foreach ($qb->getQuery()->iterate(null, AbstractQuery::HYDRATE_ARRAY) as $rows) {
             yield from $rows;
