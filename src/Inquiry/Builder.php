@@ -24,6 +24,8 @@ class Builder implements HasAttributesInterface
 
     /** Attribute set to true if current is build for count */
     public const ATTR_BUILD_FOR_COUNT = '__for_count__';
+    /** Attribute set to true if current is build for QBEs */
+    public const ATTR_BUILD_FOR_QBE = '__build_qbe__';
     private const AUTO_COLUMN_PREFIX = '__col_';
     private int $autoColIdx = 0;
 
@@ -91,6 +93,14 @@ class Builder implements HasAttributesInterface
     public function isBuildForCount(): bool
     {
         return $this->get(self::ATTR_BUILD_FOR_COUNT, false);
+    }
+
+    /**
+     * Return true if current build phase for QBE metas.
+     */
+    public function isBuildForQBE(): bool
+    {
+        return $this->get(self::ATTR_BUILD_FOR_QBE, false);
     }
 
     /**

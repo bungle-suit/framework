@@ -113,4 +113,15 @@ class BuilderTest extends MockeryTestCase
         $this->builder->set(Builder::ATTR_BUILD_FOR_COUNT, false);
         self::assertFalse($this->builder->isBuildForCount());
     }
+
+    public function testBuildForQBE(): void
+    {
+        self::assertFalse($this->builder->isBuildForQBE());
+
+        $this->builder->set(Builder::ATTR_BUILD_FOR_QBE, true);
+        self::assertTrue($this->builder->isBuildForQBE());
+
+        $this->builder->set(Builder::ATTR_BUILD_FOR_QBE, false);
+        self::assertFalse($this->builder->isBuildForQBE());
+    }
 }

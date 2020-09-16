@@ -85,7 +85,6 @@ class QueryTest extends MockeryTestCase
             iterator_to_array($q->query($params), false)
         );
         self::assertEquals(['foo' => $col1], $q->getColumns());
-        self::assertEquals(['fooMeta' => $q1], $q->getQBEMetas());
     }
 
     public function testPagedQuery(): void
@@ -175,5 +174,31 @@ class QueryTest extends MockeryTestCase
         self::assertEquals([['line1'], ['line2']], $pagedData->getData());
         self::assertEquals([false, true], $isBuildForCounts);
         self::assertEquals(['foo' => $col1], $q->getColumns());
+    }
+
+    public function testBuildQBEMetas(): void
+    {
+        $qb = Mockery::mock(QueryBuilder::class);
+        $this->em->expects('createQueryBuilder')
+                 ->andReturn($qb)
+        ;
+
+        $params = new QueryParams(0, []);
+        $col1 = new ColumnMeta('[id]', 'id', new Type(Type::BUILTIN_TYPE_INT));
+        $q1 = new QBEMeta('fooMeta', new Type(Type::BUILTIN_TYPE_INT, true));
+        $q = new Query(
+            $this->em,
+            [
+                function (Builder $builder) use ($q1, $col1) {
+                    self::assertTrue($builder->isBuildForQBE());
+                    $builder->addColumn($col1, 'foo');
+                    $builder->addQBE($q1);
+                },
+            ]
+        );
+
+        $QBEs = $q->buildQBEMetas($params);
+        self::assertEquals(['fooMeta' => $q1], $q->getQBEMetas());
+        self::assertSame($QBEs, $q->getQBEMetas());
     }
 }
