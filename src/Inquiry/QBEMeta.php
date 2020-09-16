@@ -3,18 +3,23 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Inquiry;
 
+use Bungle\Framework\Model\HasAttributes;
+use Bungle\Framework\Model\HasAttributesInterface;
 use LogicException;
 use Symfony\Component\PropertyInfo\Type;
 
 /**
  * Describe a QBE value.
  */
-class QBEMeta
+class QBEMeta implements HasAttributesInterface
 {
+    use HasAttributes;
+
     private string $name;
     private Type $type;
+    private string $label;
 
-    public function __construct(string $name, Type $type)
+    public function __construct(string $name, string $label, Type $type, array $options = [])
     {
         if (!$type->isNullable()) {
             throw new LogicException("QBE value must allow null. ($name)");
@@ -22,6 +27,8 @@ class QBEMeta
 
         $this->name = $name;
         $this->type = $type;
+        $this->initAttributes($options);
+        $this->label = $label;
     }
 
     /**
@@ -35,5 +42,10 @@ class QBEMeta
     public function getType(): Type
     {
         return $this->type;
+    }
+
+    public function getLabel(): string
+    {
+        return $this->label;
     }
 }

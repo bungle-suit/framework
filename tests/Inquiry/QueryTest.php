@@ -67,7 +67,7 @@ class QueryTest extends MockeryTestCase
               ->with(Mockery::type(Builder::class))
         ;
         $col1 = new ColumnMeta('[id]', 'id', new Type(Type::BUILTIN_TYPE_INT));
-        $q1 = new QBEMeta('fooMeta', new Type(Type::BUILTIN_TYPE_INT, true));
+        $q1 = new QBEMeta('fooMeta', 'lbl', new Type(Type::BUILTIN_TYPE_INT, true));
         $q = new Query(
             $this->em,
             [
@@ -185,7 +185,7 @@ class QueryTest extends MockeryTestCase
 
         $params = new QueryParams(0, []);
         $col1 = new ColumnMeta('[id]', 'id', new Type(Type::BUILTIN_TYPE_INT));
-        $q1 = new QBEMeta('fooMeta', new Type(Type::BUILTIN_TYPE_INT, true));
+        $q1 = new QBEMeta('fooMeta', 'lbl', new Type(Type::BUILTIN_TYPE_INT, true));
         $q = new Query(
             $this->em,
             [

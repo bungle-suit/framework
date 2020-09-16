@@ -93,14 +93,14 @@ class BuilderTest extends MockeryTestCase
 
     public function testAddQBE(): void
     {
-        $this->builder->addQBE($q1 = new QBEMeta('id', new Type(Type::BUILTIN_TYPE_INT, true)));
-        $this->builder->addQBE($q2 = new QBEMeta('name', new Type(Type::BUILTIN_TYPE_INT, true)));
+        $this->builder->addQBE($q1 = new QBEMeta('id', 'lbl', new Type(Type::BUILTIN_TYPE_INT, true)));
+        $this->builder->addQBE($q2 = new QBEMeta('name', 'lbl', new Type(Type::BUILTIN_TYPE_INT, true)));
         self::assertEquals(['id' => $q1, 'name' => $q2], $this->builder->getQBEs());
         self::assertEquals([$q1, $q2], array_values($this->builder->getQBEs()));
 
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage("QBE 'name' already defined");
-        $this->builder->addQBE(new QBEMeta('name', new Type(Type::BUILTIN_TYPE_INT, true)));
+        $this->builder->addQBE(new QBEMeta('name', 'lbl', new Type(Type::BUILTIN_TYPE_INT, true)));
     }
 
     public function testBuildForCount(): void
