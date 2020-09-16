@@ -14,9 +14,11 @@ class Query
 {
     /** @var array<string, ColumnMeta> */
     private array $columns;
+    /** @var array<string, QBEMeta> */
+    private array $qbeMetas;
 
     /**
-     * @var QueryStepInterface[] $steps;
+     * @var QueryStepInterface[] $steps ;
      */
     private array $steps;
 
@@ -45,7 +47,8 @@ class Query
     private function queryData(QueryParams $params, bool $paging): Traversable
     {
         $qb = $this->prepareQuery($params, false, $paging);
-        foreach ($qb->getQuery()->iterate(null, AbstractQuery::HYDRATE_ARRAY) as $rows) {
+        foreach ($qb->getQuery()
+                    ->iterate(null, AbstractQuery::HYDRATE_ARRAY) as $rows) {
             yield from $rows;
         }
     }
@@ -59,17 +62,25 @@ class Query
     {
         $data = iterator_to_array($this->queryData($params, true), false);
         $count = $this->queryCount($params);
+
         return new PagedData($data, $count);
     }
 
     private function queryCount(QueryParams $params): int
     {
         $qb = $this->prepareQuery($params, true, false);
-        return intval($qb->getQuery()->execute(null, AbstractQuery::HYDRATE_SINGLE_SCALAR));
+
+        return intval(
+            $qb->getQuery()
+               ->execute(null, AbstractQuery::HYDRATE_SINGLE_SCALAR)
+        );
     }
 
-    private function prepareQuery(QueryParams $params, bool $forCount, bool $pagedData): QueryBuilder
-    {
+    private function prepareQuery(
+        QueryParams $params,
+        bool $forCount,
+        bool $pagedData
+    ): QueryBuilder {
         $qb = $this->em->createQueryBuilder();
         $builder = new Builder($qb, $params);
         $steps = $this->steps;
@@ -86,7 +97,9 @@ class Query
         }
         if (!$forCount) {
             $this->columns = $builder->getColumns();
+            $this->qbeMetas = $builder->getQBEs();
         }
+
         return $qb;
     }
 
@@ -125,6 +138,15 @@ class Query
         if (!isset($this->columns)) {
             throw new LogicException('columns not exist, until query/pagedQuery()');
         }
+
         return $this->columns;
+    }
+
+    /**
+     * @return QBEMeta[]
+     */
+    public function getQBEMetas(): array
+    {
+        return $this->qbeMetas;
     }
 }

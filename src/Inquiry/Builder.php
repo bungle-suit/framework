@@ -19,7 +19,7 @@ class Builder implements HasAttributesInterface
     private QueryParams $queryParams;
     /** @var ColumnMeta[] */
     private array $columns = [];
-    /** @var QBEMeta[] */
+    /** @var array<string, QBEMeta> */
     private array $qbeMetas = [];
 
     /** Attribute set to true if current is build for count */
@@ -94,7 +94,7 @@ class Builder implements HasAttributesInterface
     }
 
     /**
-     * @return QBEMeta[]
+     * @return array<string, QBEMeta>
      */
     public function getQBEs(): array
     {

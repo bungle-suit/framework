@@ -6,6 +6,7 @@ namespace Bungle\Framework\Tests\Inquiry;
 use ArrayIterator;
 use Bungle\Framework\Inquiry\Builder;
 use Bungle\Framework\Inquiry\ColumnMeta;
+use Bungle\Framework\Inquiry\QBEMeta;
 use Bungle\Framework\Inquiry\Query;
 use Bungle\Framework\Inquiry\QueryParams;
 use Bungle\Framework\Inquiry\QueryStepInterface;
@@ -66,13 +67,15 @@ class QueryTest extends MockeryTestCase
               ->with(Mockery::type(Builder::class))
         ;
         $col1 = new ColumnMeta('[id]', 'id', new Type(Type::BUILTIN_TYPE_INT));
+        $q1 = new QBEMeta('fooMeta', new Type(Type::BUILTIN_TYPE_INT, true));
         $q = new Query(
             $this->em,
             [
                 $step1,
                 $step2,
-                function (Builder $builder) use ($col1) {
+                function (Builder $builder) use ($q1, $col1) {
                     $builder->addColumn($col1, 'foo');
+                    $builder->addQBE($q1);
                 },
             ]
         );
@@ -82,6 +85,7 @@ class QueryTest extends MockeryTestCase
             iterator_to_array($q->query($params), false)
         );
         self::assertEquals(['foo' => $col1], $q->getColumns());
+        self::assertEquals(['fooMeta' => $q1], $q->getQBEMetas());
     }
 
     public function testPagedQuery(): void
@@ -158,12 +162,12 @@ class QueryTest extends MockeryTestCase
                   )
         ;
         $pagingStep->expects('__invoke')
-                  ->with(
-                      Mockery::on(
-                          fn(Builder $builder) => !$builder->isBuildForCount() &&
-                              count($builder->getColumns()) === 1
-                      )
-                  )
+                   ->with(
+                       Mockery::on(
+                           fn(Builder $builder) => !$builder->isBuildForCount() &&
+                               count($builder->getColumns()) === 1
+                       )
+                   )
         ;
 
         $pagedData = $q->pagedQuery($params);
