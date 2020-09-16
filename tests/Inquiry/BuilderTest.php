@@ -5,6 +5,7 @@ namespace Bungle\Framework\Tests\Inquiry;
 
 use Bungle\Framework\Inquiry\Builder;
 use Bungle\Framework\Inquiry\ColumnMeta;
+use Bungle\Framework\Inquiry\QBEMeta;
 use Bungle\Framework\Inquiry\QueryParams;
 use Doctrine\ORM\QueryBuilder;
 use LogicException;
@@ -41,11 +42,17 @@ class BuilderTest extends MockeryTestCase
         // add named columns
         self::assertEquals(
             'col1',
-            $this->builder->addColumn($col1 = new ColumnMeta('a', 'foo', new Type(Type::BUILTIN_TYPE_INT)), 'col1')
+            $this->builder->addColumn(
+                $col1 = new ColumnMeta('a', 'foo', new Type(Type::BUILTIN_TYPE_INT)),
+                'col1'
+            )
         );
         self::assertEquals(
             'col2',
-            $this->builder->addColumn($col2 = new ColumnMeta('b', 'bar', new Type(Type::BUILTIN_TYPE_STRING)), 'col2'),
+            $this->builder->addColumn(
+                $col2 = new ColumnMeta('b', 'bar', new Type(Type::BUILTIN_TYPE_STRING)),
+                'col2'
+            ),
         );
         self::assertEquals(
             [
@@ -58,11 +65,15 @@ class BuilderTest extends MockeryTestCase
         // add auto named column
         self::assertEquals(
             '__col_1',
-            $this->builder->addColumn($col3 = new ColumnMeta('c', 'foobar', new Type(Type::BUILTIN_TYPE_STRING)))
+            $this->builder->addColumn(
+                $col3 = new ColumnMeta('c', 'foobar', new Type(Type::BUILTIN_TYPE_STRING))
+            )
         );
         self::assertEquals(
             '__col_2',
-            $this->builder->addColumn($col4 = new ColumnMeta('d', 'foobar', new Type(Type::BUILTIN_TYPE_STRING)))
+            $this->builder->addColumn(
+                $col4 = new ColumnMeta('d', 'foobar', new Type(Type::BUILTIN_TYPE_STRING))
+            )
         );
         self::assertEquals(
             [
@@ -78,6 +89,18 @@ class BuilderTest extends MockeryTestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Column "col2" already added');
         $this->builder->addColumn($col2, 'col2');
+    }
+
+    public function testAddQBE(): void
+    {
+        $this->builder->addQBE($q1 = new QBEMeta('id', new Type(Type::BUILTIN_TYPE_INT, true)));
+        $this->builder->addQBE($q2 = new QBEMeta('name', new Type(Type::BUILTIN_TYPE_INT, true)));
+        self::assertEquals(['id' => $q1, 'name' => $q2], $this->builder->getQBEs());
+        self::assertEquals([$q1, $q2], array_values($this->builder->getQBEs()));
+
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage("QBE 'name' already defined");
+        $this->builder->addQBE(new QBEMeta('name', new Type(Type::BUILTIN_TYPE_INT, true)));
     }
 
     public function testBuildForCount(): void

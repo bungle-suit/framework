@@ -19,6 +19,8 @@ class Builder implements HasAttributesInterface
     private QueryParams $queryParams;
     /** @var ColumnMeta[] */
     private array $columns = [];
+    /** @var QBEMeta[] */
+    private array $qbeMetas = [];
 
     /** Attribute set to true if current is build for count */
     public const ATTR_BUILD_FOR_COUNT = '__for_count__';
@@ -36,7 +38,8 @@ class Builder implements HasAttributesInterface
     }
 
     /**
-     * @param string $name column name, each column must have unique name, create random unique name if $name is empty.
+     * @param string $name column name, each column must have unique name, create random unique
+     *     name if $name is empty.
      * @return string return column name.
      */
     public function addColumn(ColumnMeta $column, string $name = ''): string
@@ -50,6 +53,18 @@ class Builder implements HasAttributesInterface
         $this->columns[$name] = $column;
 
         return $name;
+    }
+
+    /**
+     * Define QBE input.
+     */
+    public function addQBE(QBEMeta $qbe): void
+    {
+        if (array_key_exists($qbe->getName(), $this->qbeMetas)) {
+            throw new LogicException("QBE '{$qbe->getName()}' already defined");
+        }
+
+        $this->qbeMetas[$qbe->getName()] = $qbe;
     }
 
     /**
@@ -76,5 +91,13 @@ class Builder implements HasAttributesInterface
     public function isBuildForCount(): bool
     {
         return $this->get(self::ATTR_BUILD_FOR_COUNT, false);
+    }
+
+    /**
+     * @return QBEMeta[]
+     */
+    public function getQBEs(): array
+    {
+        return $this->qbeMetas;
     }
 }
