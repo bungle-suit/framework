@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework;
 
+use DateTime;
 use DateTimeInterface;
 use Symfony\Component\String\UnicodeString;
 
@@ -81,5 +82,17 @@ class Converter
         }
 
         return $sb->replace('  ', self::FULL_SPACE)->toString();
+    }
+
+    /**
+     * Parse string to DateTime, if $s is null or empty, return null.
+     */
+    public static function parseNullDateTime(?string $s): ?DateTime
+    {
+        if (!$s) {
+            return null;
+        }
+
+        return new DateTime($s);
     }
 }

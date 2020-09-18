@@ -55,4 +55,11 @@ class ConverterTest extends TestCase
         self::assertEquals("现 款 销 售 单", Converter::justifyAlign("现款销售单", 7));
         self::assertEquals("现 款　销 售　单", Converter::justifyAlign("现款销售单", 8));
     }
+
+    public function testParseNullDateTime(): void
+    {
+        self::assertNull(Converter::parseNullDateTime(null));
+        self::assertNull(Converter::parseNullDateTime(''));
+        self::assertEquals(new DateTime('2020-09-18'), Converter::parseNullDateTime('2020-09-18'));
+    }
 }
