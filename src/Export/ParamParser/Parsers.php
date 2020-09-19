@@ -99,6 +99,24 @@ class Parsers
         };
     }
 
+    /**
+     * Returns a parser that failed if all $rangeParamNames are out of $maxDays.
+     * @return callable(ExportContext): ?string
+     */
+    public static function ensureDateRanges(int $maxDays, string ...$rangeParamNames): callable
+    {
+        return function (ExportContext $context) use ($rangeParamNames, $maxDays): ?string {
+            foreach ($rangeParamNames as $name) {
+                /** @var ?DateRange $v */
+                $v = $context->get($name);
+                if ($v && !$v->outOfRange($maxDays)) {
+                    return null;
+                }
+            }
+            return "只能导出${maxDays}天内的数据";
+        };
+    }
+
     public static function parseDate(?string $s): ?DateTime
     {
         if (null == $s) {

@@ -69,6 +69,22 @@ class ParsersTest extends MockeryTestCase
         ], $this->successParse($p));
     }
 
+    public function testEnsureDateRanges(): void
+    {
+        $p = Parsers::ensureDateRanges(90, 'range1', 'range2', 'range3');
+        $ctx = new ExportContext(new Request());
+
+        // case 1: out of range
+        $ctx->set('range1', null);
+        $ctx->set('range2', new DateRange(new DateTime('2020-01-01'), new DateTime('2020-06-01')));
+        $ctx->set('range3', new DateRange(null, null));
+        self::assertEquals('只能导出90天内的数据', $p($ctx));
+
+        // case 2: okay if anyone in the range.
+        $ctx->set('range3', new DateRange(new DateTime('2020-08-01'), new DateTime('2020-09-01')));
+        self::assertNull($p($ctx));
+    }
+
     public function testEnsureAttrExist(): void
     {
         $p = Parsers::ensureAttrExist('foo');
