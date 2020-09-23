@@ -23,14 +23,16 @@ class Query
     private array $steps;
 
     private EntityManagerInterface $em;
+    private string $title;
 
     /**
      * @phpstan-param QueryStepInterface[] $iterSteps
      */
-    public function __construct(EntityManagerInterface $em, array $steps)
+    public function __construct(EntityManagerInterface $em, array $steps, string $title='Query Name Not Set')
     {
         $this->em = $em;
         $this->steps = $steps;
+        $this->title = $title;
     }
 
     /**
@@ -183,5 +185,15 @@ class Query
     public function getQBEMetas(): array
     {
         return $this->qbeMetas;
+    }
+
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): void
+    {
+        $this->title = $title;
     }
 }
