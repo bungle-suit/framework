@@ -80,11 +80,12 @@ class QueryTest extends MockeryTestCase
             ]
         );
 
+        $iter = $q->query($params);
+        self::assertEquals(['foo' => $col1], $q->getColumns());
         self::assertEquals(
             [['line1'], ['line2'], ['line3']],
-            iterator_to_array($q->query($params), false)
+            iterator_to_array($iter, false)
         );
-        self::assertEquals(['foo' => $col1], $q->getColumns());
     }
 
     public function testPagedQuery(): void

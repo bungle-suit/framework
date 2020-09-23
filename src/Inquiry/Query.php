@@ -6,6 +6,7 @@ namespace Bungle\Framework\Inquiry;
 use Bungle\Framework\Inquiry\Steps\QuerySteps;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use LogicException;
 use Traversable;
 
@@ -55,14 +56,13 @@ class Query
      */
     public function query(QueryParams $params): Traversable
     {
-        return $this->queryData($params, false);
+        $qb = $this->prepareQuery($params, self::BUILD_FOR_DATA)->getQueryBuilder();
+
+        return $this->queryData($qb);
     }
 
-    private function queryData(QueryParams $params, bool $paging): Traversable
+    private function queryData(QueryBuilder $qb): Traversable
     {
-        $qb = $this->prepareQuery($params, $paging ? self::BUILD_FOR_PAGING : self::BUILD_FOR_DATA)
-                   ->getQueryBuilder()
-        ;
         foreach ($qb->getQuery()
                     ->iterate(null, AbstractQuery::HYDRATE_ARRAY) as $rows) {
             yield from $rows;
@@ -76,7 +76,8 @@ class Query
      */
     public function pagedQuery(QueryParams $params): PagedData
     {
-        $data = iterator_to_array($this->queryData($params, true), false);
+        $qb = $this->prepareQuery($params, self::BUILD_FOR_PAGING)->getQueryBuilder();
+        $data = iterator_to_array($this->queryData($qb), false);
         $count = $this->queryCount($params);
 
         return new PagedData($data, $count);
@@ -85,8 +86,7 @@ class Query
     private function queryCount(QueryParams $params): int
     {
         $qb = $this->prepareQuery($params, self::BUILD_FOR_COUNT)
-                   ->getQueryBuilder()
-        ;
+                   ->getQueryBuilder();
 
         return intval(
             $qb->getQuery()
