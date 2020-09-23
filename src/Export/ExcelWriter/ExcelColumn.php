@@ -10,7 +10,7 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 final class ExcelColumn
 {
     private string $propertyPath;
-    /** @var callable(mixed, int): mixed */
+    /** @var callable(mixed, int, mixed): mixed */
     private $valueConverter;
     private string $header;
     private ?string $cellFormat = null;
@@ -23,13 +23,19 @@ final class ExcelColumn
     private int $colSpan;
 
     /**
-     * @param string                     $header         header text
-     * @param string $propertyPath will return the row data if path is empty, use converter to shape cell data.
-     * @param null|callable(mixed, int):mixed $valueConverter function to convert value before save to cell,
-     *                                                   use identity converter if null
+     * @param string $header header text
+     * @param string $propertyPath will return the row data if path is empty, use converter to
+     *     shape cell data.
+     * @param null|callable(mixed, int, mixed):mixed $valueConverter function to convert value
+     *     before saving to cell, use identity converter if null.
+     *     First argument is the value or row if $propertyPath is empty, 2nd argument is
+     *     row index from zero, 3rd argument is the row object.
      */
-    public function __construct(string $header, string $propertyPath, ?callable $valueConverter = null)
-    {
+    public function __construct(
+        string $header,
+        string $propertyPath,
+        ?callable $valueConverter = null
+    ) {
         $this->propertyPath = $propertyPath;
         $this->valueConverter = $valueConverter ?? [FP::class, 'identity'];
         $this->header = $header;
@@ -41,7 +47,7 @@ final class ExcelColumn
     }
 
     /**
-     * @return callable(mixed, int): mixed
+     * @return callable(mixed, int, mixed): mixed
      */
     public function getValueConverter(): callable
     {
@@ -70,7 +76,7 @@ final class ExcelColumn
 
     public static function createDate(string $title, string $propertyPath): self
     {
-        $f = fn ($v) => (null === $v) ? null : Date::PHPToExcel($v);
+        $f = fn($v) => (null === $v) ? null : Date::PHPToExcel($v);
 
         return (new self($title, $propertyPath, $f))
             ->setCellFormat(NumberFormat::FORMAT_DATE_YYYYMMDD);
@@ -116,6 +122,7 @@ final class ExcelColumn
         // valueConverter failed convert to type that PHPSpreadsheet accept.
         $this->valueConverter = FP::constant(null);
         $this->formula = $formula;
+
         return $this;
     }
 
@@ -132,6 +139,7 @@ final class ExcelColumn
     public function setColSpan(int $colSpan): self
     {
         $this->colSpan = $colSpan;
+
         return $this;
     }
 }

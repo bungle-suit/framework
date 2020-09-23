@@ -110,7 +110,7 @@ class ExcelWriter extends ExcelOperator
             /** @var ExcelColumn $c */
             foreach ($cols as $c) {
                 $v = $c->getPropertyPath() ? $propertyAccessor->getValue($row, $c->getPropertyPath()) : $row;
-                $v = ($c->getValueConverter())($v, $idx);
+                $v = ($c->getValueConverter())($v, $idx, $row);
                 $dataRow[] = $v;
                 for ($i = 0; $i < ($c->getColSpan() - 1); $i++) {
                     $dataRow[] = null;

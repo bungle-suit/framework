@@ -56,7 +56,10 @@ class ExcelWriterTest extends MockeryTestCase
     public function testTable(): void
     {
         $cols = [
-            new ExcelColumn('Foo', '', fn (array $row, int $rowIdx) => 10 + $row[2] + $rowIdx),
+            new ExcelColumn('Foo', '', function (array $row, int $rowIdx, array $rowAgain) {
+                self::assertSame($row, $rowAgain);
+                return 10 + $row[2] + $rowIdx;
+            }),
             new ExcelColumn('Bar', '[1]'),
             new ExcelColumn('FooBar', '[0]'),
         ];
