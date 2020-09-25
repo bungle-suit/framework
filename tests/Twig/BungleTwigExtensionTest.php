@@ -80,4 +80,11 @@ class BungleTwigExtensionTest extends MockeryTestCase
     {
         return $this->getFilter($name)->getCallable();
     }
+
+    public function testUniqueId(): void
+    {
+        self::assertEquals('__uid_1', BungleTwigExtension::uniqueId());
+        self::assertEquals('__uid_2', BungleTwigExtension::uniqueId());
+        self::assertEquals('__uid_3', BungleTwigExtension::uniqueId());
+    }
 }

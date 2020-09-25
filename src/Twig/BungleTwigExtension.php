@@ -13,11 +13,13 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
+use Twig\TwigFunction;
 
 class BungleTwigExtension extends AbstractExtension
 {
     private HighIDNameTranslator $highIDNameTranslator;
     private ObjectName $objectName;
+    private static $uniqueId = 0;
 
     public function __construct(HighIDNameTranslator $highIDNameTranslator, ObjectName $objectName)
     {
@@ -44,6 +46,24 @@ class BungleTwigExtension extends AbstractExtension
             new TwigFilter('justify', Converter::class.'::justifyAlign'),
             new TwigFilter('object_name', [$this->objectName, 'getName']),
         ];
+    }
+
+    /**
+     * @return TwigFunction[]
+     */
+    public function getFunctions(): array
+    {
+        return [
+            new TwigFunction('unique_id', [self::class, 'uniqueId']),
+        ];
+    }
+
+    /**
+     * Return unique id. useful to generate random dom id.
+     */
+    public static function uniqueId(): string
+    {
+        return '__uid_'.(++self::$uniqueId);
     }
 
     /**
