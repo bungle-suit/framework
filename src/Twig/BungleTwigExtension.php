@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\Twig;
 
 use Bungle\Framework\Converter;
+use Bungle\Framework\Ent\Code\UniqueName;
 use Bungle\Framework\Ent\IDName\HighIDNameTranslator;
 use Bungle\Framework\Ent\ObjectName;
 use Symfony\Component\Serializer\Encoder\JsonDecode;
@@ -19,12 +20,13 @@ class BungleTwigExtension extends AbstractExtension
 {
     private HighIDNameTranslator $highIDNameTranslator;
     private ObjectName $objectName;
-    private static $uniqueId = 0;
+    private UniqueName $uidNames;
 
     public function __construct(HighIDNameTranslator $highIDNameTranslator, ObjectName $objectName)
     {
         $this->highIDNameTranslator = $highIDNameTranslator;
         $this->objectName = $objectName;
+        $this->uidNames = new UniqueName('__uid_');
     }
 
     /**
@@ -54,16 +56,16 @@ class BungleTwigExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('unique_id', [self::class, 'uniqueId']),
+            new TwigFunction('unique_id', [$this, 'uniqueId']),
         ];
     }
 
     /**
      * Return unique id. useful to generate random dom id.
      */
-    public static function uniqueId(): string
+    public function uniqueId(): string
     {
-        return '__uid_'.(++self::$uniqueId);
+        return $this->uidNames->next();
     }
 
     /**

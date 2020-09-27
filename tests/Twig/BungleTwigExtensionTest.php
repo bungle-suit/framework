@@ -83,8 +83,12 @@ class BungleTwigExtensionTest extends MockeryTestCase
 
     public function testUniqueId(): void
     {
-        self::assertEquals('__uid_1', BungleTwigExtension::uniqueId());
-        self::assertEquals('__uid_2', BungleTwigExtension::uniqueId());
-        self::assertEquals('__uid_3', BungleTwigExtension::uniqueId());
+        $this->cache = new ArrayAdapter();
+        $this->objectName = new ObjectName($this->cache);
+        $this->highIDNameTranslator = Mockery::mock(HighIDNameTranslator::class);
+        $ext = new BungleTwigExtension($this->highIDNameTranslator, $this->objectName);
+        self::assertEquals('__uid_1', $ext->uniqueId());
+        self::assertEquals('__uid_2', $ext->uniqueId());
+        self::assertEquals('__uid_3', $ext->uniqueId());
     }
 }
