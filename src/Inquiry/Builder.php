@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Inquiry;
 
+use Bungle\Framework\Ent\Code\UniqueName;
 use Bungle\Framework\Model\HasAttributes;
 use Bungle\Framework\Model\HasAttributesInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -27,7 +28,7 @@ class Builder implements HasAttributesInterface
     /** Attribute set to true if current is build for QBEs */
     public const ATTR_BUILD_FOR_QBE = '__build_qbe__';
     private const AUTO_COLUMN_PREFIX = '__col_';
-    private int $autoColIdx = 0;
+    private UniqueName $autoColName;
 
     /**
      * @param array<string, mixed> $options the value used to init attributes.
@@ -37,6 +38,7 @@ class Builder implements HasAttributesInterface
         $this->qb = $qb;
         $this->queryParams = $queryParams;
         $this->initAttributes($queryParams->getOptions());
+        $this->autoColName = new UniqueName(self::AUTO_COLUMN_PREFIX);
     }
 
     /**
@@ -47,7 +49,7 @@ class Builder implements HasAttributesInterface
     public function addColumn(ColumnMeta $column, string $name = ''): string
     {
         if ($name === '') {
-            $name = self::AUTO_COLUMN_PREFIX.(++$this->autoColIdx);
+            $name = $this->autoColName->next();
         }
         if (key_exists($name, $this->columns)) {
             throw new LogicException("Column \"$name\" already added");
