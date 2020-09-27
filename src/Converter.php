@@ -39,6 +39,15 @@ class Converter
         return strval($v);
     }
 
+    public static function formatYearMonth(?DateTimeInterface $v): string
+    {
+        if ($v === null) {
+            return '';
+        }
+
+        return $v->format('yy-m');
+    }
+
     private const HALF_SPACE = ' ';
     private const FULL_SPACE = '　';
 

@@ -40,6 +40,12 @@ class ConverterTest extends TestCase
         self::assertEquals('100', $f(100));
     }
 
+    public function testFormatYearMonth(): void
+    {
+        self::assertEquals('', Converter::formatYearMonth(null));
+        self::assertEquals('2020-09', Converter::formatYearMonth(new DateTime('2020-09-30')));
+    }
+
     public function testMinLength(): void
     {
         self::assertEquals("", Converter::justifyAlign("", 2));
