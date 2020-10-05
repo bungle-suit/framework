@@ -1,9 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Form;
 
+use DateTime;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormTypeGuesserInterface;
@@ -29,17 +32,27 @@ class PropertyInfoTypeGuesser implements FormTypeGuesserInterface
             return null;
         }
 
-        if ($types[0]->isCollection()) {
+        $t = $types[0];
+
+        if ($t->isCollection()) {
             return null;
         }
 
-        switch ($types[0]->getBuiltinType()) {
+        switch ($t->getBuiltinType()) {
             case Type::BUILTIN_TYPE_INT:
                 return new TypeGuess(IntegerType::class, [], Guess::HIGH_CONFIDENCE);
             case Type::BUILTIN_TYPE_FLOAT:
                 return new TypeGuess(NumberType::class, [], Guess::HIGH_CONFIDENCE);
             case Type::BUILTIN_TYPE_BOOL:
                 return new TypeGuess(CheckboxType::class, [], Guess::HIGH_CONFIDENCE);
+            case Type::BUILTIN_TYPE_OBJECT:
+                if ($t->getClassName() === DateTime::class) {
+                    return new TypeGuess(
+                        DateType::class,
+                        ['html5' => true, 'widget' => 'single_text'],
+                        Guess::HIGH_CONFIDENCE
+                    );
+                }
         }
 
         return null;
@@ -47,6 +60,14 @@ class PropertyInfoTypeGuesser implements FormTypeGuesserInterface
 
     public function guessRequired(string $class, string $property): ?ValueGuess
     {
+        $types = $this->propertyInfoExtractor->getTypes($class, $property);
+        if (0 === count($types)) {
+            return null;
+        }
+
+        if ($types[0]->isNullable()) {
+            return new ValueGuess(false, Guess::MEDIUM_CONFIDENCE);
+        }
         return null;
     }
 
