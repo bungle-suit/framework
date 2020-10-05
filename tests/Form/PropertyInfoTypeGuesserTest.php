@@ -63,7 +63,7 @@ class PropertyInfoTypeGuesserTest extends MockeryTestCase
         if ($formType === "null") {
             self::assertNull($this->guesser->guessType(self::class, 'foo'));
         } else {
-            $exp = new TypeGuess($formType, $formOptions, Guess::HIGH_CONFIDENCE);
+            $exp = new TypeGuess($formType, $formOptions, Guess::VERY_HIGH_CONFIDENCE);
             self::assertEquals($exp, $this->guesser->guessType(self::class, 'foo'));
         }
     }

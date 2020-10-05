@@ -40,17 +40,17 @@ class PropertyInfoTypeGuesser implements FormTypeGuesserInterface
 
         switch ($t->getBuiltinType()) {
             case Type::BUILTIN_TYPE_INT:
-                return new TypeGuess(IntegerType::class, [], Guess::HIGH_CONFIDENCE);
+                return new TypeGuess(IntegerType::class, [], Guess::VERY_HIGH_CONFIDENCE);
             case Type::BUILTIN_TYPE_FLOAT:
-                return new TypeGuess(NumberType::class, [], Guess::HIGH_CONFIDENCE);
+                return new TypeGuess(NumberType::class, [], Guess::VERY_HIGH_CONFIDENCE);
             case Type::BUILTIN_TYPE_BOOL:
-                return new TypeGuess(CheckboxType::class, [], Guess::HIGH_CONFIDENCE);
+                return new TypeGuess(CheckboxType::class, [], Guess::VERY_HIGH_CONFIDENCE);
             case Type::BUILTIN_TYPE_OBJECT:
                 if ($t->getClassName() === DateTime::class) {
                     return new TypeGuess(
                         DateType::class,
                         ['html5' => true, 'widget' => 'single_text'],
-                        Guess::HIGH_CONFIDENCE
+                        Guess::VERY_HIGH_CONFIDENCE
                     );
                 }
         }
