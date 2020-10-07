@@ -25,4 +25,23 @@ final class ArrayUtil
             );
         }
     }
+
+    /**
+     * Remove $element from $array
+     * @param bool $reindex reindex after removing.
+     * @return true if element found and removed.
+     */
+    public static function removeElement(array &$array, $element, bool $reindex = false): bool
+    {
+        $key = array_search($element, $array);
+        if ($key === false) {
+            return false;
+        }
+
+        unset($array[$key]);
+        if ($reindex) {
+            $array = array_values($array);
+        }
+        return true;
+    }
 }

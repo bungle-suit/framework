@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Model;
@@ -29,5 +30,25 @@ class ArrayUtilTest extends MockeryTestCase
         $arr = ['a' => 1, 'b' => 2, 'c' => 3];
         ArrayUtil::insertAt($arr, 'b', ['aa' => 10, 'bb' => 20]);
         self::assertEquals(['a' => 1, 'aa' => 10, 'bb' => 20, 'b' => 2, 'c' => 3], $arr);
+    }
+
+    public function testRemoveElement(): void
+    {
+        $arr = [1, 2, 3, 4];
+        self::assertTrue(ArrayUtil::removeElement($arr, 2));
+        self::assertEquals([0 => 1, 2 => 3, 3 => 4], $arr);
+
+        self::assertFalse(ArrayUtil::removeElement($arr, 2, true));
+        self::assertEquals([0 => 1, 2 => 3, 3 => 4], $arr);
+
+        self::assertTrue(ArrayUtil::removeElement($arr, 3, true));
+        self::assertEquals([1, 4], $arr);
+
+        $arr = ['a' => 1, 'b' => 2, 'c' => 3];
+        self::assertTrue(ArrayUtil::removeElement($arr, 2));
+        self::assertEquals(['a' => 1, 'c' => 3], $arr);
+
+        self::assertTrue(ArrayUtil::removeElement($arr, 1, true));
+        self::assertEquals([3], $arr);
     }
 }
