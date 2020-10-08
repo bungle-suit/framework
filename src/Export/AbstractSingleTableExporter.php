@@ -19,6 +19,7 @@ use Traversable;
 abstract class AbstractSingleTableExporter extends AbstractExcelExporter
 {
     private string $title;
+    private bool $titleBuilt = false;
 
     /** @required  */
     public BasalInfoService $basal;
@@ -32,20 +33,32 @@ abstract class AbstractSingleTableExporter extends AbstractExcelExporter
         $this->title = $title;
     }
 
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    protected function doBuild(string $fn, array $params): void
+    {
+        $this->doGetTitle($params);
+        parent::doBuild($fn, $params);
+    }
+
     protected function generate(ExcelWriter $writer, array $params): void
     {
         $cols = iterator_to_array($this->createColumns(), false);
-        $writer->writeTitle($this->buildTitle(), count($cols));
+        $writer->writeTitle($this->doGetTitle($params), count($cols));
         $writer->writeTable($cols, $this->query($params));
         foreach (range(1, count($cols)) as $colIdx) {
             $writer->getSheet()->getColumnDimensionByColumn($colIdx)->setAutoSize(true);
         }
     }
 
-    protected function createSpreadsheet(): Spreadsheet
+    /** @inheritDoc */
+    protected function createSpreadsheet(array $params): Spreadsheet
     {
-        $r = parent::createSpreadsheet();
-        $r->getActiveSheet()->setTitle($this->buildTitle());
+        $r = parent::createSpreadsheet($params);
+        $r->getActiveSheet()->setTitle($this->doGetTitle($params));
         return $r;
     }
 
@@ -73,10 +86,25 @@ abstract class AbstractSingleTableExporter extends AbstractExcelExporter
     {
         $now = $this->basal->now();
 
-        return "{$this->title}-{$now->format('Y-m-d-His')}.xlsx";
+        return "{$this->doGetTitle($params)}-{$now->format('Y-m-d-His')}.xlsx";
     }
 
-    protected function buildTitle(): string
+    /**
+     * @param mixed[] $params
+     */
+    private function doGetTitle(array $params): string
+    {
+        if (!$this->titleBuilt) {
+            $this->titleBuilt = true;
+            $this->title = $this->buildTitle($params);
+        }
+        return $this->title;
+    }
+
+    /**
+     * @param mixed[] $params
+     */
+    protected function buildTitle(array $params): string
     {
         return $this->title;
     }

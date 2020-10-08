@@ -22,8 +22,8 @@ class TestSingleTableExporter extends AbstractSingleTableExporter
         yield new ExcelColumn('Name', '[1]');
     }
 
-    public function buildTitle(): string
+    protected function buildTitle(array $params): string
     {
-        return parent::buildTitle();
+        return 'new-title';
     }
 }

@@ -14,13 +14,16 @@ abstract class AbstractExcelExporter extends AbstractExporter
      */
     protected function doBuild(string $fn, array $params): void
     {
-        $sheet = $this->createSpreadsheet();
+        $sheet = $this->createSpreadsheet($params);
         $writer = new ExcelWriter($sheet);
         $this->generate($writer, $params);
         (new Xlsx($sheet))->save($fn);
     }
 
-    protected function createSpreadsheet(): Spreadsheet
+    /**
+     * @param mixed $params
+     */
+    protected function createSpreadsheet(array $params): Spreadsheet
     {
         $r = new Spreadsheet();
         $r->getDefaultStyle()->getFont()->setName('宋体');

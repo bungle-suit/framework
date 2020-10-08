@@ -41,12 +41,7 @@ class AbstractSingleTableExporterTest extends MockeryTestCase
     public function testBuildFilename(): void
     {
         $this->basal->expects('now')->andReturn(new DateTime('2020-05-09 17:55:04'));
-        self::assertEquals('title-2020-05-09-175504.xlsx', $this->exporter->buildFilename([]));
-    }
-
-    public function testBuildTitle(): void
-    {
-        self::assertEquals('title', $this->exporter->buildTitle());
+        self::assertEquals('new-title-2020-05-09-175504.xlsx', $this->exporter->buildFilename([]));
     }
 
     public function testExport(): void
@@ -60,9 +55,9 @@ class AbstractSingleTableExporterTest extends MockeryTestCase
         $sheet = (new Xlsx())->load($fn);
         self::assertEquals(1, $sheet->getSheetCount());
         $workSheet = $sheet->getSheet(0);
-        self::assertEquals('title', $workSheet->getTitle());
+        self::assertEquals('new-title', $workSheet->getTitle());
         self::assertNotNull($workSheet->getCell('A1'));
-        self::assertEquals('title', $workSheet->getCell('A1')->getValue());
+        self::assertEquals('new-title', $workSheet->getCell('A1')->getValue());
         self::assertNotNull($workSheet->getCell('A2'));
         self::assertEquals('ID', $workSheet->getCell('A2')->getValue());
         self::assertNotNull($workSheet->getCell('B2'));
