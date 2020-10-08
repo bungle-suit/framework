@@ -76,11 +76,6 @@ abstract class AbstractSingleTableExporter extends AbstractExcelExporter
         return "{$this->title}-{$now->format('Y-m-d-His')}.xlsx";
     }
 
-    protected function buildWorkSheetName(): string
-    {
-        return $this->title;
-    }
-
     protected function buildTitle(): string
     {
         return $this->title;

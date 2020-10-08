@@ -44,11 +44,6 @@ class AbstractSingleTableExporterTest extends MockeryTestCase
         self::assertEquals('title-2020-05-09-175504.xlsx', $this->exporter->buildFilename([]));
     }
 
-    public function testBuildWorkSheetName(): void
-    {
-        self::assertEquals('title', $this->exporter->buildWorkSheetName());
-    }
-
     public function testBuildTitle(): void
     {
         self::assertEquals('title', $this->exporter->buildTitle());

@@ -9,7 +9,7 @@ use Traversable;
 
 class TestSingleTableExporter extends AbstractSingleTableExporter
 {
-    protected function query(array $qbes): iterable
+    protected function query(array $qBEs): iterable
     {
         yield [1, 'foo'];
         yield [2, 'bar'];
@@ -20,11 +20,6 @@ class TestSingleTableExporter extends AbstractSingleTableExporter
     {
         yield new ExcelColumn('ID', '[0]');
         yield new ExcelColumn('Name', '[1]');
-    }
-
-    public function buildWorkSheetName(): string
-    {
-        return parent::buildWorkSheetName();
     }
 
     public function buildTitle(): string
