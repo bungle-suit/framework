@@ -63,7 +63,7 @@ class Query
         return $this->queryData($qb);
     }
 
-    private function queryData(QueryBuilder $qb): Traversable
+    protected function queryData(QueryBuilder $qb): Traversable
     {
         foreach ($qb->getQuery()
                     ->iterate(null, AbstractQuery::HYDRATE_ARRAY) as $rows) {
