@@ -13,6 +13,10 @@ use Symfony\Contracts\Cache\CacheInterface;
 
 /**
  * If form type label not set, use PropertyInfo as label.
+ *
+ * Not replace @see PropertyInfoTypeGuesser, PropertyInfoTypeGuesser has better performance.
+ *
+ * PropertyInfoTypeGuesser not work if provided Form type.
  */
 class PropertyInfoLabelFormExtension extends AbstractTypeExtension
 {
@@ -45,7 +49,7 @@ class PropertyInfoLabelFormExtension extends AbstractTypeExtension
         [$name, $cls] = [$form->getName(), get_class($data)];
         $label = $this->cache->get(
             'bungle_auto_label-'.str_replace('\\', '-', $cls).'-'.$name,
-            fn () => $this->propertyInfoExtractor->getShortDescription($cls, $name)
+            fn() => $this->propertyInfoExtractor->getShortDescription($cls, $name)
         );
 
         $view->vars['label'] = $label;
