@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Bungle\Framework\Model\ExtAttribute\DataMapper;
+namespace Bungle\Framework\Form\DataMapper;
 
 use Bungle\Framework\FP;
+use Bungle\Framework\Model\ExtAttribute\AbstractNormalizedAttributes;
 use Bungle\Framework\Model\ExtAttribute\AttributeDefinitionInterface;
 use Bungle\Framework\Model\ExtAttribute\AttributeInterface;
 use Bungle\Framework\Model\ExtAttribute\AttributeSetDefinition;
 use LogicException;
 use Symfony\Component\Form\DataTransformerInterface;
-use Symfony\Component\Form\Exception\TransformationFailedException;
 
 /**
  * @template T of AbstractNormalizedAttributes

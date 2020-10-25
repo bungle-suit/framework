@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Model\ExtAttribute\DataMapper;
 
-use Bungle\Framework\Model\ExtAttribute\DataMapper\AttributeSetNormalizer;
+use Bungle\Framework\Form\DataMapper\AttributeSetNormalizer;
 use Bungle\Framework\Tests\Model\ExtAttribute\TestAttribute;
 use Bungle\Framework\Tests\Model\ExtAttribute\TestNormalizedAttributeSet;
 use Mockery\Adapter\Phpunit\MockeryTestCase;

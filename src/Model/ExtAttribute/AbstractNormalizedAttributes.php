@@ -2,11 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Bungle\Framework\Model\ExtAttribute\DataMapper;
+namespace Bungle\Framework\Model\ExtAttribute;
 
 use ArrayAccess;
-use Bungle\Framework\Model\ExtAttribute\AttributeDefinitionInterface;
-use Bungle\Framework\Model\ExtAttribute\AttributeSetDefinition;
 use LogicException;
 
 /**

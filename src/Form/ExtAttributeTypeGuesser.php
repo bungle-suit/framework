@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Form;
 
+use Bungle\Framework\Model\ExtAttribute\AbstractNormalizedAttributes;
 use Bungle\Framework\Model\ExtAttribute\AttributeDefinitionInterface;
 use Bungle\Framework\Model\ExtAttribute\AttributeSetDefinition;
-use Bungle\Framework\Model\ExtAttribute\DataMapper\AbstractNormalizedAttributes;
 use Symfony\Component\Form\FormTypeGuesserInterface;
 use Symfony\Component\Form\Guess\TypeGuess;
 use Symfony\Component\Form\Guess\ValueGuess;
