@@ -6,30 +6,35 @@ namespace Bungle\Framework\Model\ExtAttribute\DataMapper;
 
 use ArrayAccess;
 use Bungle\Framework\Model\ExtAttribute\AttributeDefinitionInterface;
+use Bungle\Framework\Model\ExtAttribute\AttributeSetDefinition;
 use LogicException;
 
 /**
  * Normalized form of attributes, used as attribute settings from normalized form.
+ *
+ * Derive from this to create attribute set.
  */
-class NormalizedAttributes implements ArrayAccess
+abstract class AbstractNormalizedAttributes implements ArrayAccess
 {
-    private array $definitions;
     private array $dataSet;
 
     /**
      * @param array<string, AttributeDefinitionInterface> $definitions
      * @param array<string, mixed> $dataSet attribute values
      */
-    public function __construct(array $definitions, array $dataSet)
+    public function __construct(array $dataSet)
     {
-        $this->definitions = $definitions;
         $this->dataSet = $dataSet;
     }
 
-    public function getDefinitions(): array
+    private static AttributeSetDefinition $definitions;
+
+    public static function getDefinition(): AttributeSetDefinition
     {
-        return $this->definitions;
+        return self::$definitions ?? (self::$definitions = static::createDefinition());
     }
+
+    abstract protected static function createDefinition(): AttributeSetDefinition;
 
     public function offsetExists($offset)
     {
@@ -53,5 +58,13 @@ class NormalizedAttributes implements ArrayAccess
     public function offsetUnset($offset)
     {
         throw new LogicException('Not supported');
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return $this->dataSet;
     }
 }

@@ -19,9 +19,11 @@ class StringAttribute extends AbstractAttribute
 
     public function restoreValue(AttributeInterface $attribute)
     {
+        return $attribute->getValue();
     }
 
     public function saveValue(AttributeInterface $attribute, $value): void
     {
+        $attribute->setValue($value);
     }
 }

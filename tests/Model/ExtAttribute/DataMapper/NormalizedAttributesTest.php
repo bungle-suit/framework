@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Model\ExtAttribute\DataMapper;
 
-use Bungle\Framework\Model\ExtAttribute\DataMapper\NormalizedAttributes;
+use Bungle\Framework\Tests\Model\ExtAttribute\TestNormalizedAttributeSet;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 class NormalizedAttributesTest extends MockeryTestCase
 {
     public function testArrayAccess(): void
     {
-        $attrs = new NormalizedAttributes([], ['a' => 1, 'b' => true, 'c' => 'foo']);
+        $attrs = new TestNormalizedAttributeSet(['a' => 1, 'b' => true, 'c' => 'foo']);
 
         self::assertEquals(1, $attrs['a']);
         self::assertEquals(true, $attrs['b']);

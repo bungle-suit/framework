@@ -72,7 +72,7 @@ class AttributeSet
     /**
      * Save current dataset to attributes.
      * @phpstan-param callable(string): AttributeInterface Take attribute name returns new Attribute object.
-     * @param AttributeInterface]] $attributes from external storage, such as database.
+     * @param AttributeInterface[] $attributes from external storage, such as database.
      * @param array<string, mixed> $dataset
      *
      * If updated attribute value not default,

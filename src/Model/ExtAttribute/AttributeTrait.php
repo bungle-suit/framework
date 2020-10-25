@@ -30,7 +30,7 @@ trait AttributeTrait
     /**
      * @ORM\Column()
      */
-    protected string $value;
+    protected string $value = '';
 
     public function getValue(): string
     {
