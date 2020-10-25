@@ -41,7 +41,7 @@ final class BungleFormTypeGuesserTest extends TestCase
         self::assertNull($this->guesser->guessType('Some\Entity', 'ID'));
     }
 
-    public function testGuessTypeSetLabel(): void
+    public function testSkipIfInnerResolvedLabel(): void
     {
         $this
             ->inner
@@ -50,6 +50,25 @@ final class BungleFormTypeGuesserTest extends TestCase
                 new TypeGuess(
                     ColorType::class,
                     ['label' => 'Exist', 'foo' => 'opt'],
+                    Guess::MEDIUM_CONFIDENCE
+                )
+            );
+
+        self::assertEquals(
+            new TypeGuess(ColorType::class, ['label' => 'Exist', 'foo' => 'opt'], Guess::MEDIUM_CONFIDENCE),
+            $this->guesser->guessType('Some\Entity', 'id')
+        );
+    }
+
+    public function testGuessTypeSetLabel(): void
+    {
+        $this
+            ->inner
+            ->allows('guessType')
+            ->andReturn(
+                new TypeGuess(
+                    ColorType::class,
+                    ['foo' => 'opt'],
                     Guess::MEDIUM_CONFIDENCE
                 )
             );

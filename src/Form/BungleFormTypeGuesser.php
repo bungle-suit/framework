@@ -40,7 +40,7 @@ class BungleFormTypeGuesser implements FormTypeGuesserInterface
     public function guessType(string $class, string $property): ?TypeGuess
     {
         $inner = $this->inner->guessType($class, $property);
-        if (!$inner) {
+        if (!$inner || array_key_exists('label', $inner->getOptions())) {
             return $inner;
         }
 
