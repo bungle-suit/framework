@@ -4,10 +4,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\Tests\Model\ExtAttribute;
 
 use Bungle\Framework\Model\ExtAttribute\BoolAttribute;
-use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\FormBuilderInterface;
 
 class BoolAttributeTest extends MockeryTestCase
 {
@@ -26,30 +23,6 @@ class BoolAttributeTest extends MockeryTestCase
         self::assertEquals('lbl', $this->def->getLabel());
     }
 
-    public function testBuildForm(): void
-    {
-        $builder = Mockery::mock(FormBuilderInterface::class);
-        // no description
-        $def = new BoolAttribute('foo', 'lbl');
-        $builder->expects('add')
-            ->with(
-                'foo',
-                CheckBoxType::class,
-                ['label' => 'lbl', 'required' => false]
-            );
-        $def->buildForm($builder, []);
-
-        // has description
-        $def = new BoolAttribute('foo', 'lbl', 'description');
-        $builder->expects('add')
-            ->with(
-                'foo',
-                CheckBoxType::class,
-                ['label' => 'lbl', 'required' => false, 'help' => 'description']
-            );
-        $def->buildForm($builder, []);
-    }
-
     public function testCreateDefault(): void
     {
         self::assertFalse($this->def->createDefault());
@@ -57,7 +30,7 @@ class BoolAttributeTest extends MockeryTestCase
 
     public function testRestoreValue(): void
     {
-        $attr = AttributeSetTest::newAttribute('foo');
+        $attr = new TestAttribute('foo');
         self::assertFalse($this->def->restoreValue($attr));
 
         $attr->setBool(true);
@@ -66,7 +39,7 @@ class BoolAttributeTest extends MockeryTestCase
 
     public function testSaveValue(): void
     {
-        $attr = AttributeSetTest::newAttribute('foo');
+        $attr = new TestAttribute('foo');
         $this->def->saveValue($attr, true);
         self::assertTrue($attr->asBool());
 

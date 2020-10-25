@@ -14,7 +14,7 @@ class AttributeUtilsTest extends MockeryTestCase
         self::assertFalse(AttributeUtils::getBoolAttribute([], 'foo'));
 
         // attribute exist but false
-        $attr = AttributeSetTest::newAttribute('foo', '');
+        $attr = new TestAttribute('foo', '');
         self::assertFalse(AttributeUtils::getBoolAttribute([$attr], 'foo'));
 
         // attribute exist but true

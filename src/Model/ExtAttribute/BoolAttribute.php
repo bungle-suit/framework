@@ -4,25 +4,9 @@ declare(strict_types=1);
 namespace Bungle\Framework\Model\ExtAttribute;
 
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\FormBuilderInterface;
 
 class BoolAttribute extends AbstractAttribute
 {
-    public function buildForm(FormBuilderInterface $builder, array $options): void
-    {
-        $attrs = [
-            'label' => $this->getLabel(), 'required' => false,
-        ];
-        if ($this->getDescription()) {
-            $attrs['help'] = $this->getDescription();
-        }
-        $builder->add(
-            $this->getName(),
-            CheckBoxType::class,
-            $attrs,
-        );
-    }
-
     public function createDefault()
     {
         return false;
