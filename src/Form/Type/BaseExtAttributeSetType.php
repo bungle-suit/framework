@@ -21,6 +21,11 @@ class BaseExtAttributeSetType extends AbstractType
         $this->normalizedAttributeSetClass = $extAttributeSetType;
     }
 
+    public function getNormalizedAttributeSetClass(): string
+    {
+        return $this->normalizedAttributeSetClass;
+    }
+
     final public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addModelTransformer(
