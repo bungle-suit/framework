@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Bungle\Framework\Tests\Model\ExtAttribute\DataMapper;
 
 use Bungle\Framework\Form\DataMapper\AttributeSetNormalizer;
+use Bungle\Framework\Model\ExtAttribute\BoolAttribute;
+use Bungle\Framework\Model\ExtAttribute\StringAttribute;
 use Bungle\Framework\Tests\Model\ExtAttribute\TestAttribute;
-use Bungle\Framework\Tests\Model\ExtAttribute\TestNormalizedAttributeSet;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 class AttributeSetNormalizerTest extends MockeryTestCase
@@ -17,16 +18,20 @@ class AttributeSetNormalizerTest extends MockeryTestCase
     {
         parent::setUp();
 
-        $this->normalizer = new AttributeSetNormalizer(TestNormalizedAttributeSet::class);
+        $defs = [
+            new BoolAttribute('a', 'Foo', 'Foo Desc'),
+            new BoolAttribute('b', 'Bar', 'Bar Desc'),
+            new StringAttribute('c', 'Foobar', 'Foobar Desc'),
+        ];
+        $this->normalizer = new AttributeSetNormalizer($defs, fn (string $name) => new TestAttribute($name));
     }
 
     public function testTransform(): void
     {
         $normalized = $this->normalizer->transform([]);
-        self::assertInstanceOf(TestNormalizedAttributeSet::class, $normalized);
         self::assertEquals(
             ['a' => false, 'b' => false, 'c' => ''],
-            $normalized->toArray()
+            $normalized
         );
         self::assertEquals('', $normalized['c']);
 
@@ -36,7 +41,7 @@ class AttributeSetNormalizerTest extends MockeryTestCase
                 'c' => new TestAttribute('c', 'blah'),
             ]
         );
-        self::assertEquals(['a' => true, 'b' => false, 'c' => 'blah'], $normalized->toArray());
+        self::assertEquals(['a' => true, 'b' => false, 'c' => 'blah'], $normalized);
     }
 
     public function testReverseTransform(): void

@@ -5,41 +5,42 @@ declare(strict_types=1);
 namespace Bungle\Framework\Form\DataMapper;
 
 use Bungle\Framework\FP;
-use Bungle\Framework\Model\ExtAttribute\AbstractNormalizedAttributes;
 use Bungle\Framework\Model\ExtAttribute\AttributeDefinitionInterface;
 use Bungle\Framework\Model\ExtAttribute\AttributeInterface;
-use Bungle\Framework\Model\ExtAttribute\AttributeSetDefinition;
 use LogicException;
 use Symfony\Component\Form\DataTransformerInterface;
 
 /**
- * @template T of AbstractNormalizedAttributes
- * Convert attribute array to @see AbstractNormalizedAttributes.
+ * Convert attribute array to [attrName -> attrValue] array.
  */
 class AttributeSetNormalizer implements DataTransformerInterface
 {
+    /**
+     * @var array<string, AttributeDefinitionInterface>
+     */
     private array $definitions;
-    private AttributeSetDefinition $definition;
-    /** @phpstan-var class-string<T> */
-    private string $normalizedAttributeSetClass;
 
     /**
-     * @phpstan-param class-string<T> $normalizedAttributeSetClass
+     * @var callable(string $attrName): AttributeInterface
      */
-    public function __construct(string $normalizedAttributeSetClass)
+    private $createAttribute;
+
+    /**
+     * @param array<int, AttributeDefinitionInterface> $attributeDefinitions
+     * @param callable(string $attrName): AttributeInterface create a new attribute object.
+     */
+    public function __construct(array $definitions, callable $createAttribute)
     {
-        $this->definition = ([$normalizedAttributeSetClass, 'getDefinition'])();
         $this->definitions = FP::toKeyed(
             fn(AttributeDefinitionInterface $attr) => $attr->getName(),
-            $this->definition->getAttributeDefinitions()
+            $definitions
         );
-        $this->normalizedAttributeSetClass = $normalizedAttributeSetClass;
+        $this->createAttribute = $createAttribute;
     }
 
     /**
      * @param AttributeInterface[] $value
-     * @phpstan-return T
-     * @return AbstractNormalizedAttributes
+     * @return array<string, mixed>
      */
     public function transform($value)
     {
@@ -53,23 +54,20 @@ class AttributeSetNormalizer implements DataTransformerInterface
             $r[$def->getName()] = $def->restoreValue($attr);
         }
 
-        $cls = $this->normalizedAttributeSetClass;
-        return new $cls($r);
+        return $r;
     }
 
     /**
-     * @param AbstractNormalizedAttributes $value
-     *
-     * @phpstan-param T $value
+     * @param array<string, mixed> $value
      * @return AttributeInterface[]
      */
     public function reverseTransform($value)
     {
-        assert(get_class($value) === $this->normalizedAttributeSetClass);
+        assert(is_array($value));
 
         $r = [];
-        foreach ($value->toArray() as $name => $val) {
-            $attr = $this->definition->create($name);
+        foreach ($value as $name => $val) {
+            $attr = ($this->createAttribute)($name);
             $def = $this->getDefinition($name);
             $def->saveValue($attr, $val);
             if ($attr->getValue() !== '') {
