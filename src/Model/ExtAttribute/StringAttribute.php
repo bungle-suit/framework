@@ -30,6 +30,8 @@ class StringAttribute extends AbstractAttribute
 
     public function getFormOption(): array
     {
-        return [];
+        return [
+            'empty_data' => '',
+        ];
     }
 }
