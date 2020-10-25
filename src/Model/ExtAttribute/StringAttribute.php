@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Model\ExtAttribute;
 
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class StringAttribute extends AbstractAttribute
@@ -25,5 +26,15 @@ class StringAttribute extends AbstractAttribute
     public function saveValue(AttributeInterface $attribute, $value): void
     {
         $attribute->setValue($value);
+    }
+
+    public function getFormType(): string
+    {
+        return TextType::class;
+    }
+
+    public function getFormOption(): array
+    {
+        return [];
     }
 }

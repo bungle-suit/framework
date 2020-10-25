@@ -15,9 +15,9 @@ class TestNormalizedAttributeSet extends AbstractNormalizedAttributes
     {
         return new AttributeSetDefinition(
             [
-                new BoolAttribute('a', 'Foo', ''),
-                new BoolAttribute('b', 'Bar', ''),
-                new StringAttribute('c', 'Foobar', ''),
+                new BoolAttribute('a', 'Foo', 'Foo Desc'),
+                new BoolAttribute('b', 'Bar', 'Bar Desc'),
+                new StringAttribute('c', 'Foobar', 'Foobar Desc'),
             ],
             fn(string $name) => new TestAttribute($name)
         );

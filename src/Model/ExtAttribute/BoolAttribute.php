@@ -37,4 +37,14 @@ class BoolAttribute extends AbstractAttribute
     {
         $attribute->setBool($value);
     }
+
+    public function getFormType(): string
+    {
+        return CheckboxType::class;
+    }
+
+    public function getFormOption(): array
+    {
+        return [];
+    }
 }

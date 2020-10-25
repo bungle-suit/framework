@@ -19,6 +19,17 @@ interface AttributeDefinitionInterface
     public function buildForm(FormBuilderInterface $formBuilder, array $options): void;
 
     /**
+     * Return symfony form type
+     */
+    public function getFormType(): string;
+
+    /**
+     * Return symfony form options, no need set 'required', 'label', 'description' options,
+     * these are set by caller.
+     */
+    public function getFormOption(): array;
+
+    /**
      * @return mixed create attribute default value
      */
     public function createDefault();
