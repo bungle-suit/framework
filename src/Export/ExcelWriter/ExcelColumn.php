@@ -21,6 +21,7 @@ final class ExcelColumn
      */
     private $formula; // 公式
     private int $colSpan;
+    private bool $mergeCells;
 
     /**
      * @param string $header header text
@@ -140,6 +141,17 @@ final class ExcelColumn
     {
         $this->colSpan = $colSpan;
 
+        return $this;
+    }
+
+    public function isMergeCells(): bool
+    {
+        return $this->mergeCells ?? false;
+    }
+
+    public function setMergeCells(bool $mergeCells): self
+    {
+        $this->mergeCells = $mergeCells;
         return $this;
     }
 }

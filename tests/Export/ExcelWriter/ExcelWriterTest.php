@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Export\ExcelWriter;
@@ -39,7 +40,10 @@ class ExcelWriterTest extends MockeryTestCase
         self::assertEquals(['A2:C2'], array_values($this->workSheet->getMergeCells()));
         $cell = $this->workSheet->getCell('A2', false);
         self::assertNotNull($cell);
-        self::assertEquals(Alignment::HORIZONTAL_CENTER, $cell->getStyle()->getAlignment()->getHorizontal());
+        self::assertEquals(
+            Alignment::HORIZONTAL_CENTER,
+            $cell->getStyle()->getAlignment()->getHorizontal()
+        );
         self::assertTrue($cell->getStyle()->getFont()->getBold());
         self::assertEquals(16, $cell->getStyle()->getFont()->getSize());
         self::assertEquals(20, $this->workSheet->getRowDimension(2)->getRowHeight());
@@ -47,7 +51,10 @@ class ExcelWriterTest extends MockeryTestCase
         $this->writer->writeTitle('foobar', 1, 'A', ExcelWriter::TITLE_STYLE_H6);
         $cell = $this->workSheet->getCell('A3', false);
         self::assertNotNull($cell);
-        self::assertEquals(Alignment::HORIZONTAL_CENTER, $cell->getStyle()->getAlignment()->getHorizontal());
+        self::assertEquals(
+            Alignment::HORIZONTAL_CENTER,
+            $cell->getStyle()->getAlignment()->getHorizontal()
+        );
         self::assertTrue($cell->getStyle()->getFont()->getBold());
         self::assertEquals(11, $cell->getStyle()->getFont()->getSize());
         self::assertEquals(-1, $this->workSheet->getRowDimension(3)->getRowHeight());
@@ -56,23 +63,83 @@ class ExcelWriterTest extends MockeryTestCase
     public function testTable(): void
     {
         $cols = [
-            new ExcelColumn('Foo', '', function (array $row, int $rowIdx, array $rowAgain) {
-                self::assertSame($row, $rowAgain);
-                return 10 + $row[2] + $rowIdx;
-            }),
+            new ExcelColumn(
+                'Foo',
+                '',
+                function (array $row, int $rowIdx, array $rowAgain) {
+                    self::assertSame($row, $rowAgain);
+
+                    return 10 + $row[2] + $rowIdx;
+                }
+            ),
             new ExcelColumn('Bar', '[1]'),
             new ExcelColumn('FooBar', '[0]'),
         ];
 
-        $this->writer->writeTable($cols, [
-            ['a', 0, 2],
-            ['b', null, 4],
-        ], 'B');
+        $this->writer->writeTable(
+            $cols,
+            [
+                ['a', 0, 2],
+                ['b', null, 4],
+            ],
+            'B'
+        );
 
         $this->assertRow(4);
         $this->assertRowContent(['Foo', 'Bar', 'FooBar'], 'B1:D1');
         $this->assertRowContent([12, 0, 'a'], 'B2:D2');
         $this->assertRowContent([15, null, 'b'], 'B3:D3');
+    }
+
+    public function testTableMergeCells(): void
+    {
+        $cols = [
+            (new ExcelColumn('Foo', '[0]'))->setMergeCells(true)->setColSpan(2),
+            new ExcelColumn('Bar', '[1]'),
+        ];
+
+        $this->writer->writeTable(
+            $cols,
+            [
+                ['a', 1],
+            ]
+        );
+        $this->assertRangeContent(
+            [
+                ['a', null, 1],
+                [null, null, null],
+            ],
+            'A2:C3'
+        );
+
+        $this->writer->writeTable(
+            $cols,
+            [
+                ['a', 1],
+                ['a', 2],
+                ['a', 3],
+                ['b', 4],
+                ['a', 5],
+                ['a', 6],
+            ]
+        );
+
+        $this->assertRangeContent(
+            [
+                ['Foo', null, 'Bar'],
+                ['a', null, 1],
+                [null, null, 2],
+                [null, null, 3],
+                ['b', null, 4],
+                ['a', null, 5],
+                [null, null, 6],
+            ],
+            'A3:C9'
+        );
+        self::assertEquals(
+            ['A4:B6', 'A7:B7', 'A8:B9'],
+            array_values($this->workSheet->getMergeCells())
+        );
     }
 
     public function testSpanColumn(): void
@@ -84,22 +151,36 @@ class ExcelWriterTest extends MockeryTestCase
             new ExcelColumn('d', '[3]'),
         ];
 
-        $this->writer->writeTable($cols, [
-            ['a', 0, 2, 3],
-            ['b', null, 4, 5],
-        ], 'A');
+        $this->writer->writeTable(
+            $cols,
+            [
+                ['a', 0, 2, 3],
+                ['b', null, 4, 5],
+            ],
+            'A'
+        );
 
         $this->assertRow(4);
         $this->assertRowContent(['a', 'b', null, 'c', null, 'd'], 'A1:F1');
         $this->assertRowContent(['a', 0, null, 2, null, 3], 'A2:F2');
         $this->assertRowContent(['b', null, null, 4, null, 5], 'A3:F3');
-        self::assertEquals([
-            'B1:C1', 'B2:C2', 'B3:C3',
-            'D1:E1', 'D2:E2', 'D3:E3',
-        ], array_values($this->workSheet->getMergeCells()));
+        self::assertEquals(
+            [
+                'B1:C1',
+                'B2:C2',
+                'B3:C3',
+                'D1:E1',
+                'D2:E2',
+                'D3:E3',
+            ],
+            array_values($this->workSheet->getMergeCells())
+        );
         $cell = $this->workSheet->getCell('F3');
         self::assertNotNull($cell);
-        self::assertEquals(Border::BORDER_THIN, $cell->getStyle()->getBorders()->getRight()->getBorderStyle());
+        self::assertEquals(
+            Border::BORDER_THIN,
+            $cell->getStyle()->getBorders()->getRight()->getBorderStyle()
+        );
     }
 
     public function testFormulaColumn(): void
@@ -107,13 +188,17 @@ class ExcelWriterTest extends MockeryTestCase
         $cols = [
             new ExcelColumn('A', '[0]'),
             new ExcelColumn('B', '[1]'),
-            (new ExcelColumn('Sum', ''))->setFormula(fn (int $row) => "=A$row+B$row"),
+            (new ExcelColumn('Sum', ''))->setFormula(fn(int $row) => "=A$row+B$row"),
         ];
 
-        $this->writer->writeTable($cols, [
-            [0, 2],
-            [1, 3],
-        ], 'A');
+        $this->writer->writeTable(
+            $cols,
+            [
+                [0, 2],
+                [1, 3],
+            ],
+            'A'
+        );
 
         $this->assertRow(4);
         $this->assertRowContent(['A', 'B', 'Sum'], 'A1:C1');
@@ -129,10 +214,14 @@ class ExcelWriterTest extends MockeryTestCase
             (new ExcelColumn('Num2', '[2]'))->enableSum(),
         ];
 
-        $this->writer->writeTable($cols, [
-            ['a', 1, 2],
-            ['b', null, 4],
-        ], 'B');
+        $this->writer->writeTable(
+            $cols,
+            [
+                ['a', 1, 2],
+                ['b', null, 4],
+            ],
+            'B'
+        );
 
         $this->assertRowContent(['a', 1, 2], 'B2:D2');
         $this->assertRowContent(['b', null, 4], 'B3:D3');
@@ -148,10 +237,14 @@ class ExcelWriterTest extends MockeryTestCase
             (new ExcelColumn('Num2', '[1]'))->enableSum(),
         ];
 
-        $this->writer->writeTable($cols, [
-            [1, 2],
-            [null, 4],
-        ], 'A');
+        $this->writer->writeTable(
+            $cols,
+            [
+                [1, 2],
+                [null, 4],
+            ],
+            'A'
+        );
 
         $this->assertRowContent([1, 2], 'A2:B2');
         $this->assertRowContent([null, 4], 'A3:B3');
@@ -162,7 +255,15 @@ class ExcelWriterTest extends MockeryTestCase
     public function testWriteGrid(): void
     {
         $grid = [
-            ['a', 'b', new ExcelCell('c', null, [ExcelCell::OPTION_FORMAT_CODE => NumberFormat::FORMAT_NUMBER_00])],
+            [
+                'a',
+                'b',
+                new ExcelCell(
+                    'c',
+                    null,
+                    [ExcelCell::OPTION_FORMAT_CODE => NumberFormat::FORMAT_NUMBER_00]
+                ),
+            ],
             [new ExcelCell('long', [2, 1]), 'd'],
         ];
 
@@ -202,7 +303,8 @@ class ExcelWriterTest extends MockeryTestCase
     {
         $w = new ExcelWriter($this->sheet);
         $w->setColumnWidths([1, 2, 3.5]);
-        $getWidth = fn (string $col) => $this->sheet->getActiveSheet()->getColumnDimension($col)->getWidth();
+        $getWidth = fn(string $col) => $this->sheet->getActiveSheet()->getColumnDimension($col)
+                                                   ->getWidth();
         self::assertEquals(1, $getWidth('A'));
         self::assertEquals(2, $getWidth('B'));
         self::assertEquals(3.5, $getWidth('C'));
@@ -221,6 +323,15 @@ class ExcelWriterTest extends MockeryTestCase
     private function assertRowContent(array $exp, string $range): void
     {
         $act = $this->workSheet->rangeToArray($range)[0];
+        self::assertSame($exp, $act);
+    }
+
+    /**
+     * @param array<mixed[]> $exp
+     */
+    private function assertRangeContent(array $exp, string $range): void
+    {
+        $act = $this->workSheet->rangeToArray($range);
         self::assertSame($exp, $act);
     }
 
