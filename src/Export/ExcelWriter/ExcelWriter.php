@@ -227,4 +227,17 @@ class ExcelWriter extends ExcelOperator
             ->setBorderStyle(Border::BORDER_THIN)
         ;
     }
+
+    /**
+     * Set current sheet column widths.
+     *
+     * @param array<int|float> $colWidths column width start from 'A' column.
+     */
+    public function setColumnWidths(array $colWidths): void
+    {
+        foreach ($colWidths as $idx => $width) {
+            $col = $this->sheet->getColumnDimension(Coordinate::stringFromColumnIndex($idx + 1));
+            $col->setWidth($width);
+        }
+    }
 }

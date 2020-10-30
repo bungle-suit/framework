@@ -198,6 +198,16 @@ class ExcelWriterTest extends MockeryTestCase
         self::assertEquals(1, $w->getRow());
     }
 
+    public function testSetColumnWidths(): void
+    {
+        $w = new ExcelWriter($this->sheet);
+        $w->setColumnWidths([1, 2, 3.5]);
+        $getWidth = fn (string $col) => $this->sheet->getActiveSheet()->getColumnDimension($col)->getWidth();
+        self::assertEquals(1, $getWidth('A'));
+        self::assertEquals(2, $getWidth('B'));
+        self::assertEquals(3.5, $getWidth('C'));
+    }
+
     private function assertCellContent(string $pos, string $exp): void
     {
         $cell = $this->workSheet->getCell($pos, false);
