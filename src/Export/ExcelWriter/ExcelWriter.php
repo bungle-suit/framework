@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Export\ExcelWriter;
@@ -66,7 +67,7 @@ class ExcelWriter extends ExcelOperator
     }
 
     /**
-     * @param array<int, ExcelColumn>  $cols
+     * @param array<int, ExcelColumn> $cols
      * @param iterable<object|(string|number|null)[]> $rows
      */
     public function writeTable(array $cols, iterable $rows, string $col = 'A'): void
@@ -109,7 +110,10 @@ class ExcelWriter extends ExcelOperator
             $dataRow = [];
             /** @var ExcelColumn $c */
             foreach ($cols as $c) {
-                $v = $c->getPropertyPath() ? $propertyAccessor->getValue($row, $c->getPropertyPath()) : $row;
+                $v = $c->getPropertyPath() ? $propertyAccessor->getValue(
+                    $row,
+                    $c->getPropertyPath()
+                ) : $row;
                 $v = ($c->getValueConverter())($v, $idx, $row);
                 $dataRow[] = $v;
                 for ($i = 0; $i < ($c->getColSpan() - 1); $i++) {
@@ -124,7 +128,7 @@ class ExcelWriter extends ExcelOperator
             if ($col->formulaEnabled()) {
                 $f = $col->getFormula();
                 $colIdx = $idx + $startColIdx;
-                for ($row = $startRow + 1; $row < $this->getRow(); $row ++) {
+                for ($row = $startRow + 1; $row < $this->getRow(); $row++) {
                     $sheet->setCellValueByColumnAndRow($colIdx, $row, $f($row));
                 }
             }
@@ -149,7 +153,12 @@ class ExcelWriter extends ExcelOperator
         }
 
         $sheet
-            ->getStyleByColumnAndRow($startColIdx, $startRow, $startColIdx + $colCountIncludeSpan - 1, $this->row - 1)
+            ->getStyleByColumnAndRow(
+                $startColIdx,
+                $startRow,
+                $startColIdx + $colCountIncludeSpan - 1,
+                $this->row - 1
+            )
             ->getBorders()
             ->getAllBorders()
             ->setBorderStyle(Border::BORDER_THIN);
@@ -159,16 +168,25 @@ class ExcelWriter extends ExcelOperator
             $fmt = $c->getCellFormat();
             if (null !== $fmt) {
                 $sheet
-                    ->getStyleByColumnAndRow($startColIdx + $idx, $startRow, $startColIdx + $idx, $this->row - 1)
+                    ->getStyleByColumnAndRow(
+                        $startColIdx + $idx,
+                        $startRow,
+                        $startColIdx + $idx,
+                        $this->row - 1
+                    )
                     ->getNumberFormat()->setFormatCode($fmt);
             }
 
-            if ($c->getColSpan() > 1) {
-                $colName = Coordinate::stringFromColumnIndex($colIdx);
-                $endColName = Coordinate::stringFromColumnIndex($colIdx + $c->getColSpan() - 1);
-                foreach (range($startRow, $this->getRow() - 1) as $row) {
-                    $sheet->mergeCells("$colName$row:$endColName$row");
+            if (!$c->isMergeCells()) {
+                if ($c->getColSpan() > 1) {
+                    $colName = Coordinate::stringFromColumnIndex($colIdx);
+                    $endColName = Coordinate::stringFromColumnIndex($colIdx + $c->getColSpan() - 1);
+                    foreach (range($startRow, $this->getRow() - 1) as $row) {
+                        $sheet->mergeCells("$colName$row:$endColName$row");
+                    }
                 }
+            } else {
+                $this->mergeColCells($c, $startColIdx + $idx, $startRow);
             }
             $colIdx += $c->getColSpan();
         }
@@ -192,7 +210,7 @@ class ExcelWriter extends ExcelOperator
                 $c = FP::notNull($this->sheet->getCellByColumnAndRow($colIdx, $this->getRow()));
                 if (!($cv instanceof ExcelCell)) {
                     $c->setValue($cv);
-                    $colIdx ++;
+                    $colIdx++;
                     continue;
                 }
 
@@ -219,13 +237,13 @@ class ExcelWriter extends ExcelOperator
         }
 
         $startCell = $col.$startRow;
-        $endCell = Coordinate::stringFromColumnIndex($startColIdx + $maxGridCols - 1).($this->getRow() - 1);
+        $endCell = Coordinate::stringFromColumnIndex($startColIdx + $maxGridCols - 1).
+            ($this->getRow() - 1);
         $this->sheet
             ->getStyle("{$startCell}:{$endCell}")
             ->getBorders()
             ->getAllBorders()
-            ->setBorderStyle(Border::BORDER_THIN)
-        ;
+            ->setBorderStyle(Border::BORDER_THIN);
     }
 
     /**
@@ -238,6 +256,43 @@ class ExcelWriter extends ExcelOperator
         foreach ($colWidths as $idx => $width) {
             $col = $this->sheet->getColumnDimension(Coordinate::stringFromColumnIndex($idx + 1));
             $col->setWidth($width);
+        }
+    }
+
+    private function mergeColCells(ExcelColumn $c, int $colIdx, int $startRow)
+    {
+        $colName = Coordinate::stringFromColumnIndex($colIdx);
+        $startDataRow = $startRow + 1;
+        $endRow = $this->getRow() - 1;
+        $range = "$colName$startDataRow:$colName$endRow";
+        $data = $this->sheet->rangeToArray($range);
+        if (!$data) {
+            return;
+        }
+
+        $start = 0;
+        $val = $data[0];
+        foreach ($data as $i => $v) {
+            if ($val !== $v) {
+                if ($i - $start > 1 || $c->getColSpan() > 1) {
+                    $this->sheet->mergeCellsByColumnAndRow(
+                        $colIdx,
+                        $start + $startDataRow,
+                        ($colIdx + $c->getColSpan() - 1),
+                        $i + $startDataRow - 1
+                    );
+                }
+                $val = $v;
+                $start = $i;
+            }
+        }
+        if ($start !== count($data) - 1) {
+            $this->sheet->mergeCellsByColumnAndRow(
+                $colIdx,
+                $start + $startDataRow,
+                ($colIdx + $c->getColSpan() - 1),
+                $endRow
+            );
         }
     }
 }
