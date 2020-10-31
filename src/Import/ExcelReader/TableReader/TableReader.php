@@ -55,6 +55,7 @@ class TableReader implements SectionContentReaderInterface
         $arrLabels = array_map(fn (ColumnInterface $col) => $col->getTitle(), $this->cols);
         $sheet = $reader->getSheet();
         $cols = Coordinate::columnIndexFromString($sheet->getHighestColumn($reader->getRow()));
+        $this->colIdxes = [];
         for ($i = $this->startColIdx; $i <= $cols; $i ++) {
             $lbl = $reader->getCellValueByColumn($i);
             if (($idx = array_search($lbl, $arrLabels)) !== false) {
