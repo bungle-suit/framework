@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Export;
@@ -21,11 +22,11 @@ abstract class AbstractSingleTableExporter extends AbstractExcelExporter
     private string $title;
     private bool $titleBuilt = false;
 
-    /** @required  */
+    /** @required */
     public BasalInfoService $basal;
 
     /**
-     * @param string  $title  title will be filename prefix, workSheet name,
+     * @param string $title title will be filename prefix, workSheet name,
      *                        first row title by default, unless override corresponding method
      */
     public function __construct(string $title)
@@ -48,10 +49,15 @@ abstract class AbstractSingleTableExporter extends AbstractExcelExporter
     {
         $cols = iterator_to_array($this->createColumns(), false);
         $writer->writeTitle($this->doGetTitle($params), count($cols));
-        $writer->writeTable($cols, $this->query($params));
+        $writer->writeTable($cols, $this->query($params), 'A', $this->getTableOptions());
         foreach (range(1, count($cols)) as $colIdx) {
             $writer->getSheet()->getColumnDimensionByColumn($colIdx)->setAutoSize(true);
         }
+    }
+
+    protected function getTableOptions(): array
+    {
+        return [];
     }
 
     /** @inheritDoc */
@@ -59,6 +65,7 @@ abstract class AbstractSingleTableExporter extends AbstractExcelExporter
     {
         $r = parent::createSpreadsheet($params);
         $r->getActiveSheet()->setTitle($this->doGetTitle($params));
+
         return $r;
     }
 
@@ -98,11 +105,13 @@ abstract class AbstractSingleTableExporter extends AbstractExcelExporter
             $this->titleBuilt = true;
             $this->title = $this->buildTitle($params);
         }
+
         return $this->title;
     }
 
     /**
      * @param mixed[] $params
+     * @noinspection PhpUnusedParameterInspection
      */
     protected function buildTitle(array $params): string
     {
