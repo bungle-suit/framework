@@ -31,6 +31,11 @@ interface TablePluginInterface
     public function onRowFinish(array $rows, TableContext $context): void;
 
     /**
+     * Called after the last data row.
+     */
+    public function onDataFinish(TableContext $context): void;
+
+    /**
      * Called after write the last line, current row move to next line of last data row.
      */
     public function onTableFinish(TableContext $context): void;

@@ -99,6 +99,7 @@ class ExcelWriter extends ExcelOperator
         }
 
         $userPlugins[] = new DefaultStyleTablePlugin();
+
         return new CompositeTablePlugin($userPlugins);
     }
 
@@ -123,13 +124,19 @@ class ExcelWriter extends ExcelOperator
         $pluginContext = new TableContext($this, $cols, $startColIdx, $startRow);
         $plugin->onTableStart($pluginContext);
 
-        $colCountIncludeSpan = 0;
-        $idx = $startColIdx;
+        $colIdx = $startColIdx;
         /** @var ExcelColumn $c */
         foreach ($cols as $c) {
-            $colCountIncludeSpan += $c->getColSpan();
-            $sheet->setCellValueByColumnAndRow($idx, $this->getRow(), $c->getHeader());
-            $idx += $c->getColSpan();
+            $sheet->setCellValueByColumnAndRow($colIdx, $this->getRow(), $c->getHeader());
+            if ($c->getColSpan() > 1) {
+                $sheet->mergeCellsByColumnAndRow(
+                    $colIdx,
+                    $this->row,
+                    $colIdx + $c->getColSpan() - 1,
+                    $this->row
+                );
+            }
+            $colIdx += $c->getColSpan();
         }
         $plugin->onHeaderFinish($pluginContext);
         $this->nextRow();
@@ -138,38 +145,32 @@ class ExcelWriter extends ExcelOperator
         foreach ($rows as $idx => $row) {
             $dataRow = [];
             /** @var ExcelColumn $c */
+            $colIdx = $startColIdx;
             foreach ($cols as $c) {
                 $v = $c->getPropertyPath() ?
                     $propertyAccessor->getValue($row, $c->getPropertyPath()) :
                     $row;
                 $v = ($c->getValueConverter())($v, $idx, $row);
                 $dataRow[] = $v;
-                for ($i = 0; $i < ($c->getColSpan() - 1); $i++) {
-                    $dataRow[] = null;
+                if ($c->getColSpan() > 1) {
+                    for ($i = 0; $i < ($c->getColSpan() - 1); $i++) {
+                        $dataRow[] = null;
+                    }
+                    $sheet->mergeCellsByColumnAndRow(
+                        $colIdx,
+                        $this->row,
+                        $colIdx + $c->getColSpan() - 1,
+                        $this->row
+                    );
                 }
+                $colIdx += $c->getColSpan();
             }
             $sheet->fromArray($dataRow, null, "$col{$this->row}", true);
             $plugin->onRowFinish($dataRow, $pluginContext);
 
             $this->nextRow();
         }
-
-        $colIdx = $startColIdx;
-        foreach ($cols as $idx => $c) {
-            if (!$c->isMergeCells()) {
-                if ($c->getColSpan() > 1) {
-                    $colName = Coordinate::stringFromColumnIndex($colIdx);
-                    $endColName = Coordinate::stringFromColumnIndex($colIdx + $c->getColSpan() - 1);
-                    foreach (range($startRow, $this->getRow() - 1) as $row) {
-                        $sheet->mergeCells("$colName$row:$endColName$row");
-                    }
-                }
-            } else {
-                $this->mergeColCells($c, $startColIdx + $idx, $startRow);
-            }
-            $colIdx += $c->getColSpan();
-        }
-
+        $plugin->onDataFinish($pluginContext);
         $plugin->onTableFinish($pluginContext);
     }
 
@@ -237,43 +238,6 @@ class ExcelWriter extends ExcelOperator
         foreach ($colWidths as $idx => $width) {
             $col = $this->sheet->getColumnDimension(Coordinate::stringFromColumnIndex($idx + 1));
             $col->setWidth($width);
-        }
-    }
-
-    private function mergeColCells(ExcelColumn $c, int $colIdx, int $startRow)
-    {
-        $colName = Coordinate::stringFromColumnIndex($colIdx);
-        $startDataRow = $startRow + 1;
-        $endRow = $this->getRow() - 1;
-        $range = "$colName$startDataRow:$colName$endRow";
-        $data = $this->sheet->rangeToArray($range);
-        if (!$data) {
-            return;
-        }
-
-        $start = 0;
-        $val = $data[0];
-        foreach ($data as $i => $v) {
-            if ($val !== $v) {
-                if ($i - $start > 1 || $c->getColSpan() > 1) {
-                    $this->sheet->mergeCellsByColumnAndRow(
-                        $colIdx,
-                        $start + $startDataRow,
-                        ($colIdx + $c->getColSpan() - 1),
-                        $i + $startDataRow - 1
-                    );
-                }
-                $val = $v;
-                $start = $i;
-            }
-        }
-        if ($start !== count($data) - 1) {
-            $this->sheet->mergeCellsByColumnAndRow(
-                $colIdx,
-                $start + $startDataRow,
-                ($colIdx + $c->getColSpan() - 1),
-                $endRow
-            );
         }
     }
 

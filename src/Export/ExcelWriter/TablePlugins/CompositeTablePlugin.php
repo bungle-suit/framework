@@ -26,6 +26,9 @@ class CompositeTablePlugin implements TablePluginInterface
         }
     }
 
+    /**
+     * @param mixed[] $rows
+     */
     public function onRowFinish(array $rows, TableContext $context): void
     {
         foreach ($this->plugins as $plugin) {
@@ -44,6 +47,13 @@ class CompositeTablePlugin implements TablePluginInterface
     {
         foreach ($this->plugins as $plugin) {
             $plugin->onHeaderFinish($context);
+        }
+    }
+
+    public function onDataFinish(TableContext $context): void
+    {
+        foreach ($this->plugins as $plugin) {
+            $plugin->onDataFinish($context);
         }
     }
 }
