@@ -7,6 +7,7 @@ namespace Bungle\Framework\Export\ExcelWriter;
 use Bungle\Framework\Export\ExcelWriter\TablePlugins\CompositeTablePlugin;
 use Bungle\Framework\Export\ExcelWriter\TablePlugins\DefaultStyleTablePlugin;
 use Bungle\Framework\Export\ExcelWriter\TablePlugins\FormulaColumnTablePlugin;
+use Bungle\Framework\Export\ExcelWriter\TablePlugins\NumberFormatTablePlugin;
 use Bungle\Framework\Export\ExcelWriter\TablePlugins\SumTablePlugin;
 use Bungle\Framework\FP;
 use LogicException;
@@ -90,6 +91,13 @@ class ExcelWriter extends ExcelOperator
             }
         }
 
+        foreach ($cols as $col) {
+            if ($col->getCellFormat() !== null) {
+                $userPlugins[] = new NumberFormatTablePlugin();
+                break;
+            }
+        }
+
         $userPlugins[] = new DefaultStyleTablePlugin();
         return new CompositeTablePlugin($userPlugins);
     }
@@ -148,18 +156,6 @@ class ExcelWriter extends ExcelOperator
 
         $colIdx = $startColIdx;
         foreach ($cols as $idx => $c) {
-            $fmt = $c->getCellFormat();
-            if (null !== $fmt) {
-                $sheet
-                    ->getStyleByColumnAndRow(
-                        $startColIdx + $idx,
-                        $startRow,
-                        $startColIdx + $idx,
-                        $this->row - 1
-                    )
-                    ->getNumberFormat()->setFormatCode($fmt);
-            }
-
             if (!$c->isMergeCells()) {
                 if ($c->getColSpan() > 1) {
                     $colName = Coordinate::stringFromColumnIndex($colIdx);
