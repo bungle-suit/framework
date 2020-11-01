@@ -122,6 +122,7 @@ class ExcelWriter extends ExcelOperator
             $sheet->setCellValueByColumnAndRow($idx, $this->getRow(), $c->getHeader());
             $idx += $c->getColSpan();
         }
+        $plugin->onHeaderFinish($pluginContext);
 
         /** @noinspection SpellCheckingInspection */
         $sheet->getStyleByColumnAndRow(

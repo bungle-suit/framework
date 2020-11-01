@@ -83,6 +83,15 @@ class ExcelWriterTest extends MockeryTestCase
         $plugin->expects('onTableStart')->with(
             Mockery::on(fn(TableContext $ctx) => $ctx->getRowIndex() === 1)
         );
+        $plugin->expects('onHeaderFinish')->with(
+            Mockery::on(
+                function (TableContext $ctx) {
+                    self::assertRowContent(['Foo', 'Bar', 'FooBar'], 'B1:D3');
+
+                    return $ctx->getRowIndex() === 1;
+                }
+            )
+        );
         $plugin->expects('onRowFinish')->with([12, 0, 'a'], Mockery::type(TableContext::class));
         $plugin->expects('onRowFinish')->with(
             [15, null, 'b'],
@@ -98,9 +107,7 @@ class ExcelWriterTest extends MockeryTestCase
                 ['b', null, 4],
             ],
             'B',
-            [
-                'plugins' => $plugin,
-            ]
+            ['plugins' => $plugin]
         );
 
         $this->assertRow(4);

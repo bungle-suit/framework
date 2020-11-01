@@ -39,4 +39,11 @@ class CompositeTablePlugin implements TablePluginInterface
             $plugin->onTableFinish($context);
         }
     }
+
+    public function onHeaderFinish(TableContext $context): void
+    {
+        foreach ($this->plugins as $plugin) {
+            $plugin->onHeaderFinish($context);
+        }
+    }
 }

@@ -23,4 +23,8 @@ abstract class AbstractTablePlugin implements TablePluginInterface
     public function onTableFinish(TableContext $context): void
     {
     }
+
+    public function onHeaderFinish(TableContext $context): void
+    {
+    }
 }

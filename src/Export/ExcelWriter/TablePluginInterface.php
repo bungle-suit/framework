@@ -18,6 +18,11 @@ interface TablePluginInterface
     public function onTableStart(TableContext $context): void;
 
     /**
+     * Called after written header row before move to next row.
+     */
+    public function onHeaderFinish(TableContext $context): void;
+
+    /**
      * Called after row write to spread sheet.
      * @param mixed[] $rows data just written, indexed from 0,
      * null value exists because of column span. Use @see TableContext::getValue()
