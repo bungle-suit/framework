@@ -214,7 +214,7 @@ class FPTest extends TestCase
 
     public function testAnd(): void
     {
-        list($aHit, $bHit) = [0, 0];
+        [$aHit, $bHit] = [0, 0];
         $a = function (int $a, int $b) use (&$aHit) {
             $aHit ++;
             self::assertEquals(1, $a);
@@ -253,7 +253,7 @@ class FPTest extends TestCase
 
     public function testOr(): void
     {
-        list($aHit, $bHit) = [0, 0];
+        [$aHit, $bHit] = [0, 0];
         $a = function (array $v) use (&$aHit) {
             $aHit ++;
             self::assertEquals([1, 2], $v);
@@ -301,5 +301,12 @@ class FPTest extends TestCase
         $f = FP::not($a);
         self::assertFalse($f(200));
         self::assertEquals(1, $aHit);
+    }
+
+    public function testLast(): void
+    {
+        self::assertNull(FP::last([]));
+        self::assertEquals(1, FP::last([1]));
+        self::assertEquals(2, FP::last([1, 2]));
     }
 }

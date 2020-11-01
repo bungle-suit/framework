@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework;
@@ -15,7 +16,7 @@ class FP
      */
     public static function attr(string $name): callable
     {
-        return fn (object $o) => $o->$name;
+        return fn(object $o) => $o->$name;
     }
 
     /**
@@ -24,7 +25,7 @@ class FP
      */
     public static function getter(string $method): callable
     {
-        return fn (object $o) => $o->$method();
+        return fn(object $o) => $o->$method();
     }
 
     /**
@@ -59,6 +60,7 @@ class FP
             $key = $fKey($value);
             $r[$key][] = $value;
         }
+
         return $r;
     }
 
@@ -87,6 +89,7 @@ class FP
                 $groups[] = [$v];
             }
         }
+
         return $groups;
     }
 
@@ -105,6 +108,7 @@ class FP
                 return true;
             }
         }
+
         return false;
     }
 
@@ -123,6 +127,7 @@ class FP
                 return false;
             }
         }
+
         return true;
     }
 
@@ -137,6 +142,7 @@ class FP
         foreach ($values as $v) {
             return false;
         }
+
         return true;
     }
 
@@ -185,6 +191,7 @@ class FP
         if ($fIsUninitialized === null ? empty($v) : $fIsUninitialized($v)) {
             $v = $fInit();
         }
+
         return $v;
     }
 
@@ -193,22 +200,30 @@ class FP
      *
      * @param callable $fIsUninitialized test does the property initialized.
      *
-     * If the property not set (isset() returns false), always init the property, ignores $fIsUninitialized.
+     * If the property not set (isset() returns false), always init the property, ignores
+     *     $fIsUninitialized.
      *
      * @return mixed the property value
      */
-    public static function initProperty(object $o, string $property, callable $fInit, callable $fIsUninitialized = null)
-    {
-        if (!isset($o->$property) || ($fIsUninitialized !== null && $fIsUninitialized($o->$property))) {
+    public static function initProperty(
+        object $o,
+        string $property,
+        callable $fInit,
+        callable $fIsUninitialized = null
+    ) {
+        if (!isset($o->$property) ||
+            ($fIsUninitialized !== null && $fIsUninitialized($o->$property))) {
             $o->$property = $fInit();
         }
+
         return $o->$property;
     }
 
     /**
      * If array item at specific $idx not initialized, call $fInit to init the array item.
      *
-     * If the property not set (isset() returns false), always init the property, ignores $fIsUninitialized.
+     * If the property not set (isset() returns false), always init the property, ignores
+     * $fIsUninitialized.
      *
      * @phpstan-template K
      * @phpstan-template T
@@ -219,18 +234,24 @@ class FP
      * @phpstan-param callable(T): bool $fIsUninitialized test does the array item initialized.
      * @phpstan-return T[] the array item value.
      */
-    public static function initArrayItem(array &$arr, $idx, callable $fInit, callable $fIsUninitialized = null)
-    {
+    public static function initArrayItem(
+        array &$arr,
+        $idx,
+        callable $fInit,
+        callable $fIsUninitialized = null
+    ) {
         if (!isset($arr[$idx]) || ($fIsUninitialized !== null && $fIsUninitialized($arr[$idx]))) {
             $arr[$idx] = $fInit();
         }
+
         return $arr[$idx] = $fInit();
     }
 
     /**
      * @phpstan-template K
      * @phpstan-template V
-     * @phpstan-param callable(V): K $fKey, accept one argument: array item, returns key normally string.
+     * @phpstan-param callable(V): K $fKey, accept one argument: array item, returns key normally
+     *     string.
      * @phpstan-param V[] $arr
      * @phpstan-return array<K, V>
      *
@@ -242,6 +263,7 @@ class FP
         /** @phpstan-var array<K, V>|false $r */
         $r = array_combine($keys, $arr);
         assert($r !== false);
+
         return $r;
     }
 
@@ -262,6 +284,7 @@ class FP
                 return $item;
             }
         }
+
         return $default;
     }
 
@@ -281,6 +304,7 @@ class FP
                 return $item;
             }
         }
+
         return null;
     }
 
@@ -298,6 +322,7 @@ class FP
         if (!key_exists($key, $arr)) {
             $arr[$key] = $fCreate($key);
         }
+
         return $arr[$key];
     }
 
@@ -350,5 +375,16 @@ class FP
         return function (...$args) use ($a) {
             return !$a(...$args);
         };
+    }
+
+    /**
+     * @template T
+     * @phpstan-param (\ArrayAccess<T>&\Countable)|array<T> $arr
+     * @phpstan-return null|T null if $arr is empty
+     */
+    public static function last($arr)
+    {
+        $lastIdx = count($arr) - 1;
+        return $arr[$lastIdx] ?? null;
     }
 }
