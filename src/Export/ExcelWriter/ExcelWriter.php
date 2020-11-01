@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\Export\ExcelWriter;
 
 use Bungle\Framework\Export\ExcelWriter\TablePlugins\CompositeTablePlugin;
+use Bungle\Framework\Export\ExcelWriter\TablePlugins\DefaultStyleTablePlugin;
 use Bungle\Framework\Export\ExcelWriter\TablePlugins\FormulaColumnTablePlugin;
 use Bungle\Framework\Export\ExcelWriter\TablePlugins\SumTablePlugin;
 use Bungle\Framework\FP;
@@ -13,7 +14,6 @@ use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
@@ -90,6 +90,7 @@ class ExcelWriter extends ExcelOperator
             }
         }
 
+        $userPlugins[] = new DefaultStyleTablePlugin();
         return new CompositeTablePlugin($userPlugins);
     }
 
@@ -123,26 +124,6 @@ class ExcelWriter extends ExcelOperator
             $idx += $c->getColSpan();
         }
         $plugin->onHeaderFinish($pluginContext);
-
-        /** @noinspection SpellCheckingInspection */
-        $sheet->getStyleByColumnAndRow(
-            $startColIdx,
-            $this->row,
-            $startColIdx + $colCountIncludeSpan - 1,
-            $this->row
-        )->applyFromArray(
-            [
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                ],
-                'font' => ['bold' => true],
-                'fill' => [
-                    'fillType' => Fill::FILL_SOLID,
-                    'startColor' => ['argb' => 'FFDDDDDD'],
-                ],
-            ]
-        );
-
         $this->nextRow();
 
         $propertyAccessor = new PropertyAccessor();
@@ -164,17 +145,6 @@ class ExcelWriter extends ExcelOperator
 
             $this->nextRow();
         }
-
-        $sheet
-            ->getStyleByColumnAndRow(
-                $startColIdx,
-                $startRow,
-                $startColIdx + $colCountIncludeSpan - 1,
-                $this->row - 1
-            )
-            ->getBorders()
-            ->getAllBorders()
-            ->setBorderStyle(Border::BORDER_THIN);
 
         $colIdx = $startColIdx;
         foreach ($cols as $idx => $c) {
