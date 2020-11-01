@@ -209,6 +209,10 @@ class ExcelWriter extends ExcelOperator
             }
             $colIdx += $c->getColSpan();
         }
+
+        if ($plugin) {
+            $plugin->onTableFinish($pluginContext);
+        }
     }
 
     /**

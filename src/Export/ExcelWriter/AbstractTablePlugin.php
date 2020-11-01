@@ -16,4 +16,8 @@ abstract class AbstractTablePlugin implements TablePluginInterface
     public function onRowFinish(array $rows, TableContext $context): void
     {
     }
+
+    public function onTableFinish(TableContext $context): void
+    {
+    }
 }

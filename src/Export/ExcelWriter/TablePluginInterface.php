@@ -22,4 +22,9 @@ interface TablePluginInterface
      * to get cell value by column.
      */
     public function onRowFinish(array $rows, TableContext $context): void;
+
+    /**
+     * Called after write the last line, current row move to next line of last data row.
+     */
+    public function onTableFinish(TableContext $context): void;
 }

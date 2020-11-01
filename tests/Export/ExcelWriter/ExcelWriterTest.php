@@ -88,6 +88,9 @@ class ExcelWriterTest extends MockeryTestCase
             [15, null, 'b'],
             Mockery::on(fn(TableContext $ctx) => $ctx->getRowIndex() === 3)
         );
+        $plugin->expects('onTableFinish')->with(
+            Mockery::on(fn(TableContext $ctx) => $ctx->getRowIndex() === 4)
+        );
         $this->writer->writeTable(
             $cols,
             [

@@ -29,4 +29,11 @@ class CompositeTablePlugin implements TablePluginInterface
             $plugin->onRowFinish($rows, $context);
         }
     }
+
+    public function onTableFinish(TableContext $context): void
+    {
+        foreach ($this->plugins as $plugin) {
+            $plugin->onTableFinish($context);
+        }
+    }
 }
