@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Export\ExcelWriter;
 
+use Bungle\Framework\Export\ExcelWriter\TablePlugins\AbstractTablePlugin;
+
 /**
  * TablePluginInterface may add more methods afterwords, derives
  * from @see AbstractTablePlugin to survise design changes.

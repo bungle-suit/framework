@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Bungle\Framework\Export\ExcelWriter;
+namespace Bungle\Framework\Export\ExcelWriter\TablePlugins;
+
+use Bungle\Framework\Export\ExcelWriter\TableContext;
+use Bungle\Framework\Export\ExcelWriter\TablePluginInterface;
 
 /**
  * Abstract implementation of @see TablePluginInterface

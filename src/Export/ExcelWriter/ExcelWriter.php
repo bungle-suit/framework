@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Export\ExcelWriter;
 
+use Bungle\Framework\Export\ExcelWriter\TablePlugins\CompositeTablePlugin;
+use Bungle\Framework\Export\ExcelWriter\TablePlugins\FormulaColumnTablePlugin;
 use Bungle\Framework\FP;
 use LogicException;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
@@ -68,6 +70,22 @@ class ExcelWriter extends ExcelOperator
     }
 
     /**
+     * @param ExcelColumn[] $cols ,
+     * @param TablePluginInterface[] $userPlugins
+     */
+    private static function createPlugin(array $cols, array $userPlugins): TablePluginInterface
+    {
+        foreach ($cols as $col) {
+            if ($col->formulaEnabled()) {
+                $userPlugins[] = new FormulaColumnTablePlugin();
+                break;
+            }
+        }
+
+        return new CompositeTablePlugin($userPlugins);
+    }
+
+    /**
      * @param array<int, ExcelColumn> $cols
      * @param iterable<object|(string|number|null)[]> $rows
      * @param array{plugins?: TablePluginInterface|(TablePluginInterface[])} $options
@@ -79,17 +97,14 @@ class ExcelWriter extends ExcelOperator
         array $options = []
     ): void {
         $options = self::resolveTableOptions($options);
-        /** @var ?TablePluginInterface $plugin */
-        $plugin = $options['plugins'];
+        $plugin = self::createPlugin($cols, $options['plugins']);
 
         $sheet = $this->sheet;
         $startRow = $this->row;
         $startColIdx = Coordinate::columnIndexFromString($col);
 
-        if ($plugin) {
-            $pluginContext = new TableContext($this, $cols, $startColIdx, $startRow);
-            $plugin->onTableStart($pluginContext);
-        }
+        $pluginContext = new TableContext($this, $cols, $startColIdx, $startRow);
+        $plugin->onTableStart($pluginContext);
 
         $colCountIncludeSpan = 0;
         $idx = $startColIdx;
@@ -100,6 +115,7 @@ class ExcelWriter extends ExcelOperator
             $idx += $c->getColSpan();
         }
 
+        /** @noinspection SpellCheckingInspection */
         $sheet->getStyleByColumnAndRow(
             $startColIdx,
             $this->row,
@@ -135,22 +151,9 @@ class ExcelWriter extends ExcelOperator
                 }
             }
             $sheet->fromArray($dataRow, null, "$col{$this->row}", true);
-
-            if ($plugin) {
-                $plugin->onRowFinish($dataRow, $pluginContext);
-            }
+            $plugin->onRowFinish($dataRow, $pluginContext);
 
             $this->nextRow();
-        }
-        /** @var ExcelColumn $col */
-        foreach ($cols as $idx => $col) {
-            if ($col->formulaEnabled()) {
-                $f = $col->getFormula();
-                $colIdx = $idx + $startColIdx;
-                for ($row = $startRow + 1; $row < $this->getRow(); $row++) {
-                    $sheet->setCellValueByColumnAndRow($colIdx, $row, $f($row));
-                }
-            }
         }
         $firstSumCol = -1;
         foreach ($cols as $idx => $col) {
@@ -210,9 +213,7 @@ class ExcelWriter extends ExcelOperator
             $colIdx += $c->getColSpan();
         }
 
-        if ($plugin) {
-            $plugin->onTableFinish($pluginContext);
-        }
+        $plugin->onTableFinish($pluginContext);
     }
 
     /**
@@ -324,16 +325,16 @@ class ExcelWriter extends ExcelOperator
     {
         $resolver = new OptionsResolver();
         $resolver
-            ->setDefault('plugins', null)
+            ->setDefault('plugins', [])
             ->setAllowedTypes('plugins', ['null', 'array', TablePluginInterface::class])
             ->setNormalizer(
                 'plugins',
                 function ($options, $val) {
                     if ($val === null) {
-                        return null;
+                        return [];
                     }
 
-                    return is_array($val) ? new CompositeTablePlugin($val) : $val;
+                    return is_array($val) ? $val : [$val];
                 }
             );
 
