@@ -11,6 +11,7 @@ use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class ExcelWriter extends ExcelOperator
@@ -69,12 +70,26 @@ class ExcelWriter extends ExcelOperator
     /**
      * @param array<int, ExcelColumn> $cols
      * @param iterable<object|(string|number|null)[]> $rows
+     * @param array{plugins?: TablePluginInterface|(TablePluginInterface[])} $options
      */
-    public function writeTable(array $cols, iterable $rows, string $col = 'A'): void
-    {
+    public function writeTable(
+        array $cols,
+        iterable $rows,
+        string $col = 'A',
+        array $options = []
+    ): void {
+        $options = self::resolveTableOptions($options);
+        /** @var ?TablePluginInterface $plugin */
+        $plugin = $options['plugins'];
+
         $sheet = $this->sheet;
         $startRow = $this->row;
         $startColIdx = Coordinate::columnIndexFromString($col);
+
+        if ($plugin) {
+            $pluginContext = new TableContext($this, $cols, $startColIdx, $startRow);
+            $plugin->onTableStart($pluginContext);
+        }
 
         $colCountIncludeSpan = 0;
         $idx = $startColIdx;
@@ -110,10 +125,9 @@ class ExcelWriter extends ExcelOperator
             $dataRow = [];
             /** @var ExcelColumn $c */
             foreach ($cols as $c) {
-                $v = $c->getPropertyPath() ? $propertyAccessor->getValue(
-                    $row,
-                    $c->getPropertyPath()
-                ) : $row;
+                $v = $c->getPropertyPath() ?
+                    $propertyAccessor->getValue($row, $c->getPropertyPath()) :
+                    $row;
                 $v = ($c->getValueConverter())($v, $idx, $row);
                 $dataRow[] = $v;
                 for ($i = 0; $i < ($c->getColSpan() - 1); $i++) {
@@ -121,6 +135,11 @@ class ExcelWriter extends ExcelOperator
                 }
             }
             $sheet->fromArray($dataRow, null, "$col{$this->row}", true);
+
+            if ($plugin) {
+                $plugin->onRowFinish($dataRow, $pluginContext);
+            }
+
             $this->nextRow();
         }
         /** @var ExcelColumn $col */
@@ -294,5 +313,26 @@ class ExcelWriter extends ExcelOperator
                 $endRow
             );
         }
+    }
+
+    /** @noinspection PhpUnusedParameterInspection */
+    private static function resolveTableOptions(array $options): array
+    {
+        $resolver = new OptionsResolver();
+        $resolver
+            ->setDefault('plugins', null)
+            ->setAllowedTypes('plugins', ['null', 'array', TablePluginInterface::class])
+            ->setNormalizer(
+                'plugins',
+                function ($options, $val) {
+                    if ($val === null) {
+                        return null;
+                    }
+
+                    return is_array($val) ? new CompositeTablePlugin($val) : $val;
+                }
+            );
+
+        return $resolver->resolve($options);
     }
 }

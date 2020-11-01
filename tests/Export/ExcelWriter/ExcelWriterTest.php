@@ -7,6 +7,9 @@ namespace Bungle\Framework\Tests\Export\ExcelWriter;
 use Bungle\Framework\Export\ExcelWriter\ExcelCell;
 use Bungle\Framework\Export\ExcelWriter\ExcelColumn;
 use Bungle\Framework\Export\ExcelWriter\ExcelWriter;
+use Bungle\Framework\Export\ExcelWriter\TableContext;
+use Bungle\Framework\Export\ExcelWriter\TablePluginInterface;
+use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -76,13 +79,25 @@ class ExcelWriterTest extends MockeryTestCase
             new ExcelColumn('FooBar', '[0]'),
         ];
 
+        $plugin = Mockery::mock(TablePluginInterface::class);
+        $plugin->expects('onTableStart')->with(
+            Mockery::on(fn(TableContext $ctx) => $ctx->getRowIndex() === 1)
+        );
+        $plugin->expects('onRowFinish')->with([12, 0, 'a'], Mockery::type(TableContext::class));
+        $plugin->expects('onRowFinish')->with(
+            [15, null, 'b'],
+            Mockery::on(fn(TableContext $ctx) => $ctx->getRowIndex() === 3)
+        );
         $this->writer->writeTable(
             $cols,
             [
                 ['a', 0, 2],
                 ['b', null, 4],
             ],
-            'B'
+            'B',
+            [
+                'plugins' => $plugin,
+            ]
         );
 
         $this->assertRow(4);
