@@ -6,6 +6,7 @@ namespace Bungle\Framework\Export\ExcelWriter;
 
 use Bungle\Framework\Export\ExcelWriter\TablePlugins\CompositeTablePlugin;
 use Bungle\Framework\Export\ExcelWriter\TablePlugins\FormulaColumnTablePlugin;
+use Bungle\Framework\Export\ExcelWriter\TablePlugins\SumTablePlugin;
 use Bungle\Framework\FP;
 use LogicException;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
@@ -82,6 +83,13 @@ class ExcelWriter extends ExcelOperator
             }
         }
 
+        foreach ($cols as $col) {
+            if ($col->isEnableSum()) {
+                $userPlugins[] = new SumTablePlugin();
+                break;
+            }
+        }
+
         return new CompositeTablePlugin($userPlugins);
     }
 
@@ -154,24 +162,6 @@ class ExcelWriter extends ExcelOperator
             $plugin->onRowFinish($dataRow, $pluginContext);
 
             $this->nextRow();
-        }
-        $firstSumCol = -1;
-        foreach ($cols as $idx => $col) {
-            if ($col->isEnableSum()) {
-                $firstSumCol = -1 === $firstSumCol ? $idx : $firstSumCol;
-                $colName = Coordinate::stringFromColumnIndex($startColIdx + $idx);
-                [$firstDataRow, $lastDataRow] = [$startRow + 1, $this->row - 1];
-                /** @var Cell $c */
-                $c = $sheet->getCell("{$colName}{$this->row}");
-                $c->setValue("=round(sum({$colName}{$firstDataRow}:{$colName}{$lastDataRow}),2)");
-            }
-        }
-        if ($firstSumCol > 0) {
-            $colName = Coordinate::stringFromColumnIndex($startColIdx + $firstSumCol - 1);
-            /** @var Cell $c */
-            $c = $sheet->getCell($colName.$this->row);
-            $c->setValue('总计');
-            $c->getStyle()->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
         }
 
         $sheet
