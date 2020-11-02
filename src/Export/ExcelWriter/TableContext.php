@@ -34,6 +34,11 @@ class TableContext
      */
     private array $colEndNames;
 
+    /**
+     * @var array<string, string>
+     */
+    private array $mergedCells = [];
+
     public function __construct(ExcelWriter $writer, array $columns, int $startCol, int $startRow)
     {
         $this->cols = $columns;
@@ -41,6 +46,39 @@ class TableContext
         $this->startCol = $startCol;
         $this->startRow = $startRow;
         self::initColIndexes($columns);
+    }
+
+    /**
+     * It is faster than use Spreadsheet mergeCells(), but
+     * no checks are made, must ensure:
+     *
+     * 1. no intersection ranges.
+     * 2. cells in range must created
+     */
+    public function mergeCells(string $range): void
+    {
+        $this->mergedCells[$range] = $range;
+    }
+
+    /**
+     * Reverse operation of @see mergeCells().
+     */
+    public function unmergeCells(string $range): void
+    {
+        unset($this->mergedCells[$range]);
+    }
+
+    /**
+     * Save merged cells to current sheet.
+     */
+    public function flushMergedCells(): void
+    {
+        $this->getWriter()->getSheet()->setMergeCells($this->mergedCells);
+    }
+
+    public function getMergedCells(): array
+    {
+        return $this->mergedCells;
     }
 
     public function getWriter(): ExcelWriter

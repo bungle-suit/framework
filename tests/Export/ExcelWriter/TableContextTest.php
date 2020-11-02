@@ -73,4 +73,14 @@ class TableContextTest extends MockeryTestCase
         $row = [1, 2, null, null, 3];
         self::assertEquals(3, $getter($row));
     }
+
+    public function testMergeUnmergeCells(): void
+    {
+        $this->context->mergeCells($range1 = 'A1:A3');
+        $this->context->mergeCells($range2 = 'B1:B3');
+        self::assertEquals([$range1 => $range1, $range2 => $range2], $this->context->getMergedCells());
+
+        $this->context->unmergeCells($range2);
+        self::assertEquals([$range1 => $range1], $this->context->getMergedCells());
+    }
 }

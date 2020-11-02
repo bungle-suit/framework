@@ -128,7 +128,7 @@ class ExcelWriter extends ExcelOperator
         foreach ($cols as $c) {
             $sheet->setCellValue("{$pluginContext->getColumnName($c)}{$this->row}", $c->getHeader());
             if ($c->getColSpan() > 1) {
-                $sheet->mergeCells(
+                $pluginContext->mergeCells(
                     "{$pluginContext->getColumnName($c)}{$this->row}:{$pluginContext->getColumnEndName($c)}{$this->row}"
                 );
             }
@@ -151,7 +151,7 @@ class ExcelWriter extends ExcelOperator
                     for ($i = 0; $i < ($c->getColSpan() - 1); $i++) {
                         $dataRow[] = null;
                     }
-                    $sheet->mergeCells("$colName{$this->row}:$colEndName{$this->row}");
+                    $pluginContext->mergeCells("$colName{$this->row}:$colEndName{$this->row}");
                 }
             }
             $sheet->fromArray($dataRow, null, "$col{$this->row}", true);
@@ -161,6 +161,7 @@ class ExcelWriter extends ExcelOperator
         }
         $plugin->onDataFinish($pluginContext);
         $plugin->onTableFinish($pluginContext);
+        $pluginContext->flushMergedCells();
     }
 
     /**
