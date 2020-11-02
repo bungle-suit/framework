@@ -6,6 +6,7 @@ namespace Bungle\Framework\Export\ExcelWriter\TablePlugins;
 
 use Bungle\Framework\Export\ExcelWriter\ExcelColumn;
 use Bungle\Framework\Export\ExcelWriter\TableContext;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 /**
  * Merge column cells
@@ -15,7 +16,7 @@ class CellMergeTablePlugin extends AbstractTablePlugin
     private array $cols;
     private array $startRow;
     private array $groupData;
-    /** @var callable(mixed): mixed */
+    /** @var array<callable(mixed): mixed> */
     private array $dataAccessors;
 
     /**
@@ -81,7 +82,9 @@ class CellMergeTablePlugin extends AbstractTablePlugin
                 }
             }
             $endRow = $curRow - 1;
-            $sheet->mergeCells("$startColName$startRow:$endColName$endRow");
+            $range = "$startColName$startRow:$endColName$endRow";
+            $sheet->mergeCells($range);
+            $sheet->getStyle($range)->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
         }
     }
 
