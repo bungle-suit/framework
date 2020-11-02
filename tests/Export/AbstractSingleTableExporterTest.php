@@ -68,7 +68,6 @@ class AbstractSingleTableExporterTest extends MockeryTestCase
         self::assertEquals('blah', $workSheet->getCell('B5')->getValue());
 
         $merges = $workSheet->getMergeCells();
-        self::assertGreaterThan(0, count($merges));
         self::assertEquals('A1:B1', array_values($merges)[0]);
     }
 }
