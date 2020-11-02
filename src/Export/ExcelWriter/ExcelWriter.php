@@ -124,19 +124,14 @@ class ExcelWriter extends ExcelOperator
         $pluginContext = new TableContext($this, $cols, $startColIdx, $startRow);
         $plugin->onTableStart($pluginContext);
 
-        $colIdx = $startColIdx;
         /** @var ExcelColumn $c */
         foreach ($cols as $c) {
-            $sheet->setCellValueByColumnAndRow($colIdx, $this->getRow(), $c->getHeader());
+            $sheet->setCellValue("{$pluginContext->getColumnName($c)}{$this->row}", $c->getHeader());
             if ($c->getColSpan() > 1) {
-                $sheet->mergeCellsByColumnAndRow(
-                    $colIdx,
-                    $this->row,
-                    $colIdx + $c->getColSpan() - 1,
-                    $this->row
+                $sheet->mergeCells(
+                    "{$pluginContext->getColumnName($c)}{$this->row}:{$pluginContext->getColumnEndName($c)}{$this->row}"
                 );
             }
-            $colIdx += $c->getColSpan();
         }
         $plugin->onHeaderFinish($pluginContext);
         $this->nextRow();
@@ -145,8 +140,8 @@ class ExcelWriter extends ExcelOperator
         foreach ($rows as $idx => $row) {
             $dataRow = [];
             /** @var ExcelColumn $c */
-            $colIdx = $startColIdx;
             foreach ($cols as $c) {
+                [$colName, $colEndName] = [$pluginContext->getColumnName($c), $pluginContext->getColumnEndName($c)];
                 $v = $c->getPropertyPath() ?
                     $propertyAccessor->getValue($row, $c->getPropertyPath()) :
                     $row;
@@ -156,14 +151,8 @@ class ExcelWriter extends ExcelOperator
                     for ($i = 0; $i < ($c->getColSpan() - 1); $i++) {
                         $dataRow[] = null;
                     }
-                    $sheet->mergeCellsByColumnAndRow(
-                        $colIdx,
-                        $this->row,
-                        $colIdx + $c->getColSpan() - 1,
-                        $this->row
-                    );
+                    $sheet->mergeCells("$colName{$this->row}:$colEndName{$this->row}");
                 }
-                $colIdx += $c->getColSpan();
             }
             $sheet->fromArray($dataRow, null, "$col{$this->row}", true);
             $plugin->onRowFinish($dataRow, $pluginContext);
