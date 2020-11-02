@@ -28,14 +28,19 @@ class TableContext
      */
     private array $colNames;
 
+    /**
+     * Index is the same of self::$cols.
+     * @var array<int, string>
+     */
+    private array $colEndNames;
+
     public function __construct(ExcelWriter $writer, array $columns, int $startCol, int $startRow)
     {
         $this->cols = $columns;
         $this->writer = $writer;
         $this->startCol = $startCol;
         $this->startRow = $startRow;
-        $this->colIdxes = self::initColIndexes($columns);
-        $this->colNames = self::initColNames($columns);
+        self::initColIndexes($columns);
     }
 
     public function getWriter(): ExcelWriter
@@ -57,6 +62,14 @@ class TableContext
     public function getColumnName(ExcelColumn $col): string
     {
         return $this->colNames[spl_object_id($col)];
+    }
+
+    /**
+     * If column has colSpan, returns the end column name, or return getColumnName().
+     */
+    public function getColumnEndName(ExcelColumn $col): string
+    {
+        return $this->colEndNames[spl_object_id($col)];
     }
 
     /**
@@ -122,30 +135,18 @@ class TableContext
      * @param ExcelColumn[] $cols
      * @return array<int, int>
      */
-    private function initColIndexes(array $cols): array
+    private function initColIndexes(array $cols): void
     {
-        $arr = [];
+        [$idxes, $names, $endNames] = [[], [], []];
         $idx = $this->startCol;
         foreach ($cols as $col) {
-            $arr[spl_object_id($col)] = $idx;
-            $idx += $col->getColSpan();
-        }
-
-        return $arr;
-    }
-
-    /**
-     * @param ExcelColumn[] $cols
-     * @return array<int, string>
-     */
-    private function initColNames(array $cols): array
-    {
-        $arr = [];
-        foreach ($cols as $col) {
             $id = spl_object_id($col);
-            $arr[$id] = Coordinate::stringFromColumnIndex($this->getColumnIndex($col));
+            $idxes[$id] = $idx;
+            $names[$id] = Coordinate::stringFromColumnIndex($idx);
+            $idx += $col->getColSpan();
+            $endNames[$id] = Coordinate::stringFromColumnIndex($idx - 1);
         }
 
-        return $arr;
+        [$this->colIdxes, $this->colNames, $this->colEndNames] = [$idxes, $names, $endNames];
     }
 }

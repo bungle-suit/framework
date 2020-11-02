@@ -72,15 +72,16 @@ class CellMergeTablePlugin extends AbstractTablePlugin
     {
         [$startRow, $c] = [$this->startRow[$idx], $this->cols[$idx]];
         if ($curRow - $startRow > 1) {
-            $startCol = $context->getColumnIndex($c);
-            $endCol = $startCol + $c->getColSpan() - 1;
+            $startColName = $context->getColumnName($c);
+            $endColName = $context->getColumnEndName($c);
             $sheet = $context->getWriter()->getSheet();
             if ($c->getColSpan() > 1) {
                 for ($row = $startRow; $row < $curRow; $row++) {
-                    $sheet->unmergeCellsByColumnAndRow($startCol, $row, $endCol, $row);
+                    $sheet->unmergeCells("$startColName$row:$endColName$row");
                 }
             }
-            $sheet->mergeCellsByColumnAndRow($startCol, $startRow, $endCol, $curRow - 1);
+            $endRow = $curRow - 1;
+            $sheet->mergeCells("$startColName$startRow:$endColName$endRow");
         }
     }
 

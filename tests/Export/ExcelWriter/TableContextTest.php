@@ -52,6 +52,13 @@ class TableContextTest extends MockeryTestCase
         self::assertEquals('F', $this->context->getColumnName($this->col3));
     }
 
+    public function testGetColumnEndName(): void
+    {
+        self::assertEquals('B', $this->context->getColumnEndName($this->col1));
+        self::assertEquals('E', $this->context->getColumnEndName($this->col2));
+        self::assertEquals('F', $this->context->getColumnEndName($this->col3));
+    }
+
     public function testGetValue(): void
     {
         $row = [1, 2, null, null, 3];
