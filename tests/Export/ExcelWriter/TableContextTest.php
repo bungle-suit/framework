@@ -16,19 +16,20 @@ class TableContextTest extends MockeryTestCase
     private ExcelColumn $col1;
     private ExcelColumn $col2;
     private ExcelColumn $col3;
+    private ExcelWriter $writer;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $spread = new Spreadsheet();
-        $writer = new ExcelWriter($spread);
+        $this->writer = new ExcelWriter($spread);
         $cols = [
             $this->col1 = new ExcelColumn('foo', '[id]'),
             $this->col2 = (new ExcelColumn('bar', '[name]'))->setColSpan(3),
             $this->col3 = new ExcelColumn('foobar', '[addr]'),
         ];
-        $this->context = new TableContext($writer, $cols, 2, 5);
+        $this->context = new TableContext($this->writer, $cols, 2, 5);
     }
 
     public function testBasicProperties(): void
@@ -52,11 +53,32 @@ class TableContextTest extends MockeryTestCase
         self::assertEquals('F', $this->context->getColumnName($this->col3));
     }
 
-    public function testGetColumnEndName(): void
+    /**
+     * @param string[] $exp
+     * @param ExcelColumn[] $cols
+     * @dataProvider getColumnEndNameProvider
+     */
+    public function testGetColumnEndName(array $exp, array $cols): void
     {
-        self::assertEquals('B', $this->context->getColumnEndName($this->col1));
-        self::assertEquals('E', $this->context->getColumnEndName($this->col2));
-        self::assertEquals('F', $this->context->getColumnEndName($this->col3));
+        $context = new TableContext($this->writer, $cols, 2, 5);
+        $act = array_map(fn(ExcelColumn $col) => $context->getColumnEndName($col), $cols);
+        self::assertEquals($exp, $act);
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public function getColumnEndNameProvider(): array
+    {
+        $col1 = new ExcelColumn('foo', '[id]');
+        $col2 = (new ExcelColumn('bar', '[name]'))->setColSpan(3);
+        $col3 = new ExcelColumn('foobar', '[addr]');
+        $col4 = (new ExcelColumn('foobar', '[addr]'))->setColSpan(2);
+
+        return [
+            [['B', 'E', 'F'], [$col1, $col2, $col3]],
+            [['B', 'E', 'G'], [$col1, $col2, $col4]],
+        ];
     }
 
     public function testGetValue(): void

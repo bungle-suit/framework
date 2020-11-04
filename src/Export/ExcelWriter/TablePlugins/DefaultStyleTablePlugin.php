@@ -39,16 +39,17 @@ class DefaultStyleTablePlugin extends AbstractTablePlugin
 
     public function onTableFinish(TableContext $context): void
     {
+        if (!($cols = $context->getColumns())) {
+            return;
+        }
+
         $sheet = $context->getWriter()->getSheet();
-        $sheet
-            ->getStyleByColumnAndRow(
-                $context->getStartCol(),
-                $context->getStartRow(),
-                $context->getColumnIndex(FP::notNull(FP::last($context->getColumns()))),
-                $context->getRowIndex() - 1,
-            )
-            ->getBorders()
-            ->getAllBorders()
-            ->setBorderStyle(Border::BORDER_THIN);
+        $startCol = $context->getColumnName($cols[0]);
+        $endCol = $context->getColumnEndName(FP::last($cols));
+        $endRow = $context->getRowIndex() - 1;
+        $sheet->getStyle("$startCol{$context->getStartRow()}:$endCol{$endRow}")
+              ->getBorders()
+              ->getAllBorders()
+              ->setBorderStyle(Border::BORDER_THIN);
     }
 }
