@@ -5,6 +5,7 @@ namespace Bungle\Framework\Export;
 
 use Bungle\Framework\Export\ExcelWriter\ExcelWriter;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 abstract class AbstractExcelExporter extends AbstractExporter
@@ -21,12 +22,14 @@ abstract class AbstractExcelExporter extends AbstractExporter
     }
 
     /**
-     * @param mixed $params
+     * @param mixed[] $params
+     * @noinspection PhpUnusedParameterInspection
      */
     protected function createSpreadsheet(array $params): Spreadsheet
     {
         $r = new Spreadsheet();
         $r->getDefaultStyle()->getFont()->setName('宋体');
+        $r->getActiveSheet()->getPageSetup()->setPaperSize(PageSetup::PAPERSIZE_A4);
         return $r;
     }
 
