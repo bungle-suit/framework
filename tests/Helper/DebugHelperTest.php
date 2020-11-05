@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Bungle\Framework\Test\Helpers;
+namespace Bungle\Framework\Tests\Helper;
 
 use Bungle\Framework\Helper\DebugHelper;
 use PHPUnit\Framework\TestCase;
