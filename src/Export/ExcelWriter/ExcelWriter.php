@@ -15,6 +15,7 @@ use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
@@ -31,6 +32,7 @@ class ExcelWriter extends ExcelOperator
 
         $this->sheet = $this->book->createSheet();
         $this->sheet->setTitle($name);
+        $this->sheet->getPageSetup()->setPaperSize(PageSetup::PAPERSIZE_A4);
         $this->row = 1;
     }
 
