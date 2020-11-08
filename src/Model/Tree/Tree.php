@@ -16,9 +16,9 @@ class Tree
      *
      * @template T of ChildrenTreeNode
      * @template V of ParentTreeNode
-     * @phpstan-param array<ParentTreeItem<V>> $items
+     * @phpstan-param array<ParentTreeNode<V>> $items
      * @phpstan-param callable(V): T $fCreateNode create dest tree node from source.
-     * @phpstan-return ChildrenTreeItem<T>
+     * @phpstan-return ChildrenTreeNode<T>
      */
     public static function toForest(array $items, callable $fCreateNode): array
     {
@@ -54,7 +54,7 @@ class Tree
     /**
      * @template T of ChildrenTreeNode
      * @template V of ParentTreeNode
-     * @phpstan-param array<ParentTreeItem<V>> $items
+     * @phpstan-param array<ParentTreeNode<V>> $items
      * @phpstan-param callable(V): T $fCreateNode create dest tree node from source.
      * @phpstan-return T
      * @throws LogicException if $items is empty, or more than one root node.
