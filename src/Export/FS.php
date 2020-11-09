@@ -30,4 +30,9 @@ class FS implements FSInterface
     {
         unlink($path);
     }
+
+    public function filesize(string $path): int
+    {
+        return filesize($path);
+    }
 }

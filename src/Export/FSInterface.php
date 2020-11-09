@@ -20,4 +20,6 @@ interface FSInterface
      * Delete the file at $path.
      */
     public function removeFile(string $path): void;
+
+    public function filesize(string $path): int;
 }
