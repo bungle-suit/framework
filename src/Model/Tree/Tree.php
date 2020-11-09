@@ -103,9 +103,10 @@ class Tree
      * Not prefixed with '/', i.e., 'a/b/c' instead of '/a/b/c'.
      *
      * @param ParentTreeNode|NameAbleInterface $node
+     * @param bool $includeRoot exclude root name if false.
      * @phpstan-param ParentTreeNode&NameAbleInterface $node
      */
-    public static function path(ParentTreeNode $node): string
+    public static function path(ParentTreeNode $node, bool $includeRoot = true): string
     {
         $parts = [];
         /** @var NameAbleInterface|ParentTreeNode $node */
@@ -113,6 +114,9 @@ class Tree
             $parts[] = $node->getName();
         }
         $parts = array_reverse($parts, false);
+        if (!$includeRoot) {
+            array_shift($parts);
+        }
 
         return implode('/', $parts);
     }

@@ -113,13 +113,14 @@ class TreeTest extends MockeryTestCase
     /**
      * @dataProvider pathDataProvider
      */
-    public function testPath(string $exp, TestChildrenNode $node): void
+    public function testPath(string $expIncludeRoot, string $expNoRoot, TestChildrenNode $node): void
     {
-        self::assertEquals($exp, Tree::path($node));
+        self::assertEquals($expIncludeRoot, Tree::path($node));
+        self::assertEquals($expNoRoot, Tree::path($node, false));
     }
 
     /**
-     * @return array<array{string, TestChildrenNode}>
+     * @return array<array{string, string, TestChildrenNode}>
      */
     public function pathDataProvider(): array
     {
@@ -132,9 +133,9 @@ class TreeTest extends MockeryTestCase
         $nodeB = $root->getChildren()[1];
 
         return [
-            ['root', $root],
-            ['root/A/2', $nodeA2],
-            ['root/B', $nodeB],
+            ['root', '', $root],
+            ['root/A/2', 'A/2', $nodeA2],
+            ['root/B', 'B', $nodeB],
         ];
     }
 
