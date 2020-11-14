@@ -309,4 +309,11 @@ class FPTest extends TestCase
         self::assertEquals(1, FP::last([1]));
         self::assertEquals(2, FP::last([1, 2]));
     }
+
+    public function testFilter(): void
+    {
+        $isOdd = fn (int $v) => $v % 2 !== 0;
+
+        self::assertEquals([1,3 ,5 ,7], iterator_to_array(FP::filter($isOdd, [0, 1, 2, 3, 4, 5, 6, 7, 8])));
+    }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bungle\Framework;
 
 use LogicException;
+use Traversable;
 
 /**
  * Common functional program functions
@@ -386,5 +387,20 @@ class FP
     {
         $lastIdx = count($arr) - 1;
         return $arr[$lastIdx] ?? null;
+    }
+
+    /**
+     * @template T
+     * @param callable(T): bool $f
+     * @phpstan-param iterable<T> $iterable
+     * @phpstan-return Traversable<T>
+     */
+    public static function filter(callable $f, iterable $iterable): Traversable
+    {
+        foreach ($iterable as $item) {
+            if ($f($item)) {
+                yield $item;
+            }
+        }
     }
 }
