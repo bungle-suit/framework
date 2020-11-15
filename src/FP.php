@@ -405,7 +405,8 @@ class FP
     }
 
     /**
-     * @template U,V
+     * @template U
+     * @template V
      * @param callable(U): V $f
      * @phpstan-param iterable<U> $iterable
      * @phpstan-return Traversable<V>
