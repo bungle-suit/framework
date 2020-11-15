@@ -403,4 +403,17 @@ class FP
             }
         }
     }
+
+    /**
+     * @template U,V
+     * @param callable(U): V $f
+     * @phpstan-param iterable<U> $iterable
+     * @phpstan-return Traversable<V>
+     */
+    public static function map(callable $f, iterable $iterable): Traversable
+    {
+        foreach ($iterable as $item) {
+            yield $f($item);
+        }
+    }
 }

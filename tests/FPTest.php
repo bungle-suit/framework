@@ -316,4 +316,10 @@ class FPTest extends TestCase
 
         self::assertEquals([1,3 ,5 ,7], iterator_to_array(FP::filter($isOdd, [0, 1, 2, 3, 4, 5, 6, 7, 8])));
     }
+
+    public function testMap(): void
+    {
+        $double = fn (int $v) => $v * 2;
+        self::assertEquals([2,4,6,8], iterator_to_array(FP::map($double, [1,2,3,4])));
+    }
 }
