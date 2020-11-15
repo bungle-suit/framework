@@ -416,4 +416,20 @@ class FP
             yield $f($item);
         }
     }
+
+    /**
+     * Return count/length of $iterable.
+     *
+     * @template T
+     * @phpstan-param iterable<T> $iterable
+     */
+    public static function count(iterable $iterable): int
+    {
+        $r = 0;
+        /** @noinspection PhpUnusedLocalVariableInspection */
+        foreach ($iterable as $_) {
+            $r ++;
+        }
+        return $r;
+    }
 }

@@ -322,4 +322,10 @@ class FPTest extends TestCase
         $double = fn (int $v) => $v * 2;
         self::assertEquals([2,4,6,8], iterator_to_array(FP::map($double, [1,2,3,4])));
     }
+
+    public function testCount(): void
+    {
+        self::assertEquals(0, FP::count([]));
+        self::assertEquals(3, FP::count(range(0, 2)));
+    }
 }
