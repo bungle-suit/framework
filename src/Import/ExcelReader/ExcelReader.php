@@ -60,12 +60,11 @@ class ExcelReader extends ExcelOperator
                     if ($section->getBoundary()->isSectionStart($this)) {
                         $curSection = $section;
                         $curSection->getContentReader()->onSectionStart($this);
+                        $curSection->getContentReader()->readRow($this);
                         break;
                     }
                 }
-                if ($curSection === null) {
-                    continue;
-                }
+                continue;
             }
 
             if ($curSection->getBoundary()->isSectionEnd($this)) {

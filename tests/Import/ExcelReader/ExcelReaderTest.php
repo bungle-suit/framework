@@ -89,8 +89,7 @@ class ExcelReaderTest extends MockeryTestCase
             ->with(self::validCurrentRow(2))
             ->andReturnTrue();
         $this->b2->expects('isSectionEnd')
-            ->with(self::validCurrentRow(2, 3))
-            ->times(2)
+            ->with(self::validCurrentRow(3))
             ->andReturnFalse();
         $this->b2->expects('isSectionEnd')
             ->with(self::validCurrentRow(4))
@@ -119,8 +118,8 @@ class ExcelReaderTest extends MockeryTestCase
             ->with(self::validCurrentRow(2))
             ->andReturnTrue();
         $this->b2->expects('isSectionEnd')
-            ->with(self::validCurrentRow(2, 3, 4, 5))
-            ->times(4)
+            ->with(self::validCurrentRow(3, 4, 5))
+            ->times(3)
             ->andReturnFalse();
         $this->c2->expects('onSectionStart')
             ->with(self::validCurrentRow(2));
@@ -136,11 +135,11 @@ class ExcelReaderTest extends MockeryTestCase
     public function testReadSkipEmptyRow(): void
     {
         $this->b1->expects('isSectionStart')->with(self::validCurrentRow(1))->andReturnTrue();
-        $this->b1->expects('isSectionEnd')->with(self::validCurrentRow(1, 2, 3, 4, 5))
-            ->times(5)->andReturnFalse();
-        $this->sec1->setIsEmptyRow(self::expectRow(1, 4));
+        $this->b1->expects('isSectionEnd')->with(self::validCurrentRow(2, 3, 4, 5))
+            ->times(4)->andReturnFalse();
+        $this->sec1->setIsEmptyRow(self::expectRow(2, 4));
         $this->c1->expects('onSectionStart')->with(self::validCurrentRow(1));
-        $this->c1->expects('readRow')->with(self::validCurrentRow(2, 3, 5))->times(3);
+        $this->c1->expects('readRow')->with(self::validCurrentRow(1, 3, 5))->times(3);
         $this->c1->expects('onSectionEnd')->with(self::validCurrentRow(5));
         $this->b1->expects('onReadComplete')->with(self::validCurrentRow(5));
 
@@ -153,7 +152,7 @@ class ExcelReaderTest extends MockeryTestCase
     {
         $this->b1->expects('isSectionStart')->with(self::validCurrentRow(1))->andReturnTrue();
         $this->b1->expects('isSectionStart')->with(self::validCurrentRow(3, 4))->andReturnFalse()->times(2);
-        $this->b1->expects('isSectionEnd')->with(self::validCurrentRow(1, 2))->andReturnFalse()->times(2);
+        $this->b1->expects('isSectionEnd')->with(self::validCurrentRow(2))->andReturnFalse();
         $this->b1->expects('isSectionEnd')->with(self::validCurrentRow(3))->andReturnTrue();
         $this->c1->expects('onSectionStart')->with(self::validCurrentRow(1));
         $this->c1->expects('readRow')->with(self::validCurrentRow(1, 2))->times(2);
@@ -161,13 +160,29 @@ class ExcelReaderTest extends MockeryTestCase
 
         $this->b2->expects('isSectionStart')->with(self::validCurrentRow(3))->andReturnFalse();
         $this->b2->expects('isSectionStart')->with(self::validCurrentRow(4))->andReturnTrue();
-        $this->b2->expects('isSectionEnd')->with(self::validCurrentRow(4, 5))->andReturnFalse()->times(2);
+        $this->b2->expects('isSectionEnd')->with(self::validCurrentRow(5))->andReturnFalse();
         $this->c2->expects('onSectionStart')->with(self::validCurrentRow(4));
         $this->c2->expects('readRow')->with(self::validCurrentRow(4, 5))->times(2);
         $this->c2->expects('onSectionEnd')->with(self::validCurrentRow(5));
 
         $this->b1->expects('onReadComplete')->with(self::validCurrentRow(5));
         $this->b2->expects('onReadComplete')->with(self::validCurrentRow(5));
+
+        $this->reader->read();
+    }
+
+    public function testSectionEndMatchesSectionStart(): void
+    {
+        $this->b1->expects('isSectionStart')->with(self::validCurrentRow(1))->andReturnTrue();
+        $this->b1->expects('isSectionStart')->with(self::validCurrentRow(2, 3, 4, 5))->andReturnFalse()->times(4);
+        // section end matches both row 1 and 2
+        $this->b1->expects('isSectionEnd')->with(self::validCurrentRow(1, 2))->andReturnTrue();
+        $this->c1->expects('onSectionStart')->with(self::validCurrentRow(1));
+        $this->c1->expects('readRow')->with(self::validCurrentRow(1));
+        $this->c1->expects('onSectionEnd')->with(self::validCurrentRow(2));
+        $this->b2->allows('isSectionStart')->andReturnFalse();
+        $this->b1->expects('onReadComplete');
+        $this->b2->expects('onReadComplete');
 
         $this->reader->read();
     }
