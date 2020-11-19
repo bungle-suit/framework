@@ -47,5 +47,11 @@ class ExcelOperatorTest extends MockeryTestCase
         // cell exist, return its value
         $this->op->getSheet()->setCellValue('B2', 'foo');
         self::assertEquals('foo', $this->op->getCellValue('B2'));
+
+        // read formula result
+        $this->op->getSheet()->setCellValue('A3', '1');
+        $this->op->getSheet()->setCellValue('B3', '2');
+        $this->op->getSheet()->setCellValue('C3', '=A3+B3');
+        self::assertEquals(3, $this->op->getCellValue('C3'));
     }
 }

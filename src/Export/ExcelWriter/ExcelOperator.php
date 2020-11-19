@@ -79,6 +79,6 @@ class ExcelOperator
 
     private static function cellValue(?Cell $cell)
     {
-        return $cell === null ? null : $cell->getValue();
+        return $cell === null ? null : $cell->getCalculatedValue();
     }
 }
