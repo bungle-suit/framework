@@ -21,5 +21,7 @@ class PatternColumnHeaderCellMatcherTest extends MockeryTestCase
 
         $sheet->setCellValue('A2', 'blah');
         self::assertFalse($m->matches($sheet->getCell('A2')));
+
+        self::assertFalse($m->matches($sheet->getCell('A3')));
     }
 }

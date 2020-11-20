@@ -17,7 +17,7 @@ class PatternColumnHeaderCellMatcher implements ColumnHeaderCellMatcherInterface
 
     public function matches(Cell $cell): bool
     {
-        $text = $cell->getValue();
+        $text = strval($cell->getValue());
         $r = preg_match($this->pattern, $text);
         assert($r !== false, "Wrong pattern; {$this->pattern}");
         return $r === 1;
