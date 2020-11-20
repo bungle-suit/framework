@@ -54,7 +54,17 @@ class ExcelReader extends ExcelOperator
     {
         $sheet = $this->getSheet();
         $curSection = null;
+        $emptyRows = 0;
+        $fIsEmptyRow = SectionBoundary::isEmptyRow();
         for ($maxRow = $sheet->getHighestDataRow(); $this->row <= $maxRow; $this->nextRow()) {
+            if ($fIsEmptyRow($this)) {
+                if (++$emptyRows >= 10) {
+                    break;
+                }
+            } else {
+                $emptyRows = 0;
+            }
+
             if ($curSection === null) {
                 foreach ($this->sections as $section) {
                     if ($section->getBoundary()->isSectionStart($this)) {
