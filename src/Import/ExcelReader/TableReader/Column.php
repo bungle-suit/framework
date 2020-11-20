@@ -11,12 +11,14 @@ class Column implements ColumnInterface
     private string $title;
     /** @var callable(mixed, Context): mixed */
     private $converter;
+    private ColumnHeaderCellMatcherInterface $headerCellMatcher;
 
-    public function __construct(string $path, string $title)
+    public function __construct(string $path, string $title, ColumnHeaderCellMatcherInterface $headerCellMatcher = null)
     {
         $this->path = $path;
         $this->title = $title;
         $this->converter = [FP::class, 'identity'];
+        $this->headerCellMatcher = $headerCellMatcher ?? new TextColumnHeaderCellMatcher($title);
     }
 
     public function getPath(): string
@@ -50,5 +52,10 @@ class Column implements ColumnInterface
         $this->converter = $converter;
 
         return $this;
+    }
+
+    public function getHeaderCellMatcher(): ColumnHeaderCellMatcherInterface
+    {
+        return $this->headerCellMatcher;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Import\ExcelReader\TableReader;
@@ -44,7 +45,7 @@ class TableReader implements SectionContentReaderInterface
         $this->startColIdx = Coordinate::columnIndexFromString($startCol);
         $this->createItem = FP::constant([]);
         $this->propertyAccessor = new PropertyAccessor();
-        $this->onRowComplete = fn () => null;
+        $this->onRowComplete = fn() => null;
     }
 
     public function onSectionStart(ExcelReader $reader): void
@@ -52,20 +53,29 @@ class TableReader implements SectionContentReaderInterface
         $this->context = new Context($reader);
         $this->firstRow = true;
 
-        $arrLabels = array_map(fn (ColumnInterface $col) => $col->getTitle(), $this->cols);
+        $arrLabels = array_map(fn(ColumnInterface $col) => $col->getTitle(), $this->cols);
         $sheet = $reader->getSheet();
         $cols = Coordinate::columnIndexFromString($sheet->getHighestColumn($reader->getRow()));
         $this->colIdxes = [];
-        for ($i = $this->startColIdx; $i <= $cols; $i ++) {
-            $lbl = $reader->getCellValueByColumn($i);
-            if (($idx = array_search($lbl, $arrLabels)) !== false) {
-                $this->colIdxes[$idx] = $i;
+        for ($i = $this->startColIdx; $i <= $cols; $i++) {
+            $cell = $reader->getSheet()->getCellByColumnAndRow($i, $reader->getRow());
+            $col = FP::firstOrNull(
+                fn(Column $c) => $c->getHeaderCellMatcher()->matches($cell),
+                $this->cols
+            );
+            if ($col === null) {
+                continue;
             }
+            $idx = array_search($col, $this->cols, true);
+            assert($idx !== false);
+            $this->colIdxes[$idx] = $i;
         }
 
         foreach ($arrLabels as $i => $lbl) {
             if (!isset($this->colIdxes[$i])) {
-                throw new RuntimeException("工作表\"{$sheet->getTitle()}\"第{$reader->getRow()}行没有列\"$lbl\"");
+                throw new RuntimeException(
+                    "工作表\"{$sheet->getTitle()}\"第{$reader->getRow()}行没有列\"$lbl\""
+                );
             }
         }
     }
@@ -74,6 +84,7 @@ class TableReader implements SectionContentReaderInterface
     {
         if ($this->firstRow) {
             $this->firstRow = false;
+
             return;
         }
 

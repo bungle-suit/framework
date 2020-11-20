@@ -18,6 +18,8 @@ interface ColumnInterface
      */
     public function getTitle(): string;
 
+    public function getHeaderCellMatcher(): ColumnHeaderCellMatcherInterface;
+
     /**
      * @phpstan-param Context $context
      * @return mixed Read and convert the cell value.
