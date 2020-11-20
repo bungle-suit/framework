@@ -17,6 +17,6 @@ class TextColumnHeaderCellMatcher implements ColumnHeaderCellMatcherInterface
 
     public function matches(Cell $cell): bool
     {
-        return $cell->getValue() === $this->text;
+        return $cell->getCalculatedValue() === $this->text;
     }
 }
