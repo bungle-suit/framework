@@ -58,7 +58,7 @@ class ExcelReader extends ExcelOperator
         $fIsEmptyRow = SectionBoundary::isEmptyRow();
         for ($maxRow = $sheet->getHighestDataRow(); $this->row <= $maxRow; $this->nextRow()) {
             if ($fIsEmptyRow($this)) {
-                if (++$emptyRows >= 10) {
+                if (++$emptyRows >= 30) {
                     break;
                 }
             } else {

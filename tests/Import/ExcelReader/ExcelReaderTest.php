@@ -197,19 +197,19 @@ class ExcelReaderTest extends MockeryTestCase
         $this
             ->b1
             ->expects('isSectionStart')
-            ->with(self::validCurrentRow(1, 2, 3, 4, 5, 6, 7, 8, 9))
+            ->with(self::validCurrentRow(...range(1, 29)))
             ->andReturnFalse()
-            ->times(9);
+            ->times(29);
         $this
             ->b2
             ->expects('isSectionStart')
-            ->with(self::validCurrentRow(1, 2, 3, 4, 5, 6, 7, 8, 9))
+            ->with(self::validCurrentRow(...range(1, 29)))
             ->andReturnFalse()
-            ->times(9);
-        $this->b1->expects('onReadComplete')->with(self::validCurrentRow(9));
-        $this->b2->expects('onReadComplete')->with(self::validCurrentRow(9));
+            ->times(29);
+        $this->b1->expects('onReadComplete')->with(self::validCurrentRow(29));
+        $this->b2->expects('onReadComplete')->with(self::validCurrentRow(29));
 
-        $this->reader->getSheet()->setCellValue('A11', 'foo');
+        $this->reader->getSheet()->setCellValue('A31', 'foo');
         $this->reader->read();
     }
 
