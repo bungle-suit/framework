@@ -25,4 +25,9 @@ interface ColumnInterface
      * @return mixed Read and convert the cell value.
      */
     public function read($val, Context $context);
+
+    /**
+     * It is okay if excel table no this column
+     */
+    public function isOptional(): bool;
 }

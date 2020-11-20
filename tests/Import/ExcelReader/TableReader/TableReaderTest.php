@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Import\ExcelReader\TableReader;
@@ -17,6 +18,7 @@ class TableReaderTest extends MockeryTestCase
     private array $cols;
     private TableReader $r;
     private array $arr;
+    private Column $col2;
 
     protected function setUp(): void
     {
@@ -27,24 +29,32 @@ class TableReaderTest extends MockeryTestCase
         $book->getActiveSheet()->setTitle('sheet 1');
 
         $col1 = new Column('[0]', 'lbl1');
-        $col2 = new Column('[1]', 'lbl2');
+        $this->col2 = new Column('[1]', 'lbl2');
         $col3 = new Column('[2]', 'lbl3');
-        $this->cols = [$col1, $col2, $col3];
+        $this->cols = [$col1, $this->col2, $col3];
         $this->arr = [];
-        $this->r = new TableReader($this->cols, function (array $item) {
-            $this->arr[] = $item;
-        }, 'C');
+        $this->r = new TableReader(
+            $this->cols,
+            function (array $item) {
+                $this->arr[] = $item;
+            },
+            'C'
+        );
     }
 
     public function test(): void
     {
         $this->reader->setRow(2);
         $sheet = $this->reader->getSheet();
-        $sheet->fromArray([
-            ['lbl3', 'lbl1', '', 'lbl2'],
-            ['foo', 'bar', '', 'foobar'],
-            ['1', '2', '', '10'],
-        ], null, 'C2');
+        $sheet->fromArray(
+            [
+                ['lbl3', 'lbl1', '', 'lbl2'],
+                ['foo', 'bar', '', 'foobar'],
+                ['1', '2', '', '10'],
+            ],
+            null,
+            'C2'
+        );
 
         $r = $this->r;
         $r->onSectionStart($this->reader);
@@ -55,21 +65,27 @@ class TableReaderTest extends MockeryTestCase
         $this->reader->nextRow();
         $r->readRow($this->reader);
 
-        self::assertEquals([
-            ['bar', 'foobar', 'foo'],
-            ['2', '10', '1'],
-        ], $this->arr);
-
+        self::assertEquals(
+            [
+                ['bar', 'foobar', 'foo'],
+                ['2', '10', '1'],
+            ],
+            $this->arr
+        );
         // create item, onRowComplete
     }
 
     public function testOnRowComplete(): void
     {
         $sheet = $this->reader->getSheet();
-        $sheet->fromArray([
-            ['lbl3', 'lbl1', '', 'lbl2'],
-            ['1', '2', '', '10'],
-        ], null, 'C1');
+        $sheet->fromArray(
+            [
+                ['lbl3', 'lbl1', '', 'lbl2'],
+                ['1', '2', '', '10'],
+            ],
+            null,
+            'C1'
+        );
         $this->r->setOnRowComplete(
             function (array &$item, Context $context) {
                 assert($context !== null);
@@ -83,21 +99,64 @@ class TableReaderTest extends MockeryTestCase
 
         $this->reader->nextRow();
         $r->readRow($this->reader);
-        self::assertEquals([
-            ['2', '10', '1', 'd' => 'v'],
-        ], $this->arr);
+        self::assertEquals(
+            [
+                ['2', '10', '1', 'd' => 'v'],
+            ],
+            $this->arr
+        );
     }
 
     public function testCannotFoundColumn(): void
     {
         $this->reader->setRow(3);
         $sheet = $this->reader->getSheet();
-        $sheet->fromArray([
-            ['lbl1', '', 'lbl2'],
-        ], null, 'C3');
+        $sheet->fromArray(
+            [
+                ['lbl1', '', 'lbl2'],
+            ],
+            null,
+            'C3'
+        );
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('工作表"sheet 1"第3行没有列"lbl3"');
 
         $this->r->onSectionStart($this->reader);
+    }
+
+    public function testOptionalColumn(): void
+    {
+        self::assertFalse($this->col2->isOptional());
+        $this->col2->setOptional();
+        self::assertTrue($this->col2->isOptional());
+
+        $this->reader->setRow(2);
+        $sheet = $this->reader->getSheet();
+        $sheet->fromArray(
+            [
+                ['lbl3', 'lbl1'],
+                ['foo', 'bar'],
+                ['1', '2'],
+            ],
+            null,
+            'C2'
+        );
+
+        $r = $this->r;
+        $r->onSectionStart($this->reader);
+        $r->readRow($this->reader);
+
+        $this->reader->nextRow();
+        $r->readRow($this->reader);
+        $this->reader->nextRow();
+        $r->readRow($this->reader);
+
+        self::assertEquals(
+            [
+                [0 => 'bar', 2 => 'foo'],
+                [0 => '2', 2 => '1'],
+            ],
+            $this->arr
+        );
     }
 }

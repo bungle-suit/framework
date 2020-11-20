@@ -72,7 +72,7 @@ class TableReader implements SectionContentReaderInterface
         }
 
         foreach ($arrLabels as $i => $lbl) {
-            if (!isset($this->colIdxes[$i])) {
+            if (!$this->cols[$i]->isOptional() && !isset($this->colIdxes[$i])) {
                 throw new RuntimeException(
                     "工作表\"{$sheet->getTitle()}\"第{$reader->getRow()}行没有列\"$lbl\""
                 );

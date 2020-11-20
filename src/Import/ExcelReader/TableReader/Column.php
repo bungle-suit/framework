@@ -12,6 +12,7 @@ class Column implements ColumnInterface
     /** @var callable(mixed, Context): mixed */
     private $converter;
     private ColumnHeaderCellMatcherInterface $headerCellMatcher;
+    private bool $optional;
 
     public function __construct(string $path, string $title, ColumnHeaderCellMatcherInterface $headerCellMatcher = null)
     {
@@ -57,5 +58,16 @@ class Column implements ColumnInterface
     public function getHeaderCellMatcher(): ColumnHeaderCellMatcherInterface
     {
         return $this->headerCellMatcher;
+    }
+
+    public function isOptional(): bool
+    {
+        return $this->optional ?? false;
+    }
+
+    public function setOptional(bool $optional = true): self
+    {
+        $this->optional = $optional;
+        return $this;
     }
 }
