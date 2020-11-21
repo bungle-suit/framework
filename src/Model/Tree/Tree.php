@@ -16,9 +16,9 @@ class Tree
      *
      * @template T of ChildrenTreeNode
      * @template V of ParentTreeNode
-     * @phpstan-param array<ParentTreeNode<V>> $items
+     * @phpstan-param V[] $items
      * @phpstan-param callable(V): T $fCreateNode create dest tree node from source.
-     * @phpstan-return array<ChildrenTreeNode<T>>
+     * @phpstan-return T[]
      */
     public static function toForest(array $items, callable $fCreateNode): array
     {
@@ -36,7 +36,6 @@ class Tree
         };
 
         $r = [];
-        /** @var ParentTreeNode $item */
         foreach ($items as $item) {
             $child = $findOrCreate($item);
             if ($item->getParent() === null) {
@@ -48,13 +47,14 @@ class Tree
             $parent->addChild($child);
         }
 
+        /** @phpstan-var T[] */
         return $r;
     }
 
     /**
      * @template T of ChildrenTreeNode
      * @template V of ParentTreeNode
-     * @phpstan-param array<ParentTreeNode<V>> $items
+     * @phpstan-param array<V> $items
      * @phpstan-param callable(V): T $fCreateNode create dest tree node from source.
      * @phpstan-return T
      * @throws LogicException if $items is empty, or more than one root node.
@@ -75,6 +75,7 @@ class Tree
 
     /**
      * @template T of ParentTreeNode
+     * @phpstan-param T $node
      * @phpstan-return Traversable<T>
      */
     public static function iterToRoot(ParentTreeNode $node): Traversable
@@ -86,13 +87,16 @@ class Tree
 
     /**
      * Iterate all descent nodes of $node.
-     * @template T of ChildrenTreeNode
-     * @phpstan-param T $node
+     * @template T
+     * @phpstan-param ChildrenTreeNode<T> $node
      * @phpstan-return Traversable<T>
      */
     public static function iterDescent(ChildrenTreeNode $node): Traversable
     {
-        yield $node;
+        /** @phpstan-var T */
+        /** @noinspection PhpUnnecessaryLocalVariableInspection */
+        $n = $node;
+        yield $n;
         foreach ($node->getChildren() as $child) {
             yield from self::iterDescent($child);
         }

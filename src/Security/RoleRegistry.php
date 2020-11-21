@@ -58,7 +58,7 @@ class RoleRegistry
     }
 
     /**
-     * @return true if defs just initialized.
+     * Return true if defs just initialized.
      */
     private function initDefs(): bool
     {
@@ -84,7 +84,7 @@ class RoleRegistry
 
     /**
      * Return Definitions grouped by RoleDefinition group property.
-     * @return RoleDefinition[]
+     * @phpstan-return array<string, RoleDefinition[]>
      */
     public function getGroups(): array
     {

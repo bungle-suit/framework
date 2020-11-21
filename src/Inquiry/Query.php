@@ -18,7 +18,7 @@ class Query
     private array $qbeMetas;
 
     /**
-     * @var QueryStepInterface[] $steps ;
+     * @phpstan-var (callable(Builder): void)[]
      */
     private array $steps;
 
@@ -144,7 +144,7 @@ class Query
      * In pagedQuery(), these steps will appended to steps to build count query.
      *
      * Normally no need to override, default implementation can handle most cases.
-     * @return QueryStepInterface[]
+     * @phpstan-return (callable(Builder): void)[]
      */
     protected function createExtraCountSteps(): array
     {
@@ -157,7 +157,7 @@ class Query
      * In pagedQuery(), these steps will appended to steps to build data query.
      *
      * Normally no need to override, default implementation can handle most cases.
-     * @return QueryStepInterface[]
+     * @phpstan-return (callable(Builder): void)[]
      */
     protected function createExtraPagingSteps(): array
     {

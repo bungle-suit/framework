@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\StateMachine;
 
-use Symfony\Component\Workflow\Definition;
-
 interface EntityWorkflowDefinitionResolverInterface
 {
     /**
      * Resolve workflow definition by entity class.
      * [Definition, [TransitionName => ActionName]
      *
-     * @return Definition[]|string[]
+     * @return array{\Symfony\Component\Workflow\Definition, array<string, string>}
      */
     public function resolveDefinition(string $entityClass): array;
 }

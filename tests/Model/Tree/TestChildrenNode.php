@@ -14,6 +14,7 @@ use Doctrine\Common\Collections\Collection;
  */
 class TestChildrenNode implements ChildrenTreeNode, NameAbleInterface
 {
+    /** @var Collection<int, self> */
     private Collection $children;
     private string $name;
     private ?self $parent;
@@ -34,7 +35,7 @@ class TestChildrenNode implements ChildrenTreeNode, NameAbleInterface
     }
 
     /**
-     * @return Collection<int, self>
+     * @inheritDoc
      */
     public function getChildren(): Collection
     {

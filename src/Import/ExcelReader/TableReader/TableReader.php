@@ -43,7 +43,8 @@ class TableReader implements SectionContentReaderInterface
         $this->startColIdx = Coordinate::columnIndexFromString($startCol);
         $this->createItem = FP::constant([]);
         $this->propertyAccessor = new PropertyAccessor();
-        $this->onRowComplete = fn() => null;
+        $this->onRowComplete = function (): void {
+        };
     }
 
     public function onSectionStart(ExcelReader $reader): void
@@ -126,6 +127,9 @@ class TableReader implements SectionContentReaderInterface
         return $this->onRowComplete;
     }
 
+    /**
+     * @phpstan-param callable(T, Context): void $onRowComplete
+     */
     public function setOnRowComplete(callable $onRowComplete): self
     {
         $this->onRowComplete = $onRowComplete;

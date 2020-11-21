@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\Collection;
 /**
  * Tree item that use children property to store tree relationship.
  *
- * @template T of ChildrenTreeNode
+ * @template T
  */
 interface ChildrenTreeNode extends ParentTreeNode
 {
@@ -19,7 +19,7 @@ interface ChildrenTreeNode extends ParentTreeNode
     public function getChildren(): Collection;
 
     /**
-     * @phpstan-param T $child
+     * @phpstan-param T&ChildrenTreeNode $child
      */
     public function addChild(self $child): void;
 }

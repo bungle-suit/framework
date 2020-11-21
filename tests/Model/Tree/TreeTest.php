@@ -150,7 +150,7 @@ class TreeTest extends MockeryTestCase
     }
 
     /**
-     * @return array<TestChildrenNode[]>
+     * @phpstan-return array<array<TestChildrenNode[]>>
      */
     public function iterDescentDataProvider(): array
     {

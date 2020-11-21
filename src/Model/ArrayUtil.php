@@ -29,7 +29,7 @@ final class ArrayUtil
     /**
      * Remove $element from $array
      * @param bool $reindex reindex after removing.
-     * @return true if element found and removed.
+     * Return true if element found and removed.
      */
     public static function removeElement(array &$array, $element, bool $reindex = false): bool
     {

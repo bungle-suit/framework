@@ -18,7 +18,7 @@ class QuerySteps
      */
     public static function ifBuildForCount($inner): callable
     {
-        return function (Builder $builder) use ($inner) {
+        return function (Builder $builder) use ($inner): void {
             if ($builder->isBuildForCount()) {
                 $inner($builder);
             }

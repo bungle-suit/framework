@@ -6,13 +6,11 @@ namespace Bungle\Framework\Model\Tree;
 
 /**
  * Tree item that use parent property to store tree relationship.
- *
- * @template T of ParentTreeNode
  */
 interface ParentTreeNode
 {
     /**
-     * @phpstan-return T|null
+     * @return ?static
      */
     public function getParent(): ?self;
 }
