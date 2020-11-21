@@ -6,15 +6,19 @@ namespace Bungle\Framework\Tests\Entity;
 
 use Bungle\Framework\Entity\EntityUtils;
 use Bungle\Framework\Tests\StateMachine\Entity\Order;
+use DomainException;
 use PHPUnit\Framework\TestCase;
 
-class EntityCtorHasArgumnet // phpcs:ignore
+class EntityCtorHasArgument // phpcs:ignore
 {
+    private int $id;
+
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __construct(int $id)
     {
+        $this->id = $id;
     }
 }
 
@@ -27,7 +31,7 @@ final class EntityUtilsTest extends TestCase // phpcs:ignore
 
     public function testCreateFailedCtorHasArguments(): void
     {
-        $this->expectException(\DomainException::class);
-        EntityUtils::create(EntityCtorHasArgumnet::class);
+        $this->expectException(DomainException::class);
+        EntityUtils::create(EntityCtorHasArgument::class);
     }
 }
