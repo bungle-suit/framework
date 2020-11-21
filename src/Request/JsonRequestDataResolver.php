@@ -44,6 +44,8 @@ class JsonRequestDataResolver implements ArgumentValueResolverInterface
      */
     public function resolve(Request $request, ArgumentMetadata $argument): Traversable
     {
-        yield $this->serializer->deserialize($request->getContent(), $argument->getType(), 'json');
+        $t = $argument->getType();
+        assert($t !== null);
+        yield $this->serializer->deserialize($request->getContent(), $t, 'json');
     }
 }

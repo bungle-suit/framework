@@ -8,6 +8,7 @@ namespace Bungle\Framework\Tests\Twig;
 use AssertionError;
 use Bungle\Framework\Ent\IDName\HighIDNameTranslator;
 use Bungle\Framework\Ent\ObjectName;
+use Bungle\Framework\FP;
 use Bungle\Framework\Twig\BungleTwigExtension;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -37,6 +38,7 @@ class BungleTwigExtensionTest extends MockeryTestCase
         self::assertEquals(['js'], $filter->getSafe($this->createMock(Node::class)));
 
         $f = $filter->getCallable();
+        assert($f !== null);
         self::assertEquals('null', $f(null));
         self::assertEquals('[1,null]', $f([1, null]));
         self::assertEquals('[1,"汉字"]', BungleTwigExtension::odmEncodeJson([1, '汉字']));
@@ -79,7 +81,9 @@ class BungleTwigExtensionTest extends MockeryTestCase
 
     private function getFilterFunc(string $name): callable
     {
-        return $this->getFilter($name)->getCallable();
+        /** @var callable $r */
+        $r = FP::notNull($this->getFilter($name)->getCallable());
+        return $r;
     }
 
     public function testUniqueId(): void

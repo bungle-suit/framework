@@ -34,7 +34,7 @@ final class High
     {
         $cls = new ReflectionClass($clsName);
         $reader = new AnnotationReader();
-        /** @var High $annotation */
+        /** @var ?High $annotation */
         $annotation = $reader->getClassAnnotation($cls, High::class);
         if (!$annotation) {
             return null;

@@ -7,6 +7,7 @@ namespace Bungle\Framework\Import\ExcelReader\TableReader;
 use Bungle\Framework\FP;
 use Bungle\Framework\Import\ExcelReader\ExcelReader;
 use Bungle\Framework\Import\ExcelReader\SectionContentReaderInterface;
+use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use RuntimeException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -58,6 +59,7 @@ class TableReader implements SectionContentReaderInterface
         $cols = Coordinate::columnIndexFromString($sheet->getHighestColumn("{$reader->getRow()}"));
         $this->colIdxes = [];
         for ($i = $this->startColIdx; $i <= $cols; $i++) {
+            /** @var Cell $cell */
             $cell = $reader->getSheet()->getCellByColumnAndRow($i, $reader->getRow());
             $col = FP::firstOrNull(
                 fn(ColumnInterface $c): bool => $c->getHeaderCellMatcher()->matches($cell),

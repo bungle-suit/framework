@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Import\ExcelReader;
 
+use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
 /**
@@ -87,6 +88,7 @@ class SectionBoundary implements SectionBoundaryInterface
     public static function colIsMergedStart(string $col = 'A'): callable
     {
         return function (ExcelReader $reader) use ($col): bool {
+            /** @var Cell $cell */
             $cell = $reader->getSheet()->getCell($col.$reader->getRow());
             return $cell->isMergeRangeValueCell();
         };

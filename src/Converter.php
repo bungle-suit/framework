@@ -36,7 +36,9 @@ class Converter
         if ($v instanceof DateTimeInterface) {
             $r = $v->format('y-m-d H:i');
 
-            return preg_replace('/ 00:00$/', '', $r, 1);
+            $r = preg_replace('/ 00:00$/', '', $r, 1);
+            assert(is_string($r));
+            return $r;
         }
 
         return strval($v);

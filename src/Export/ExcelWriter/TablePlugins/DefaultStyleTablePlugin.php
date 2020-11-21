@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Export\ExcelWriter\TablePlugins;
 
+use Bungle\Framework\Export\ExcelWriter\ExcelColumn;
 use Bungle\Framework\Export\ExcelWriter\TableContext;
 use Bungle\Framework\FP;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -18,10 +19,12 @@ class DefaultStyleTablePlugin extends AbstractTablePlugin
     public function onHeaderFinish(TableContext $context): void
     {
         $sheet = $context->getWriter()->getSheet();
+        /** @var ExcelColumn $lastCol */
+        $lastCol = FP::notNull(FP::last($context->getColumns()));
         $sheet->getStyleByColumnAndRow(
             $context->getStartCol(),
             $context->getRowIndex(),
-            $context->getColumnIndex(FP::notNull(FP::last($context->getColumns()))),
+            $context->getColumnIndex($lastCol),
             $context->getRowIndex()
         )->applyFromArray(
             [
@@ -45,7 +48,9 @@ class DefaultStyleTablePlugin extends AbstractTablePlugin
 
         $sheet = $context->getWriter()->getSheet();
         $startCol = $context->getColumnName($cols[0]);
-        $endCol = $context->getColumnEndName(FP::last($cols));
+        /** @var ExcelColumn $lastCol */
+        $lastCol = FP::notNull(FP::last($cols));
+        $endCol = $context->getColumnEndName($lastCol);
         $endRow = $context->getRowIndex() - 1;
         $sheet->getStyle("$startCol{$context->getStartRow()}:$endCol{$endRow}")
               ->getBorders()

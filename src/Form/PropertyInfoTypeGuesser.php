@@ -28,6 +28,7 @@ class PropertyInfoTypeGuesser implements FormTypeGuesserInterface
     public function guessType(string $class, string $property): ?TypeGuess
     {
         $types = $this->propertyInfoExtractor->getTypes($class, $property);
+        assert($types !== null);
         if (0 === count($types)) {
             return null;
         }
@@ -61,6 +62,7 @@ class PropertyInfoTypeGuesser implements FormTypeGuesserInterface
     public function guessRequired(string $class, string $property): ?ValueGuess
     {
         $types = $this->propertyInfoExtractor->getTypes($class, $property);
+        assert($types !== null);
         if (0 === count($types)) {
             return null;
         }
@@ -68,6 +70,7 @@ class PropertyInfoTypeGuesser implements FormTypeGuesserInterface
         if ($types[0]->isNullable()) {
             return new ValueGuess(false, Guess::MEDIUM_CONFIDENCE);
         }
+
         return null;
     }
 
