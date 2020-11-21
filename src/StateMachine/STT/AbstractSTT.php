@@ -151,4 +151,6 @@ abstract class AbstractSTT
         yield from $steps['saveActions'][$curState];
         yield from $steps['afterSave'] ?? [];
     }
+
+    abstract protected static function getHigh(): string;
 }

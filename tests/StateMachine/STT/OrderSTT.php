@@ -87,18 +87,24 @@ final class OrderSTT extends AbstractSTT implements STTInterface
 
            'saveActions' => [
                'saved' => [
-                   fn (Order $ord, SaveStepContext $ctx) => self::log($ctx, 'save'),
+                   function (Order $ord, SaveStepContext $ctx) {
+                       self::log($ctx, 'save');
+                   },
                    fn (Order $ord) => $ord->name = 'foo',
                    fn (Order $ord) => $ord->setState('hack'), // test prevent manipulate set state.
                ],
                StatefulInterface::INITIAL_STATE => [],
            ],
            'beforeSave' => [
-               fn (Order $ord, SaveStepContext $ctx) => self::log($ctx, 'before save'.$ctx->get('attr', '')),
+               function (Order $ord, SaveStepContext $ctx) {
+                   self::log($ctx, 'before save'.$ctx->get('attr', ''));
+               },
                fn (Order $ord) => $ord->before = 'bar',
            ],
            'afterSave' => [
-               fn (Order $ord, SaveStepContext $ctx) => self::log($ctx, 'after save'),
+               function (Order $ord, SaveStepContext $ctx) {
+                   self::log($ctx, 'after save');
+               },
                fn (Order $ord) => $ord->after = 'after',
                [self::class, 'saveLog'],
            ],

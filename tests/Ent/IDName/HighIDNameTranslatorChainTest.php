@@ -7,7 +7,7 @@ namespace Bungle\Framework\Tests\Ent\IDName;
 use Bungle\Framework\Ent\IDName\HighIDNameTranslatorChain;
 use Bungle\Framework\Ent\IDName\HighIDNameTranslatorInterface;
 use Bungle\Framework\Entity\EntityRegistry;
-use Bungle\Framework\Tests\Entity\Order;
+use Bungle\Framework\Tests\Entity\Entities\Order;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 

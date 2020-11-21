@@ -149,7 +149,7 @@ final class AbstractSTTTest extends TestBase
         $registry = Mockery::mock(EntityRegistry::class);
         $registry->allows('getEntityByHigh')->with('ord')->andReturn(Order::class);
         $stt = new Class extends AbstractSTT implements InitEntityInterface {
-            public static function getHigh() {
+            protected static function getHigh(): string {
                 return 'ord';
             }
 
