@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bungle\Framework;
 
 use DomainException;
+use Throwable;
 
 final class Exceptions
 {
@@ -44,7 +45,7 @@ final class Exceptions
         return new DomainException("Can not found property $propertyName in entity $entityClass");
     }
 
-    public static function entityExpectDefaultConstructor(string $entityClass, $inner = null): DomainException
+    public static function entityExpectDefaultConstructor(string $entityClass, Throwable $inner = null): DomainException
     {
         return new DomainException("Expect entity class $entityClass's __construct has zero argument", 0, $inner);
     }

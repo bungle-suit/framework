@@ -12,7 +12,7 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 class HighIDNameTranslatorTest extends MockeryTestCase
 {
-    public function testIdToName()
+    public function testIdToName(): void
     {
         $chain = Mockery::mock(HighIDNameTranslatorChain::class);
         $cache = new ArrayAdapter();

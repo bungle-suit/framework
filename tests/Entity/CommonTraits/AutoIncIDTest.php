@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class AutoIncIDTest extends TestCase
 {
-    public function testGetId()
+    public function testGetId(): void
     {
         $doc = new class() {
             use AutoIncID;

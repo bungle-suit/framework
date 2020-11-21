@@ -71,12 +71,18 @@ class ExcelOperator
         return self::cellValue($cell);
     }
 
+    /**
+     * @return mixed
+     */
     public function getCellValueByColumn(int $col)
     {
         $cell = $this->sheet->getCellByColumnAndRow($col, $this->row, false);
         return self::cellValue($cell);
     }
 
+    /**
+     * @return mixed
+     */
     private static function cellValue(?Cell $cell)
     {
         return $cell === null ? null : $cell->getCalculatedValue();

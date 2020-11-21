@@ -122,6 +122,9 @@ class ExcelWriterTest extends MockeryTestCase
 
     /**
      * @dataProvider tableCellMergeDataProvider
+     * @param array<mixed[]> $data
+     * @param array<mixed[]> $exp
+     * @param string[] $merges
      */
     public function testTableCellMerge(array $data, array $exp, array $merges): void
     {
@@ -144,6 +147,9 @@ class ExcelWriterTest extends MockeryTestCase
         self::assertEquals($merges, array_values($this->workSheet->getMergeCells()));
     }
 
+    /**
+     * @return array<mixed[]>
+     */
     public function tableCellMergeDataProvider(): array
     {
         return [

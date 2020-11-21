@@ -15,8 +15,12 @@ final class EntityUtils
     /**
      * Create an instance of specific entity class.
      *
-     * Entity class must have empty constructor.  */
-    public static function create(string $entityClass): object
+     * Entity class must have empty constructor.
+     * @template T
+     * @phpstan-param class-string<T> $entityClass
+     * @phpstan-return T
+     */
+    public static function create(string $entityClass)
     {
         try {
             return new $entityClass();

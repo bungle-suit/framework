@@ -1,4 +1,5 @@
 <?php
+
 /** @noinspection PhpParamsInspection */
 declare(strict_types=1);
 
@@ -15,8 +16,6 @@ use Symfony\Component\DependencyInjection\Container;
 class STTLocatorTest extends MockeryTestCase
 {
     private Container $container;
-    private string $fooCls;
-    private string $barCls;
     /** @var EntityRegistry|Mockery\MockInterface|Mockery\LegacyMockInterface */
     private $entityRegistry;
 
@@ -25,34 +24,45 @@ class STTLocatorTest extends MockeryTestCase
         parent::setUp();
 
         $this->container = new Container();
-        list($this->fooCls, $this->barCls) = ['\App\Document\Foo', '\App\Document\Bar'];
         $this->entityRegistry = Mockery::mock(EntityRegistry::class);
-        $this->entityRegistry->allows('getHigh')->with($this->fooCls)->andReturn('foo');
-        $this->entityRegistry->allows('getHigh')->with($this->barCls)->andReturn('bar');
+        $this->entityRegistry->allows('getHigh')->with(Foo::class)->andReturn('foo');
+        $this->entityRegistry->allows('getHigh')->with(Bar::class)->andReturn('bar');
     }
 
-    public function testGetSTTForClass()
+    public function testGetSTTForClass(): void
     {
         $this->container->set('\App\STT\fooSTT', $fooSTT = $this->createMock(AbstractSTT::class));
         $this->container->set('\App\STT\barSTT', $barSTT = $this->createMock(AbstractSTT::class));
 
-        $locator = new STTLocator($this->container, $this->entityRegistry, [
+        /** @var array<string, class-string<mixed>> */
+        $classesByHigh = [
             'foo' => '\App\STT\fooSTT',
             'bar' => '\App\STT\barSTT',
-        ]);
+        ];
+        $locator = new STTLocator(
+            $this->container,
+            $this->entityRegistry,
+            $classesByHigh,
+        );
 
-        self::assertEquals($barSTT, $locator->getSTTForClass($this->barCls));
-        self::assertEquals($fooSTT, $locator->getSTTForClass($this->fooCls));
+        self::assertEquals($barSTT, $locator->getSTTForClass(Bar::class));
+        self::assertEquals($fooSTT, $locator->getSTTForClass(Foo::class));
     }
 
     public function testSTTNotFound(): void
     {
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage("STT service for {$this->fooCls} not found");
+        $this->expectExceptionMessage('STT service for '.Foo::class.' not found');
 
+        /** @var array<string, class-string<mixed>> */
+        $classesByHigh = ['bar' => '\App\STT\barSTT'];
         $this->container->set('\App\STT\fooSTT', $this->createMock(AbstractSTT::class));
-        $locator = new STTLocator($this->container, $this->entityRegistry, [ 'bar' => '\App\STT\barSTT' ]);
+        $locator = new STTLocator(
+            $this->container,
+            $this->entityRegistry,
+            $classesByHigh
+        );
 
-        $locator->getSTTForClass($this->fooCls);
+        $locator->getSTTForClass(Foo::class);
     }
 }

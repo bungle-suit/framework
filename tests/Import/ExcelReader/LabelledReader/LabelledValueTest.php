@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Import\ExcelReader\LabelledReader;
@@ -10,7 +11,9 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 class LabelledValueTest extends MockeryTestCase
 {
+    /** @var LabelledValue<object> */
     private LabelledValue $lv;
+    /** @var Context<object>|Mockery\MockInterface */
     private $context;
 
     protected function setUp(): void
@@ -34,7 +37,7 @@ class LabelledValueTest extends MockeryTestCase
         self::assertEquals('foo', $this->lv->read('foo', $this->context));
 
         // use custom converter
-        $this->lv->setConverter(fn ($v) => intval($v));
+        $this->lv->setConverter(fn($v) => intval($v));
         self::assertEquals(1, $this->lv->read('1', $this->context));
     }
 }

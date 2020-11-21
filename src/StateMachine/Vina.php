@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\StateMachine;
 
 use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
+use Bungle\Framework\StateMachine\STTLocator\STTLocatorInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -26,13 +27,17 @@ class Vina
     private AuthorizationCheckerInterface $authChecker;
     private RequestStack $reqStack;
     private SyncToDBInterface $syncToDB;
-    private STTLocator\STTLocatorInterface $sttLocator;
+    /** @phpstan-var STTLocatorInterface */
+    private STTLocatorInterface $sttLocator;
 
+    /**
+     * @phpstan-param STTLocatorInterface $sttLocator
+     */
     public function __construct(
         Registry $registry,
         AuthorizationCheckerInterface $authChecker,
         RequestStack $reqStack,
-        STTLocator\STTLocatorInterface $sttLocator,
+        STTLocatorInterface $sttLocator,
         SyncToDBInterface $syncToDB = null
     ) {
         $this->registry = $registry;
@@ -65,7 +70,9 @@ class Vina
         $r = [];
         foreach ($sm->getDefinition()->getTransitions() as $trans) {
             $meta = $store->getTransitionMetadata($trans);
-            $r[$trans->getName()] = $meta['title'] ?? $trans->getName();
+            /** @var string $transName */
+            $transName = $trans->getName();
+            $r[$transName] = $meta['title'] ?? $trans->getName();
         }
 
         return $r;
@@ -74,6 +81,7 @@ class Vina
     /**
      * Return associated array of state/place name -> title
      * for StateMachine attached with $subject.
+     * @return array<string, string>
      */
     public function getStateTitles(StatefulInterface $subject): array
     {
@@ -99,6 +107,7 @@ class Vina
      * apply the transition. Such as Entity order, which high is `ord'
      * has a transition named 'save', If current user do have 'ROLE_ord_save'
      * then 'save' transition excluded from getPossibleTransitions() result.
+     * @return string[]
      */
     public function getPossibleTransitions(StatefulInterface $subject): array
     {
@@ -106,12 +115,14 @@ class Vina
         $trans = $sm->getEnabledTransitions($subject);
         $r = [];
         foreach ($trans as $tr) {
+            /** @var string $transitionName */
+            $transitionName = $tr->getName();
             $role = self::getTransitionRole(
                 $sm->getName(),
-                $tr->getName(),
+                $transitionName,
             );
             if ($this->authChecker->isGranted($role)) {
-                $r[] = $tr->getName();
+                $r[] = $transitionName;
             }
         }
 
@@ -125,7 +136,7 @@ class Vina
      * session flash, next page request can display it to user.
      *
      * If succeed, $subject synced to DB.
-     * @param array $attrs initial attrs of StepContext.
+     * @param array<string, mixed> $attrs initial attrs of StepContext.
      */
     public function applyTransition(
         StatefulInterface $subject,
@@ -154,7 +165,7 @@ class Vina
      * Like applyTransition(), but not handles TransitionException.
      *
      * $subject not sync to db.
-     * @param array $attrs initial attrs of StepContext.
+     * @param array<string, mixed> $attrs initial attrs of StepContext.
      */
     public function applyTransitionRaw(
         StatefulInterface $subject,
@@ -171,8 +182,10 @@ class Vina
     }
 
     /**
+     * @template T
      * Execute STT save steps. If succeed, $subject synced to DB.
-     * @param array $attrs initial attribute for StepContext.
+     * @param array<string, mixed> $attrs initial attribute for StepContext.
+     * @phpstan-param T&StatefulInterface $subject
      */
     public function save(StatefulInterface $subject, array $attrs = []): void
     {
@@ -183,9 +196,11 @@ class Vina
     }
 
     /**
+     * @template T
      * Returns true if $subject currently allows edit.
      *
      * NOTE: does not consider role of current user.
+     * @phpstan-param T&StatefulInterface $subject
      */
     public function haveSaveAction(StatefulInterface $subject): bool
     {
@@ -195,9 +210,11 @@ class Vina
     }
 
     /**
+     * @template T
      * Returns true if $subject currently allows edit and current user has related roles.
      *
      * If current user can start any transition on $subject, means has related roles.
+     * @phpstan-param T&StatefulInterface $subject
      */
     public function canSave(StatefulInterface $subject): bool
     {
@@ -209,7 +226,9 @@ class Vina
     }
 
     /**
+     * @template T
      * Create new instance of specific entity class.
+     * @phpstan-param class-string<T> $entityClass
      */
     public function createNew(string $entityClass): StatefulInterface
     {

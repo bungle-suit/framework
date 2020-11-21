@@ -55,6 +55,9 @@ abstract class AbstractSingleTableExporter extends AbstractExcelExporter
         }
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getTableOptions(): array
     {
         return [];

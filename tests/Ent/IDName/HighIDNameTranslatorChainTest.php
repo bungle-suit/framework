@@ -13,7 +13,7 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 class HighIDNameTranslatorChainTest extends MockeryTestCase
 {
-    public function testTranslate()
+    public function testTranslate(): void
     {
         $entityRegistry = Mockery::mock(EntityRegistry::class);
         $entityRegistry->allows('getEntityByHigh')->with('ord')->andReturn(Order::class);

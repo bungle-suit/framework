@@ -22,7 +22,7 @@ class BungleTwigExtensionTest extends MockeryTestCase
     private ArrayAdapter $cache;
     private ObjectName $objectName;
 
-    public function testFormat()
+    public function testFormat(): void
     {
         $f = $this->getFilterFunc('bungle_format');
 

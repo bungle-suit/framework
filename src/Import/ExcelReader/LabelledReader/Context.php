@@ -8,20 +8,20 @@ use Bungle\Framework\Model\HasAttributes;
 use Bungle\Framework\Model\HasAttributesInterface;
 
 /**
- * @phpstan-template T of object
+ * @phpstan-template T
  */
 class Context implements HasAttributesInterface
 {
     use HasAttributes;
 
     /** @phpstan-var T */
-    private object $obj;
+    private $obj;
     private ExcelReader $reader;
 
     /**
      * @phpstan-param T $obj
      */
-    public function __construct(ExcelReader $reader, object $obj)
+    public function __construct(ExcelReader $reader, $obj)
     {
         $this->obj = $obj;
         $this->reader = $reader;
@@ -31,7 +31,7 @@ class Context implements HasAttributesInterface
      * @phpstan-return T
      * @return mixed
      */
-    public function getObject(): object
+    public function getObject()
     {
         return $this->obj;
     }

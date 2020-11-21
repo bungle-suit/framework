@@ -90,18 +90,19 @@ class Tree
 
     /**
      * Iterate all descent nodes of $node.
-     * @template T
-     * @phpstan-param ChildrenTreeNode<T> $node
+     * @template T of ChildrenTreeNode
+     * @phpstan-param T $node
      * @phpstan-return Traversable<T>
      */
     public static function iterDescent(ChildrenTreeNode $node): Traversable
     {
         /** @noinspection PhpUnnecessaryLocalVariableInspection */
-        /** @phpstan-var T */
         $n = $node;
         yield $n;
         foreach ($node->getChildren() as $child) {
-            yield from self::iterDescent($child);
+            /** @phpstan-var Traversable<mixed> $r */
+            $r = self::iterDescent($child);
+            yield from $r;
         }
     }
 

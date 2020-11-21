@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Inquiry;
@@ -28,8 +29,11 @@ class Query
     /**
      * @phpstan-param QueryStepInterface[] $steps
      */
-    public function __construct(EntityManagerInterface $em, array $steps, string $title = 'Query Name Not Set')
-    {
+    public function __construct(
+        EntityManagerInterface $em,
+        array $steps,
+        string $title = 'Query Name Not Set'
+    ) {
         $this->em = $em;
         $this->steps = $steps;
         $this->title = $title;
@@ -63,10 +67,15 @@ class Query
         return $this->queryData($qb);
     }
 
+    /**
+     * @return Traversable<array<mixed>>
+     */
     protected function queryData(QueryBuilder $qb): Traversable
     {
-        foreach ($qb->getQuery()
-                    ->iterate(null, AbstractQuery::HYDRATE_ARRAY) as $rows) {
+        foreach (
+            $qb->getQuery()
+               ->iterate(null, AbstractQuery::HYDRATE_ARRAY) as $rows
+        ) {
             yield from $rows;
         }
     }

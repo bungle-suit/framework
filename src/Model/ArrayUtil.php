@@ -27,7 +27,10 @@ final class ArrayUtil
     }
 
     /**
+     * @template T
      * Remove $element from $array
+     * @phpstan-param array<int|string, T> $array
+     * @phpstan-param T $element
      * @param bool $reindex reindex after removing.
      * Return true if element found and removed.
      */

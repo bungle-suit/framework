@@ -18,7 +18,7 @@ class ValidateSaveStepTest extends TestCase
     private Order $ord;
     /** @var ValidatorInterface|MockObject $validator */
     private $validator;
-    /** @var ConstraintViolationListInterface|Stub $errors */
+    /** @var ConstraintViolationListInterface<object>|Stub $errors */
     private $errors;
     private SaveStepContext $ctx;
 
@@ -54,7 +54,7 @@ class ValidateSaveStepTest extends TestCase
         return $step($this->ord, $this->ctx);
     }
 
-    public function testValidateFailed()
+    public function testValidateFailed(): void
     {
         $this->create(true);
         self::assertEquals('Validation error', $this->callStep());

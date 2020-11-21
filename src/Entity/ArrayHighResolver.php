@@ -9,8 +9,14 @@ namespace Bungle\Framework\Entity;
  */
 class ArrayHighResolver implements HighResolverInterface
 {
+    /**
+     * @var array<class-string<mixed>, string>
+     */
     private array $highs;
 
+    /**
+     * @param array<class-string<mixed>, string> $highs
+     */
     public function __construct(array $highs)
     {
         $this->highs = $highs;

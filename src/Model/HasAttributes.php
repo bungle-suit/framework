@@ -12,7 +12,7 @@ namespace Bungle\Framework\Model;
 trait HasAttributes
 {
     /**
-     * @var mixed[]
+     * @var array<string, mixed>
      */
     private array $attributes = [];
 
@@ -28,6 +28,7 @@ trait HasAttributes
     /**
      * Returns attribute value, returns default if not exist.
      *
+     * @param mixed $default
      * @return mixed
      */
     public function get(string $name, $default = null)
@@ -37,6 +38,7 @@ trait HasAttributes
 
     /**
      * Set attribute.
+     * @param mixed $val
      */
     public function set(string $name, $val): void
     {

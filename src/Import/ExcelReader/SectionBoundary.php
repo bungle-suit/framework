@@ -10,9 +10,15 @@ use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
  */
 class SectionBoundary implements SectionBoundaryInterface
 {
+    /** @var callable(ExcelReader): bool */
     private $isSectionStart;
+    /** @var callable(ExcelReader): bool */
     private $isSectionEnd;
 
+    /**
+     * @param callable(ExcelReader): bool $isSectionStart
+     * @param callable(ExcelReader): bool $isSectionEnd
+     */
     public function __construct(callable $isSectionStart, callable $isSectionEnd)
     {
         $this->isSectionStart = $isSectionStart;

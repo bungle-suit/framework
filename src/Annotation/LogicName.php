@@ -56,6 +56,7 @@ final class LogicName
      * Include inherited properties.
      *
      * Ignores private and protected properties.
+     * @return array<string, string>
      */
     public static function resolvePropertyNames(string $clsName): array
     {

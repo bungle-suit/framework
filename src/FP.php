@@ -332,7 +332,7 @@ class FP
      *
      * @phpstan-template T
      * @phpstan-param T|null $v
-     * @phpstanreturn T
+     * @phpstan-return T
      */
     public static function notNull($v, string $message = '')
     {
@@ -344,9 +344,6 @@ class FP
     }
 
     /**
-     * @template U
-     * @template V
-     * @template W
      * @param callable $a
      * @param callable $b
      * @return callable bool

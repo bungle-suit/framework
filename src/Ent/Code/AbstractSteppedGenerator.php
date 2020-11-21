@@ -5,9 +5,15 @@ namespace Bungle\Framework\Ent\Code;
 
 use LogicException;
 
+/**
+ * @template T
+ */
 abstract class AbstractSteppedGenerator implements GeneratorInterface
 {
-    final public function generate(object $entity): string
+    /**
+     * @phpstan-param T $entity
+     */
+    final public function generate($entity): string
     {
         $ctx = new CodeContext();
         $steps = $this->steps();
@@ -26,7 +32,7 @@ abstract class AbstractSteppedGenerator implements GeneratorInterface
      * 1. the current entity
      * 2. CodeContext object.
      *
-     * @return callable[]
+     * @return array<callable(T, CodeContext): void>
      */
     abstract protected function steps(): array;
 }

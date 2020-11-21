@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class ConverterTest extends TestCase
 {
-    public function testFormat()
+    public function testFormat(): void
     {
         $f = [Converter::class, 'format'];
 

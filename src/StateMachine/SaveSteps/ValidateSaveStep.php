@@ -30,7 +30,7 @@ class ValidateSaveStep
         $this->validator = $validator;
     }
 
-    public function __invoke(StatefulInterface $entity, SaveStepContext $context)
+    public function __invoke(StatefulInterface $entity, SaveStepContext $context): ?string
     {
         if ($context->get(self::VALIDATED, false)) {
             return null;
@@ -44,6 +44,9 @@ class ValidateSaveStep
         return null;
     }
 
+    /**
+     * @param ConstraintViolationListInterface<mixed> $list
+     */
     public static function validationListToString(ConstraintViolationListInterface $list): string
     {
         assert($list instanceof ConstraintViolationList);

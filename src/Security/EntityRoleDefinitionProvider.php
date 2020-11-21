@@ -7,9 +7,9 @@ namespace Bungle\Framework\Security;
 use Bungle\Framework\Ent\ObjectName;
 use Bungle\Framework\Entity\EntityRegistry;
 use Bungle\Framework\StateMachine\EntityWorkflowDefinitionResolverInterface as WorkflowResolver;
-use Iterator;
 use Symfony\Component\Workflow\Definition;
 use Symfony\Component\Workflow\Exception\InvalidArgumentException;
+use Traversable;
 
 final class EntityRoleDefinitionProvider implements RoleDefinitionProviderInterface
 {
@@ -27,14 +27,14 @@ final class EntityRoleDefinitionProvider implements RoleDefinitionProviderInterf
         $this->objectName = $objectName;
     }
 
-    public function getRoleDefinitions(): Iterator
+    public function getRoleDefinitions(): Traversable
     {
         foreach ($this->entityRegistry->getEntities() as $entity) {
             $high = $this->entityRegistry->getHigh($entity);
             /** @var Definition $def */
             /** @var string[] $actionTitles */
             try {
-                list($def, $actionTitles) = $this->workflowResolver->resolveDefinition($entity);
+                [$def, $actionTitles] = $this->workflowResolver->resolveDefinition($entity);
             } catch (InvalidArgumentException $e) {
                 // If workflow not defined, workflow registry throws thi exception.
                 continue;
@@ -49,6 +49,7 @@ final class EntityRoleDefinitionProvider implements RoleDefinitionProviderInterf
                 $group
             );
             foreach ($def->getTransitions() as $trans) {
+                /** @var string $action */
                 $action = $trans->getName();
                 if (array_key_exists($action, $actions)) {
                     // If transition definition contains multiple from state, workflow

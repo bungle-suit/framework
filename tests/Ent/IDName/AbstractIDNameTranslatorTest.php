@@ -15,6 +15,7 @@ class AbstractIDNameTranslatorTest extends MockeryTestCase
 {
     private ArrayAdapter $cache;
     private AbstractIDNameTranslator $idName;
+    /** @var array<int|string, int> */
     public array $callTimes;
 
     protected function setUp(): void
@@ -24,7 +25,6 @@ class AbstractIDNameTranslatorTest extends MockeryTestCase
         $this->callTimes = [];
         $this->cache = new ArrayAdapter();
         $this->idName = new class('usr', $this->cache, $this) extends AbstractIDNameTranslator {
-            private array $callTimes;
             private AbstractIDNameTranslatorTest $self;
 
             public function __construct(
@@ -51,7 +51,7 @@ class AbstractIDNameTranslatorTest extends MockeryTestCase
         };
     }
 
-    public function testIdToName()
+    public function testIdToName(): void
     {
         self::assertEquals('bar', $this->idName->idToName('foo'));
         self::assertEquals('bar', $this->idName->idToName('foo'));

@@ -22,6 +22,7 @@ interface ColumnInterface
 
     /**
      * @phpstan-param Context $context
+     * @param mixed $val
      * @return mixed Read and convert the cell value.
      */
     public function read($val, Context $context);

@@ -103,7 +103,7 @@ class ExcelWriter extends ExcelOperator
     /**
      * @param array<int, ExcelColumn> $cols
      * @param iterable<object|(string|number|null)[]> $rows
-     * @param array{plugins?: TablePluginInterface|(TablePluginInterface[])} $options
+     * @param array<string, mixed> $options
      */
     public function writeTable(
         array $cols,
@@ -233,7 +233,11 @@ class ExcelWriter extends ExcelOperator
         }
     }
 
-    /** @noinspection PhpUnusedParameterInspection */
+    /**
+     * @noinspection PhpUnusedParameterInspection
+     * @param array<string, mixed> $options
+     * @return array<string, mixed>
+     */
     private static function resolveTableOptions(array $options): array
     {
         $resolver = new OptionsResolver();

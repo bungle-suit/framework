@@ -15,8 +15,11 @@ use RuntimeException;
 class TableReaderTest extends MockeryTestCase
 {
     private ExcelReader $reader;
+    /** @var Column[] */
     private array $cols;
+    /** @phpstan-var TableReader<mixed[]> */
     private TableReader $r;
+    /** @phpstan-var array<mixed[]> */
     private array $arr;
     private Column $col2;
 

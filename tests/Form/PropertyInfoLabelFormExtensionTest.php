@@ -68,6 +68,10 @@ class PropertyInfoLabelFormExtensionTest extends MockeryTestCase
         $this->validBuildLabel('My Name');
     }
 
+    /**
+     * @param mixed $exp
+     * @param mixed $existLabel
+     */
     private function validBuildLabel($exp, $existLabel = null): void
     {
         $view = new FormView();

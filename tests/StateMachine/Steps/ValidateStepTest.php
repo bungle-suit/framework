@@ -20,7 +20,7 @@ class ValidateStepTest extends TestCase
     private Order $ord;
     /** @var ValidatorInterface|MockObject $validator */
     private $validator;
-    /** @var ConstraintViolationListInterface|Stub $errors */
+    /** @var ConstraintViolationListInterface<object>|Stub $errors */
     private $errors;
     private StepContext $ctx;
 

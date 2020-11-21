@@ -30,8 +30,9 @@ class StatefulInterfaceMarkingStore implements MarkingStoreInterface
 
     /**
      * {@inheritdoc}
+     * @phpstan-param array<string, mixed> $context
      */
-    public function setMarking(object $subject, Marking $marking, array $context = [])
+    public function setMarking(object $subject, Marking $marking, array $context = []): void
     {
         assert($subject instanceof StatefulInterface, get_class($subject).' not implement StatefulInterface');
 

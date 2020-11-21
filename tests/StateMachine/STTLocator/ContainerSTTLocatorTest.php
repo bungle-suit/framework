@@ -1,4 +1,5 @@
 <?php
+
 /** @noinspection PhpParamsInspection */
 declare(strict_types=1);
 
@@ -13,9 +14,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ContainerSTTLocatorTest extends MockeryTestCase
 {
-    public function testGetSTTForClass()
+    public function testGetSTTForClass(): void
     {
+        /** @var class-string<mixed> $entityGoods */
         $entityGoods = 'App\Document\Goods';
+        /** @var class-string<mixed> $entityOrder */
         $entityOrder = 'App\Document\Goods\Order';
 
         $container = Mockery::mock(ContainerInterface::class);
@@ -38,6 +41,8 @@ class ContainerSTTLocatorTest extends MockeryTestCase
     {
         $this->expectException(LogicException::class);
         $locator = new ContainerSTTLocator();
-        $locator->getSTTForClass('App\Document\Foo');
+        /** @var class-string<mixed> */
+        $cls = 'App\Document\Foo';
+        $locator->getSTTForClass($cls);
     }
 }

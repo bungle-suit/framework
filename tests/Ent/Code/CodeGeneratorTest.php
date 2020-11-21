@@ -12,7 +12,7 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 class CodeGeneratorTest extends MockeryTestCase
 {
-    public function testGenerate()
+    public function testGenerate(): void
     {
         $o1 = (object)['o'=>1];
         $o2 = (object)['o'=>2];

@@ -17,6 +17,9 @@ class FileHelperTest extends MockeryTestCase
         self::assertEquals($exp, FileHelper::newHashedFilename($level, fn () => $fn));
     }
 
+    /**
+     * @return array<mixed[]>
+     */
     public function hashedFilename(): array
     {
         return [

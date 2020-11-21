@@ -5,7 +5,7 @@ namespace Bungle\Framework\Import\ExcelReader\LabelledReader;
 
 /**
  * interface to parse a value of @see LabelledReader
- * @phpstan-template T of object
+ * @phpstan-template T
  */
 interface LabelledValueInterface
 {
@@ -31,5 +31,5 @@ interface LabelledValueInterface
      * Called on section end, useful such as require post-process.
      * @phpstan-param Context<T> $context
      */
-    public function onSectionEnd(Context $context);
+    public function onSectionEnd(Context $context): void;
 }

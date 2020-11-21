@@ -9,6 +9,7 @@ use Bungle\Framework\Export\ExcelWriter\TablePluginInterface;
 
 class CompositeTablePlugin implements TablePluginInterface
 {
+    /** @var TablePluginInterface[] */
     private array $plugins;
 
     /**

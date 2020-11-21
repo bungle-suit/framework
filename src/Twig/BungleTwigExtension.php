@@ -73,6 +73,7 @@ class BungleTwigExtension extends AbstractExtension
      *
      * Named ODM is it can convert ODM query returned object/array,
      * but it may work with many other situations.
+     * @param mixed $v
      */
     public static function odmEncodeJson($v): string
     {

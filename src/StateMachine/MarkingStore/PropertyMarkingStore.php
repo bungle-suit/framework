@@ -43,8 +43,9 @@ class PropertyMarkingStore implements MarkingStoreInterface
 
     /**
      * {@inheritdoc}
+     * @phpstan-param array<string, mixed> $context
      */
-    public function setMarking(object $subject, Marking $marking, array $context = [])
+    public function setMarking(object $subject, Marking $marking, array $context = []): void
     {
         $subject->{$this->property} = key($marking->getPlaces());
     }

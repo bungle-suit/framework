@@ -13,17 +13,18 @@ use Bungle\Framework\StateMachine\STTLocator\STTLocatorInterface;
 use Bungle\Framework\Tests\StateMachine\Entity\Order;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Mockery\MockInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class FSMViewVoterTest extends MockeryTestCase
 {
     private FSMViewVoter $voter;
-    /** @var Mockery\LegacyMockInterface|Mockery\MockInterface|TokenInterface */
+    /** @var MockInterface|TokenInterface */
     private $token;
-    /** @var STTLocatorInterface|Mockery\LegacyMockInterface|Mockery\MockInterface */
+    /** @var STTLocatorInterface|MockInterface */
     private $sttLocator;
-    /** @var AbstractSTT|Mockery\MockInterface */
+    /** @var AbstractSTT<object>|MockInterface */
     private $stt;
 
     public function init(bool $configAccessSTT = false, bool $hasViewRole = false): void

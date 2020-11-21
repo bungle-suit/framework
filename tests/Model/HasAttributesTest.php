@@ -69,6 +69,9 @@ final class HasAttributesTest extends TestCase
         $ctx = new class($values) {
             use HasAttributes;
 
+            /**
+             * @param array<string, mixed> $values
+             */
             public function __construct(array $values)
             {
                 $this->initAttributes($values);

@@ -19,6 +19,9 @@ class QBEMeta implements HasAttributesInterface
     private Type $type;
     private string $label;
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function __construct(string $name, string $label, Type $type, array $options = [])
     {
         if (!$type->isNullable()) {

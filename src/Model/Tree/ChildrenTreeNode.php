@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\Collection;
 /**
  * Tree item that use children property to store tree relationship.
  *
- * @template T
+ * @template T of ChildrenTreeNode
  */
 interface ChildrenTreeNode extends ParentTreeNode
 {

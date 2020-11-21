@@ -130,6 +130,9 @@ final class VinaTest extends MockeryTestCase
         $vina->applyTransition($ord, 'save');
     }
 
+    /**
+     * @return array{Vina, Session}
+     */
     public function testApplyTransitionFailed(): array
     {
         $ord = new Order();
@@ -164,11 +167,11 @@ final class VinaTest extends MockeryTestCase
 
     /**
      * @depends testApplyTransitionFailed
+     * @param array{Vina, Session} $args
      */
     public function testApplyTransitionRawFailed(array $args): void
     {
         $this->expectException(TransitionException::class);
-        /** @var Vina $vina */
         [$vina] = $args;
 
         $vina->applyTransitionRaw(new Order(), 'check');
@@ -187,7 +190,7 @@ final class VinaTest extends MockeryTestCase
         $ord = new Order();
         $attrs = ['foo' => 'bar'];
 
-        /** @var AbstractSTT|StatefulInterface|MockInterface $stt */
+        /** @var AbstractSTT<Order>|StatefulInterface|MockInterface $stt */
         $stt = Mockery::mock(AbstractSTT::class, StatefulInterface::class);
         $sttLocator->expects('getSTTForClass')
                    ->with(Order::class)
@@ -204,7 +207,7 @@ final class VinaTest extends MockeryTestCase
         [$vina, , , , $sttLocator] = $this->createVina();
         $ord = new Order();
 
-        /** @var AbstractSTT&StatefulInterface&MockInterface $stt */
+        /** @var AbstractSTT<Order>&StatefulInterface&MockInterface $stt */
         $stt = Mockery::mock(AbstractSTT::class, StatefulInterface::class);
         $sttLocator->expects('getSTTForClass')
                    ->with(Order::class)->andReturn($stt);

@@ -13,8 +13,11 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
  */
 class CellMergeTablePlugin extends AbstractTablePlugin
 {
+    /** @var ExcelColumn[]  */
     private array $cols;
+    /** @var int[] */
     private array $startRow;
+    /** @var mixed[] */
     private array $groupData;
     /** @var array<callable(mixed): mixed> */
     private array $dataAccessors;

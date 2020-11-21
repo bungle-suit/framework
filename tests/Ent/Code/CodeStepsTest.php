@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class CodeStepsTest extends TestCase
 {
-    public function testCompactYearMonth()
+    public function testCompactYearMonth(): void
     {
         $recs = [
             '2019-01-02' => '191',

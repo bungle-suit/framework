@@ -7,6 +7,7 @@ use Bungle\Framework\FP;
 
 /**
  * @phpstan-template T of object
+ * @implements LabelledValueInterface<T>
  */
 class LabelledValue implements LabelledValueInterface
 {
@@ -47,7 +48,7 @@ class LabelledValue implements LabelledValueInterface
     /**
      * @phpstan-param Context<T> $context
      */
-    public function onSectionEnd(Context $context)
+    public function onSectionEnd(Context $context): void
     {
     }
 
@@ -56,6 +57,9 @@ class LabelledValue implements LabelledValueInterface
         return $this->converter;
     }
 
+    /**
+     * @phpstan-return self<T>
+     */
     public function setConverter(callable $converter): self
     {
         $this->converter = $converter;

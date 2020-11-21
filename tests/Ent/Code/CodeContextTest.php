@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class CodeContextTest extends TestCase
 {
-    public function testAddSection()
+    public function testAddSection(): void
     {
         $ctx = new CodeContext();
         $ctx->addSection('foo');

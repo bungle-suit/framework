@@ -325,7 +325,9 @@ class FPTest extends TestCase
 
     public function testCount(): void
     {
-        self::assertEquals(0, FP::count([]));
+        /** @var int[] $vars */
+        $vars = [];
+        self::assertEquals(0, FP::count($vars));
         self::assertEquals(3, FP::count(range(0, 2)));
     }
 }

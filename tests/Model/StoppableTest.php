@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class StoppableTest extends TestCase
 {
-    public function test()
+    public function test(): void
     {
         $ctx = new class() implements StoppableInterface {
             use Stoppable;

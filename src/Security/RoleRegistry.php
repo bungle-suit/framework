@@ -13,6 +13,7 @@ class RoleRegistry
      * @var RoleDefinition[] $defs
      */
     private array $defs;
+    /** @var RoleDefinitionProviderInterface[]  */
     private array $providers;
 
     /**

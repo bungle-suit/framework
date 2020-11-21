@@ -34,6 +34,9 @@ class TableContext
      */
     private array $colEndNames;
 
+    /**
+     * @param ExcelColumn[] $columns
+     */
     public function __construct(ExcelWriter $writer, array $columns, int $startCol, int $startRow)
     {
         $this->cols = $columns;
@@ -111,6 +114,7 @@ class TableContext
     }
 
     /**
+     * @param mixed[] $row Row cell values
      * @return mixed
      */
     public function getValue(array $row, ExcelColumn $column)
@@ -121,7 +125,7 @@ class TableContext
     }
 
     /**
-     * @return callable(array): mixed function get value from data row.
+     * @return callable(mixed[]): mixed function get value from data row.
      * It is faster than @see getValue().
      */
     public function newValueGetter(ExcelColumn $column): callable

@@ -12,6 +12,10 @@ class ContainerSTTLocator implements STTLocatorInterface, ContainerAwareInterfac
 {
     private ?ContainerInterface $container = null;
 
+    /**
+     * @template T
+     * @phpstan-return AbstractSTT<T>
+     */
     public function getSTTForClass(string $entityClass): AbstractSTT
     {
         if (!$this->container) {
@@ -21,12 +25,15 @@ class ContainerSTTLocator implements STTLocatorInterface, ContainerAwareInterfac
         $words = explode('\\', $entityClass);
         $words[1] = 'STT';
         $sttClass = implode('\\', $words).'STT';
-        /** @var AbstractSTT $r */
+        /**
+         * @phpstan-var AbstractSTT<T> $r
+         * @var AbstractSTT $r
+         */
         $r = $this->container->get($sttClass);
         return $r;
     }
 
-    public function setContainer(ContainerInterface $container = null)
+    public function setContainer(ContainerInterface $container = null): void
     {
         $this->container = $container;
     }

@@ -6,8 +6,14 @@ namespace Bungle\Framework\StateMachine;
 
 final class ArrayEntityWorkflowDefinitionResolver implements EntityWorkflowDefinitionResolverInterface
 {
+    /**
+     * @var array<class-string, array{\Symfony\Component\Workflow\Definition, array<string, string>}>
+     */
     private array $defs;
 
+    /**
+     * @param array<class-string, array{\Symfony\Component\Workflow\Definition, array<string, string>}> $defs
+     */
     public function __construct(array $defs)
     {
         $this->defs = $defs;

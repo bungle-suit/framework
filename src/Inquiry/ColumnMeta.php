@@ -18,6 +18,9 @@ class ColumnMeta implements HasAttributesInterface
     private string $label;
     private Type $type;
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function __construct(string $path, string $label, Type $type, array $options = [])
     {
         $this->path = $path;

@@ -12,6 +12,7 @@ use Bungle\Framework\StateMachine\StepContext;
 use Doctrine\Common\Annotations\Annotation\Required;
 use Symfony\Component\Workflow\Event\TransitionEvent;
 use Symfony\Component\Workflow\Exception\TransitionException;
+use Traversable;
 
 /**
  * Base class for STT services.
@@ -20,6 +21,8 @@ use Symfony\Component\Workflow\Exception\TransitionException;
  *
  * Because of auto wiring, services implement STTInterface
  * auto tagged with 'bungle.stt', and enabled.
+ *
+ * @template T
  */
 abstract class AbstractSTT
 {
@@ -37,7 +40,14 @@ abstract class AbstractSTT
     }
 
     /**
-     * @return array of settings configuration, contains fowling items:
+     * @return array{
+     *    actions: array<string, array<callable(T, StepContext): (void|string)>>,
+     *    before?: array<callable(T, StepContext): (void|string)>,
+     *    after?: array<callable(T, StepContext): (void|string)>,
+     *    beforeSave?: array<callable(T, SaveStepContext): (void|string)>,
+     *    afterSave?: array<callable(T, SaveStepContext): (void|string)>,
+     *    saveActions?: array<string, array<callable(T, SaveStepContext): (void|string)>>,
+     * }
      *
      * 1. 'before', Steps run before transition actions
      * 1. 'after', Steps run after transition actions.
@@ -56,7 +66,11 @@ abstract class AbstractSTT
      */
     abstract protected function steps(): array;
 
-    private function getTransitionSteps($subject, string $actionName)
+    /**
+     * @phpstan-param T $subject
+     * @return Traversable<array<callable(T, StepContext): (void|string)>>
+     */
+    private function getTransitionSteps($subject, string $actionName): Traversable
     {
         $steps = $this->steps();
         yield from $steps['before']??[];
@@ -71,6 +85,7 @@ abstract class AbstractSTT
 
     /**
      * Execute save action, Handles `vina.high.save` action.
+     * @param array<string, mixed> $attrs
      */
     public function save(StatefulInterface $entity, array $attrs = []): void
     {
@@ -136,7 +151,10 @@ abstract class AbstractSTT
         return isset($steps['saveActions'][$state]);
     }
 
-    private function getSaveSteps(StatefulInterface $entity)
+    /**
+     * @return Traversable<array<callable(T, SaveStepContext): (void|string)>>
+     */
+    private function getSaveSteps(StatefulInterface $entity): Traversable
     {
         $curState = $entity->getState();
         if (!$this->_canSave($entity)) {

@@ -22,6 +22,7 @@ interface AttributeDefinitionInterface
     /**
      * Return symfony form options, no need set 'required', 'label', 'description' options,
      * these are set by caller.
+     * @return array<string, mixed>
      */
     public function getFormOption(): array;
 

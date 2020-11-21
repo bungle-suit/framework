@@ -18,9 +18,6 @@ class EntityWorkflowDefinitionResolver implements EntityWorkflowDefinitionResolv
         $this->vina = $vina;
     }
 
-    /**
-     * @phpstan-param class-string<\Bungle\Framework\Entity\CommonTraits\StatefulInterface> $entityClass
-     */
     public function resolveDefinition(string $entityClass): array
     {
         $subject = EntityUtils::create($entityClass);

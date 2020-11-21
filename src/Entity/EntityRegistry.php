@@ -13,7 +13,7 @@ class EntityRegistry
     /** @var string[] $entities */
     private array $entities;
     private HighResolverInterface $highResolver;
-    /** @var string[] */
+    /** @var array<string, class-string<mixed>> */
     private array $highClsMap;
 
     private EntityDiscovererInterface $discoverer;
@@ -61,6 +61,7 @@ class EntityRegistry
 
     /**
      * Get Entity class by the high prefix.
+     * @return class-string<mixed>
      */
     public function getEntityByHigh(string $high): string
     {
@@ -78,6 +79,7 @@ class EntityRegistry
     /**
      * Shortcut method to create entity object by high,
      * Entity must have public zero-less constructor.
+     * @return mixed
      */
     public function createEntity(string $high)
     {
@@ -86,6 +88,10 @@ class EntityRegistry
         return EntityUtils::create($cls);
     }
 
+    /**
+     * @param array<class-string<mixed>> $entities
+     * @return array<string, class-string<mixed>>
+     */
     private function scanMap(array $entities): array
     {
         $r = [];
@@ -104,6 +110,9 @@ class EntityRegistry
         return $r;
     }
 
+    /**
+     * @return array<class-string<mixed>>
+     */
     public function getEntities(): array
     {
         if (!isset($this->entities)) {

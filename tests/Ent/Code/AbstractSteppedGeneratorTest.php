@@ -9,7 +9,7 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 class AbstractSteppedGeneratorTest extends MockeryTestCase
 {
-    public function testGenerateResultNotSet()
+    public function testGenerateResultNotSet(): void
     {
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage("No code step set \$result.");
@@ -22,7 +22,7 @@ class AbstractSteppedGeneratorTest extends MockeryTestCase
     {
         $o = (object)['a' => 1];
         $g = new ArraySteppedGenerator([
-            function (object $subject, CodeContext $ctx) use ($o) {
+            function (object $subject, CodeContext $ctx) use ($o): void {
                 self::assertEquals($o, $subject);
                 $ctx->result = 'foo';
             },

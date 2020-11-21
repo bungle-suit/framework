@@ -16,7 +16,7 @@ use Symfony\Component\Workflow\WorkflowInterface;
 
 class SetCodeStepTest extends MockeryTestCase
 {
-    public function test()
+    public function test(): void
     {
         $o = new class() implements CodeAbleInterface {
             use CodeAble;

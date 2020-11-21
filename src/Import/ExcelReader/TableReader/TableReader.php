@@ -24,11 +24,12 @@ class TableReader implements SectionContentReaderInterface
      * @var ColumnInterface[]
      */
     private array $cols;
+    /** @var callable(T): void */
     private $appendItem;
     private bool $firstRow = true;
     /** @var array<int, int> */
     private array $colIdxes; // column excel column index by column array index
-    private $startColIdx;
+    private int $startColIdx;
     private Context $context;
     private PropertyAccessor $propertyAccessor;
 
@@ -102,6 +103,10 @@ class TableReader implements SectionContentReaderInterface
     {
     }
 
+    /**
+     * @phpstan-param callable(): T $createItem
+     * @phpstan-return self<T>
+     */
     public function setCreateItem(callable $createItem): self
     {
         $this->createItem = $createItem;
@@ -129,6 +134,7 @@ class TableReader implements SectionContentReaderInterface
 
     /**
      * @phpstan-param callable(T, Context): void $onRowComplete
+     * @phpstan-return self<T>
      */
     public function setOnRowComplete(callable $onRowComplete): self
     {

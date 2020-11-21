@@ -6,6 +6,7 @@ namespace Bungle\Framework\Entity;
 
 use Bungle\Framework\Annotation\High;
 use Doctrine\Persistence\ManagerRegistry;
+use Iterator;
 
 class ORMEntityDiscoverer implements EntityDiscovererInterface
 {
@@ -16,7 +17,7 @@ class ORMEntityDiscoverer implements EntityDiscovererInterface
         $this->managerRegistry = $managerRegistry;
     }
 
-    public function getAllEntities(): \Iterator
+    public function getAllEntities(): Iterator
     {
         $manager = $this->managerRegistry->getManager();
         $list = $manager->getMetadataFactory()->getAllMetadata();

@@ -8,6 +8,9 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class FakeAuthorizationChecker implements AuthorizationCheckerInterface
 {
+    /**
+     * @var string[]
+     */
     private array $wantedRoles;
 
     public function __construct(string ...$wantedRoles)

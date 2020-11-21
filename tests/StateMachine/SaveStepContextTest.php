@@ -8,8 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class SaveStepContextTest extends TestCase
 {
-
-    public function testInitialAttrs()
+    public function testInitialAttrs(): void
     {
         $attrs = [
             'attr1'=> 'foo',

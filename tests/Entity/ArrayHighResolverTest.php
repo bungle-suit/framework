@@ -11,13 +11,15 @@ final class ArrayHighResolverTest extends TestCase
 {
     public function test(): void
     {
-        $resolver = new ArrayHighResolver([
-        'order\\order' => 'ord',
-        'order\\line' => 'lne',
-        ]);
+        $resolver = new ArrayHighResolver(
+            [
+                Order::class => 'ord',
+                OrderLine::class => 'lne',
+            ]
+        );
 
-        self::assertEquals('ord', $resolver->resolveHigh('order\\order'));
-        self::assertEquals('lne', $resolver->resolveHigh('order\\line'));
+        self::assertEquals('ord', $resolver->resolveHigh(Order::class));
+        self::assertEquals('lne', $resolver->resolveHigh(OrderLine::class));
         self::assertNull($resolver->resolveHigh('foo'));
     }
 }

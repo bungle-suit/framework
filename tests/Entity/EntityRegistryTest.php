@@ -12,15 +12,13 @@ use PHPUnit\Framework\TestCase;
 
 final class EntityRegistryTest extends TestCase
 {
-    const ORDER = 'order\\order';
-    const ORDER_LINE = 'order\\orderLine';
 
     public function testEntities(): void
     {
         $dis = new ArrayEntityDiscovery(
             $entities = [
-              self::ORDER,
-              self::ORDER_LINE,
+                Order::class,
+                OrderLine::class,
             ]
         );
         $reg = new EntityRegistry($dis, new ArrayHighResolver([]));
@@ -29,14 +27,18 @@ final class EntityRegistryTest extends TestCase
 
     public function testGetHigh(): void
     {
-        $dis = new ArrayEntityDiscovery([
-          $ord = self::ORDER,
-          $ordLine = self::ORDER_LINE,
-        ]);
-        $resolver = new ArrayHighResolver([
-          $ord => 'ord',
-          $ordLine => 'oln',
-        ]);
+        $dis = new ArrayEntityDiscovery(
+            [
+                $ord = Order::class,
+                $ordLine = OrderLine::class,
+            ]
+        );
+        $resolver = new ArrayHighResolver(
+            [
+                $ord => 'ord',
+                $ordLine => 'oln',
+            ]
+        );
         $reg = new EntityRegistry($dis, $resolver);
 
         self::assertEquals('ord', $reg->getHigh($ord));
@@ -44,12 +46,16 @@ final class EntityRegistryTest extends TestCase
 
     public function testNewEntity(): void
     {
-        $dis = new ArrayEntityDiscovery([
-          Entities\Order::class,
-        ]);
-        $resolver = new ArrayHighResolver([
-          Entities\Order::class => 'ord',
-        ]);
+        $dis = new ArrayEntityDiscovery(
+            [
+                Entities\Order::class,
+            ]
+        );
+        $resolver = new ArrayHighResolver(
+            [
+                Entities\Order::class => 'ord',
+            ]
+        );
         $reg = new EntityRegistry($dis, $resolver);
         self::assertInstanceOf(
             Entities\Order::class,
@@ -59,7 +65,7 @@ final class EntityRegistryTest extends TestCase
 
     public function testGetHighBadEntityClass(): void
     {
-        $order = self::ORDER;
+        $order = Order::class;
         $this->expectExceptionObject(Exceptions::entityNotDefined($order));
         $reg = new EntityRegistry(
             new ArrayEntityDiscovery([]),
@@ -80,7 +86,7 @@ final class EntityRegistryTest extends TestCase
 
     public function testGetHighNoHighDefined(): void
     {
-        $order = self::ORDER;
+        $order = Order::class;
         $this->expectExceptionObject(Exceptions::highNotDefinedOn($order));
 
         $dis = new ArrayEntityDiscovery([$order]);
@@ -90,32 +96,46 @@ final class EntityRegistryTest extends TestCase
 
     public function testDupHigh(): void
     {
-        $this->expectExceptionObject(Exceptions::highDuplicated('ord', self::ORDER, self::ORDER_LINE));
+        $this->expectExceptionObject(
+            Exceptions::highDuplicated(
+                'ord',
+                Order::class,
+                OrderLine::class
+            )
+        );
 
-        $dis = new ArrayEntityDiscovery([
-          self::ORDER,
-          self::ORDER_LINE,
-        ]);
-        $resolver = new ArrayHighResolver([
-          self::ORDER => 'ord',
-          self::ORDER_LINE => 'ord',
-        ]);
+        $dis = new ArrayEntityDiscovery(
+            [
+                Order::class,
+                OrderLine::class,
+            ]
+        );
+        $resolver = new ArrayHighResolver(
+            [
+                Order::class => 'ord',
+                OrderLine::class => 'ord',
+            ]
+        );
         $reg = new EntityRegistry($dis, $resolver);
-        $reg->getHigh(self::ORDER);
+        $reg->getHigh(Order::class);
     }
 
     public function testGetEntityByHigh(): void
     {
-        $dis = new ArrayEntityDiscovery([
-          self::ORDER,
-          self::ORDER_LINE,
-        ]);
-        $resolver = new ArrayHighResolver([
-          self::ORDER => 'ord',
-          self::ORDER_LINE => 'oln',
-        ]);
+        $dis = new ArrayEntityDiscovery(
+            [
+                Order::class,
+                OrderLine::class,
+            ]
+        );
+        $resolver = new ArrayHighResolver(
+            [
+                Order::class => 'ord',
+                OrderLine::class => 'oln',
+            ]
+        );
         $reg = new EntityRegistry($dis, $resolver);
-        self::assertEquals(self::ORDER, $reg->getEntityByHigh('ord'));
+        self::assertEquals(Order::class, $reg->getEntityByHigh('ord'));
     }
 
     public function testGetEntityByHighNotFound(): void

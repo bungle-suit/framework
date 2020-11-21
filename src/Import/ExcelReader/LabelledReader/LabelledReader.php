@@ -9,15 +9,15 @@ use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
- * @phpstan-template T of object
+ * @phpstan-template T
  * Section content reader that value after the specific label.
  */
 class LabelledReader implements SectionContentReaderInterface
 {
     /** @phpstan-var T */
-    private object $obj;
+    private $obj;
     private int $maxValuesPerRow;
-    /** @var LabelledValueInterface[] */
+    /** @var LabelledValueInterface<mixed>[] */
     private array $values;
     /** @phpstan-var Context<T> */
     private Context $context;
@@ -25,11 +25,10 @@ class LabelledReader implements SectionContentReaderInterface
     private PropertyAccessor $propertyAccessor;
 
     /**
-     * @phpstan-param T $obj
+     * @phpstan-param T $obj Object that parsed value will assign to.
      * @param int $maxValuesPerRow max labelled values per row.
-     * @param object $obj Object that parsed value will assign to.
      */
-    public function __construct(object $obj, int $maxValuesPerRow, string $startCol = 'A')
+    public function __construct($obj, int $maxValuesPerRow, string $startCol = 'A')
     {
         $this->obj = $obj;
         $this->startColIdx = Coordinate::columnIndexFromString($startCol);
@@ -37,6 +36,9 @@ class LabelledReader implements SectionContentReaderInterface
         $this->propertyAccessor = new PropertyAccessor();
     }
 
+    /**
+     * @phpstan-param LabelledValueInterface<mixed> $labelledValue
+     */
     public function defineValue(LabelledValueInterface $labelledValue): void
     {
         $this->values[] = $labelledValue;

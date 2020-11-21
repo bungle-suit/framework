@@ -8,6 +8,7 @@ use Bungle\Framework\StateMachine\STT\STTInterface;
 
 /**
  * STT that all steps are empty, use the same workflow as OrderSTT
+ * @extends AbstractSTT<\Bungle\Framework\Tests\StateMachine\Entity\Order>
  */
 class EmptySTT extends AbstractSTT implements STTInterface
 {

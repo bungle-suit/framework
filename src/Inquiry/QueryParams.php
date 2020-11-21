@@ -54,16 +54,25 @@ class QueryParams
         return $this->pageNo;
     }
 
+    /**
+     * @return object|array<string, mixed>
+     */
     public function getQbe()
     {
         return $this->qbe;
     }
 
+    /**
+     * @return array<array{string, boolean}>
+     */
     public function getSort(): array
     {
         return $this->sort;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getOptions(): array
     {
         return $this->options;

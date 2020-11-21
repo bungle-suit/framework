@@ -15,7 +15,7 @@ final class SaveStepContext implements HasAttributesInterface
     use HasAttributes;
 
     /**
-     * @param array $attrs initial attrs for SaveStepContext.
+     * @param array<string, mixed> $attrs initial attrs for SaveStepContext.
      */
     public function __construct(array $attrs = [])
     {
