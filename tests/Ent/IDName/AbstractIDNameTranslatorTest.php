@@ -51,11 +51,6 @@ class AbstractIDNameTranslatorTest extends MockeryTestCase
         };
     }
 
-    public function testNullIdToName(): void
-    {
-        self::assertEquals('', $this->idName->idToName(null));
-    }
-
     public function testIdToName()
     {
         self::assertEquals('bar', $this->idName->idToName('foo'));

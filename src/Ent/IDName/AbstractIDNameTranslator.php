@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Ent\IDName;
@@ -29,14 +30,14 @@ abstract class AbstractIDNameTranslator
      */
     public function idToName($id): string
     {
-        if ($id === null) {
-            return '';
-        }
+        return $this->cache->get(
+            $this->getCacheKey($id),
+            function (ItemInterface $item) use ($id) {
+                $item->expiresAfter(new DateInterval('PT10M'));
 
-        return $this->cache->get($this->getCacheKey($id), function (ItemInterface $item) use($id) {
-            $item->expiresAfter(new DateInterval('PT10M'));
-            return $this->doIdToName($id);
-        });
+                return $this->doIdToName($id);
+            }
+        );
     }
 
     /**

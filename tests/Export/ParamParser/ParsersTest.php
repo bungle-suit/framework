@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Export\ParamParser;
@@ -34,7 +35,10 @@ class ParsersTest extends MockeryTestCase
         $u = Mockery::mock(UserInterface::class);
         $this->basal->expects('currentUser')->andReturn($u);
 
-        self::assertEquals([Parsers::PARAM_CURRENT_USER => $u], $this->successParse([$this->parsers, 'currentUser']));
+        self::assertEquals(
+            [Parsers::PARAM_CURRENT_USER => $u],
+            $this->successParse([$this->parsers, 'currentUser'])
+        );
     }
 
     public function testParseDateRangeInThreeMonths(): void
@@ -51,9 +55,12 @@ class ParsersTest extends MockeryTestCase
         // case 2: in range
         $request->request->set('start', '2020-01-02');
         $request->query->set('end', '2020-04-02');
-        self::assertEquals([
-            'range' => new DateRange(new DateTime('2020-01-02'), new DateTime('2020-04-02')),
-        ], $this->successParse($p));
+        self::assertEquals(
+            [
+                'range' => new DateRange(new DateTime('2020-01-02'), new DateTime('2020-04-02')),
+            ],
+            $this->successParse($p)
+        );
     }
 
     public function testParseDateRangeWithoutThreeMonths(): void
@@ -64,9 +71,12 @@ class ParsersTest extends MockeryTestCase
 
         $request->request->set('start', '2020-01-02');
         $request->request->set('end', '2021-05-04');
-        self::assertEquals([
-            'range' => new DateRange(new DateTime('2020-01-02'), new DateTime('2021-05-04')),
-        ], $this->successParse($p));
+        self::assertEquals(
+            [
+                'range' => new DateRange(new DateTime('2020-01-02'), new DateTime('2021-05-04')),
+            ],
+            $this->successParse($p)
+        );
     }
 
     public function testEnsureDateRanges(): void
@@ -134,12 +144,13 @@ class ParsersTest extends MockeryTestCase
     }
 
     /**
-     * @phpstan-param callable(FlowContext): (mixed[]|string) $parser
+     * @phpstan-param callable(FlowContext): (mixed[]|string|null) $parser
      * @return array<string, mixed>
      */
     private function successParse(callable $parser): array
     {
         self::assertNull($parser($this->ctx));
+
         return $this->ctx->all();
     }
 

@@ -62,7 +62,7 @@ class TestChildrenNode implements ChildrenTreeNode, NameAbleInterface
     }
 
     /**
-     * @param array<string, string[]> $arr
+     * @phpstan-param array<string, string[]> $arr
      */
     public static function createTree(string $rootName, array $arr): self
     {
@@ -76,7 +76,7 @@ class TestChildrenNode implements ChildrenTreeNode, NameAbleInterface
     }
 
     /**
-     * @param array<string, string[]> $arr
+     * @phpstan-param array<string|int, string[]> $arr
      * @return self[]
      */
     private static function createForest(array $arr): array

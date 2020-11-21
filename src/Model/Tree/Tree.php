@@ -93,8 +93,8 @@ class Tree
      */
     public static function iterDescent(ChildrenTreeNode $node): Traversable
     {
-        /** @phpstan-var T */
         /** @noinspection PhpUnnecessaryLocalVariableInspection */
+        /** @phpstan-var T */
         $n = $node;
         yield $n;
         foreach ($node->getChildren() as $child) {
