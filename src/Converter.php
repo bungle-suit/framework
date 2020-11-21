@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework;
@@ -18,7 +19,7 @@ class Converter
      * 1. DateTime format to 'yy-MM-dd hh:mm', if time part is zero, format to 'yy-MM-dd'
      * 1. Other values use `strval()`.
      *
-     * @param $v mixed value to format
+     * @param mixed $v value to format
      */
     public static function format($v): string
     {
@@ -34,8 +35,10 @@ class Converter
 
         if ($v instanceof DateTimeInterface) {
             $r = $v->format('y-m-d H:i');
+
             return preg_replace('/ 00:00$/', '', $r, 1);
         }
+
         return strval($v);
     }
 

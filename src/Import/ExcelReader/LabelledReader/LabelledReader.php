@@ -9,7 +9,7 @@ use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
- * @phpstan-template T
+ * @phpstan-template T of object
  * Section content reader that value after the specific label.
  */
 class LabelledReader implements SectionContentReaderInterface
@@ -37,9 +37,6 @@ class LabelledReader implements SectionContentReaderInterface
         $this->propertyAccessor = new PropertyAccessor();
     }
 
-    /**
-     * @phpstan-param callable(mixed, Context<T>): mixed $converter
-     */
     public function defineValue(LabelledValueInterface $labelledValue): void
     {
         $this->values[] = $labelledValue;

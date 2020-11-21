@@ -54,7 +54,7 @@ class TreeTest extends MockeryTestCase
 
     /**
      * @dataProvider toTreeDataProvider
-     * @param TestParentNode[] $nodes
+     * @param TestParentNode[] $items
      */
     public function testToTree(?TestChildrenNode $exp, array $items): void
     {
@@ -101,8 +101,8 @@ class TreeTest extends MockeryTestCase
         $root = TestChildrenNode::createTree('root', ['A' => ['1', '2'], 'B']);
         /** @var TestChildrenNode $nodeA */
         $nodeA = $root->getChildren()[0];
-        /** @var TestChildrenNode $nodeA1 */
         $nodeA2 = $nodeA->getChildren()[1];
+        assert($nodeA2 instanceof TestChildrenNode);
 
         return [
             [[$root], $root],
@@ -127,10 +127,10 @@ class TreeTest extends MockeryTestCase
         $root = TestChildrenNode::createTree('root', ['A' => ['1', '2'], 'B']);
         /** @var TestChildrenNode $nodeA */
         $nodeA = $root->getChildren()[0];
-        /** @var TestChildrenNode $nodeA1 */
         $nodeA2 = $nodeA->getChildren()[1];
-        /** @var TestChildrenNode $nodeA1 */
+        assert($nodeA2 instanceof TestChildrenNode);
         $nodeB = $root->getChildren()[1];
+        assert($nodeB instanceof TestChildrenNode);
 
         return [
             ['root', '', $root],

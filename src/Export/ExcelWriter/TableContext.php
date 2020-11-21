@@ -133,7 +133,6 @@ class TableContext
 
     /**
      * @param ExcelColumn[] $cols
-     * @return array<int, int>
      */
     private function initColIndexes(array $cols): void
     {

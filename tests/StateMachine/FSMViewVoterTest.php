@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\StateMachine;
@@ -20,9 +21,9 @@ class FSMViewVoterTest extends MockeryTestCase
     private FSMViewVoter $voter;
     /** @var Mockery\LegacyMockInterface|Mockery\MockInterface|TokenInterface */
     private $token;
-    /** @var STTLocatorInterface|Mockery\LegacyMockInterface|Mockery\MockInterface  */
+    /** @var STTLocatorInterface|Mockery\LegacyMockInterface|Mockery\MockInterface */
     private $sttLocator;
-    /** @var AbstractSTT|Mockery\LegacyMockInterface|Mockery\MockInterface  */
+    /** @var AbstractSTT|Mockery\MockInterface */
     private $stt;
 
     public function init(bool $configAccessSTT = false, bool $hasViewRole = false): void
@@ -55,14 +56,14 @@ class FSMViewVoterTest extends MockeryTestCase
     public function testNoViewRole(): void
     {
         self::init();
-        $obj = new Order;
+        $obj = new Order();
         self::assertEquals(Voter::ACCESS_DENIED, $this->voter->vote($this->token, $obj, ['view']));
     }
 
     public function testHasViewRole(): void
     {
         self::init(false, true);
-        $obj = new Order;
+        $obj = new Order();
         self::assertEquals(Voter::ACCESS_GRANTED, $this->voter->vote($this->token, $obj, ['view']));
     }
 
@@ -70,7 +71,7 @@ class FSMViewVoterTest extends MockeryTestCase
     {
         self::init(true, true);
 
-        $allows = fn (StatefulInterface $v) => true;
+        $allows = fn(StatefulInterface $v) => true;
         $reject = fn(StatefulInterface $v) => false;
         $obj = new Order();
         $this->stt->expects('canAccess')->with()->andReturn([$allows, $allows]);

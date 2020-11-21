@@ -1,4 +1,5 @@
 <?php
+
 /** @noinspection PhpParamsInspection */
 declare(strict_types=1);
 
@@ -16,7 +17,7 @@ use Twig\TwigFilter;
 
 class BungleTwigExtensionTest extends MockeryTestCase
 {
-    /** @var Mockery\MockInterface | Mockery\LegacyMockInterface | HighIDNameTranslator */
+    /** @var Mockery\MockInterface|HighIDNameTranslator */
     private $highIDNameTranslator;
     private ArrayAdapter $cache;
     private ObjectName $objectName;

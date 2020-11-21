@@ -14,12 +14,12 @@ use Doctrine\Common\Collections\Collection;
 interface ChildrenTreeNode extends ParentTreeNode
 {
     /**
-     * @phpstan-return Collection<T>
+     * @phpstan-return Collection<int, T>
      */
     public function getChildren(): Collection;
 
     /**
-     * @phpstan-param T
+     * @phpstan-param T $child
      */
     public function addChild(self $child): void;
 }

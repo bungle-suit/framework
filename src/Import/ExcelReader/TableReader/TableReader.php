@@ -22,7 +22,6 @@ class TableReader implements SectionContentReaderInterface
     private $onRowComplete;
     /**
      * @var ColumnInterface[]
-     * @phpstan-var ColumnInterface<T>[]
      */
     private array $cols;
     private $appendItem;
@@ -34,7 +33,6 @@ class TableReader implements SectionContentReaderInterface
     private PropertyAccessor $propertyAccessor;
 
     /**
-     * @phpstan-param ColumnInterface<T>[] $cols
      * @param ColumnInterface[] $cols
      * @phpstan-param callable(T): void $appendItem
      */

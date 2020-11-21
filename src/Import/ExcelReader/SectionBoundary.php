@@ -60,9 +60,9 @@ class SectionBoundary implements SectionBoundaryInterface
      * @param string $col Which column to read, such as 'A' means first column.
      * @return callable(ExcelReader): bool
      */
-    public static function colIs(array $keywords, string $colIdx = 'A'): callable
+    public static function colIs(array $keywords, string $col = 'A'): callable
     {
-        return fn(ExcelReader $reader): bool => in_array($reader->getCellValue($colIdx.$reader->getRow()), $keywords);
+        return fn(ExcelReader $reader): bool => in_array($reader->getCellValue($col.$reader->getRow()), $keywords);
     }
 
     /**

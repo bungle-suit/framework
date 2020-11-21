@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\StateMachine\Steps;
 
 use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
+use Bungle\Framework\StateMachine\SaveSteps\ValidateSaveStep;
 use Bungle\Framework\StateMachine\StepContext;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -33,7 +34,7 @@ class ValidateStep
         $act = $context->getTransitionName();
         $errors = $this->validator->validate($entity, null, ['Default', $act]);
         if (count($errors)) {
-            return (string)$errors;
+            return ValidateSaveStep::validationListToString($errors);
         }
         return null;
     }

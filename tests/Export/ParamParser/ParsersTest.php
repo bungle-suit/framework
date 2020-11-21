@@ -134,7 +134,8 @@ class ParsersTest extends MockeryTestCase
     }
 
     /**
-     * @phpstan-param callable(FlowContext): mixed[]|string $parser
+     * @phpstan-param callable(FlowContext): (mixed[]|string) $parser
+     * @return array<string, mixed>
      */
     private function successParse(callable $parser): array
     {
@@ -143,7 +144,7 @@ class ParsersTest extends MockeryTestCase
     }
 
     /**
-     * @phpstan-param callable(FlowContext): mixed[]|string $parser
+     * @phpstan-param callable(FlowContext): (mixed[]|string) $parser
      */
     private function failedPass(string $msg, callable $parser): void
     {

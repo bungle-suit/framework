@@ -22,7 +22,7 @@ class BungleFormTypeGuesser implements FormTypeGuesserInterface
     private PropertyInfoExtractorInterface $propertyInfoExtractor;
 
     /**
-     * @param $inner, normally should use ValidatorTypeGuesser
+     * @param FormTypeGuesserInterface $inner, normally should use ValidatorTypeGuesser
      */
     public function __construct(
         FormTypeGuesserInterface $inner,

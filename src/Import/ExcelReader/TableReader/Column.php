@@ -46,7 +46,7 @@ class Column implements ColumnInterface
     }
 
     /**
-     * @phpstan-param callable(mixed, Context): mixed
+     * @phpstan-param callable(mixed, Context): mixed $converter
      */
     public function setConverter(callable $converter): self
     {

@@ -91,7 +91,9 @@ final class OrderSTT extends AbstractSTT implements STTInterface
                        self::log($ctx, 'save');
                    },
                    fn (Order $ord) => $ord->name = 'foo',
-                   fn (Order $ord) => $ord->setState('hack'), // test prevent manipulate set state.
+                   function (Order $ord) {
+                       $ord->setState('hack');
+                   }, // test prevent manipulate set state.
                ],
                StatefulInterface::INITIAL_STATE => [],
            ],

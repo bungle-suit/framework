@@ -42,10 +42,13 @@ class CodeSteps
 
     /**
      * Returns step callable appends literal string section.
+     * @noinspection PhpUnusedParameterInspection
      */
     public static function literal(string $s): callable
     {
-        return fn (object $subject, CodeContext $ctx) => $ctx->addSection($s);
+        return function (object $subject, CodeContext $ctx) use ($s) {
+            $ctx->addSection($s);
+        };
     }
 
     /**

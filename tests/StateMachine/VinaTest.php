@@ -1,4 +1,5 @@
-<?php /** @noinspection PhpParamsInspection */
+<?php
+/** @noinspection PhpParamsInspection */
 
 declare(strict_types=1);
 
@@ -14,7 +15,7 @@ use Bungle\Framework\Tests\StateMachine\Entity\Order;
 use Bungle\Framework\Tests\StateMachine\EventListener\FakeAuthorizationChecker;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use PHPUnit\Framework\MockObject\MockObject;
+use Mockery\MockInterface;
 use SplObjectStorage;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,12 +33,14 @@ use Symfony\Component\Workflow\Transition;
 
 final class VinaTest extends MockeryTestCase
 {
-    // Return [Vina, RequestStack, EventDispatcher]
+    /**
+     * @return array{Vina, RequestStack, EventDispatcher, (SyncToDBInterface&MockInterface)|null, STTLocatorInterface|MockInterface}
+     */
     private function createVina(bool $mockDB = false): array
     {
         $reqStack = new RequestStack();
         $dispatcher = new EventDispatcher();
-        $syncToDb = $mockDB ? $this->createMock(SyncToDBInterface::class): null;
+        $syncToDb = $mockDB ? Mockery::mock(SyncToDBInterface::class) : null;
         $sttLocator = Mockery::mock(STTLocatorInterface::class);
         $vina = new Vina(
             self::createRegistry($dispatcher),
@@ -56,8 +59,7 @@ final class VinaTest extends MockeryTestCase
 
     public function testGetStateTitle(): void
     {
-        /** @var Vina $vina */
-        list($vina) = $this::createVina();
+        [$vina] = $this::createVina();
         self::assertEquals('未保存', $vina->getCurrentStateTitle(new Order()));
         $ord = new Order();
         $ord->setState('blah');
@@ -66,29 +68,35 @@ final class VinaTest extends MockeryTestCase
 
     public function testGetTransitionTitles(): void
     {
-        list($vina) = $this::createVina();
-        self::assertEquals([
-            'save' => '保存',
-            'update' => '保存',
-            'print' => '打印',
-            'check' => 'check',
-        ], $vina->getTransitionTitles(new Order()));
+        [$vina] = $this::createVina();
+        self::assertEquals(
+            [
+                'save' => '保存',
+                'update' => '保存',
+                'print' => '打印',
+                'check' => 'check',
+            ],
+            $vina->getTransitionTitles(new Order())
+        );
     }
 
     public function testGetStateTitles(): void
     {
-        list($vina) = $this::createVina();
-        self::assertEquals([
-            StatefulInterface::INITIAL_STATE => '未保存',
-            'saved' => '已保存',
-            'checked' => '已审核',
-            'unchecked' => 'unchecked',
-        ], $vina->getStateTitles(new Order()));
+        [$vina] = $this::createVina();
+        self::assertEquals(
+            [
+                StatefulInterface::INITIAL_STATE => '未保存',
+                'saved' => '已保存',
+                'checked' => '已审核',
+                'unchecked' => 'unchecked',
+            ],
+            $vina->getStateTitles(new Order())
+        );
     }
 
     public function testGetPossibleTransitions(): void
     {
-        list($vina) = $this::createVina();
+        [$vina] = $this::createVina();
         self::assertEquals(
             ['save'],
             $vina->getPossibleTransitions(new Order())
@@ -97,42 +105,43 @@ final class VinaTest extends MockeryTestCase
 
     public function testApplyTransitionSetAttrs(): void
     {
-        $attrs = ['foo' => 1, 'bar'=>2];
+        $attrs = ['foo' => 1, 'bar' => 2];
         $ord = new Order();
-        /** @var EventDispatcher $dispatcher */
-        list($vina, , $dispatcher) = $this->createVina();
+        [$vina, , $dispatcher] = $this->createVina();
         $hit = 0;
-        $dispatcher->addListener('workflow.ord.transition', function (TransitionEvent $e) use (&$hit, $attrs) {
-            $hit ++;
-            self::assertEquals($attrs, $e->getContext());
-        });
+        $dispatcher->addListener(
+            'workflow.ord.transition',
+            function (TransitionEvent $e) use (&$hit, $attrs) {
+                $hit++;
+                self::assertEquals($attrs, $e->getContext());
+            }
+        );
         $vina->applyTransition($ord, 'save', $attrs);
         self::assertEquals(1, $hit);
     }
 
     public function testApplyTransitionSyncToDB(): void
     {
-        /** @var SyncToDBInterface|MockObject $syncToDB */
         $ord = new Order();
-        list($vina, , , $syncToDB) = $this->createVina(true);
+        [$vina, , , $syncToDB] = $this->createVina(true);
 
-        $syncToDB->expects($this->once())->method('syncToDB')->with($ord);
+        assert($syncToDB !== null);
+        $syncToDB->expects('syncToDB')->with($ord);
         $vina->applyTransition($ord, 'save');
     }
 
     public function testApplyTransitionFailed(): array
     {
-        /** @var SyncToDBInterface|MockObject $syncToDB */
-        /** @var Vina $vina */
         $ord = new Order();
-        list($vina, $reqStack, , $syncToDB) = $this->createVina(true);
+        [$vina, $reqStack, , $syncToDB] = $this->createVina(true);
+        assert($syncToDB !== null);
 
         $sess = new Session(new MockArraySessionStorage());
 
         $req = Request::create('/foo');
         $req->setSession($sess);
         $reqStack->push($req);
-        $syncToDB->expects($this->never())->method('syncToDB');
+        $syncToDB->expects('syncToDB')->never();
 
         $vina->applyTransition($ord, 'check');
         self::assertNotEmpty($sess->getFlashBag()->get(Vina::FLASH_ERROR_MESSAGE));
@@ -144,12 +153,11 @@ final class VinaTest extends MockeryTestCase
     {
         $this->expectException(TransitionException::class);
 
-        /** @var SyncToDBInterface|MockObject $syncToDB */
-        /** @var Vina $vina */
         $ord = new Order();
-        list($vina, , , $syncToDB) = $this->createVina(true);
+        [$vina, , , $syncToDB] = $this->createVina(true);
+        assert($syncToDB !== null);
 
-        $syncToDB->expects($this->never())->method('syncToDB');
+        $syncToDB->expects('syncToDB')->never();
 
         $vina->applyTransition($ord, 'check');
     }
@@ -159,9 +167,9 @@ final class VinaTest extends MockeryTestCase
      */
     public function testApplyTransitionRawFailed(array $args): void
     {
-        /** @var Vina $vina */
         $this->expectException(TransitionException::class);
-        list($vina) = $args;
+        /** @var Vina $vina */
+        [$vina] = $args;
 
         $vina->applyTransitionRaw(new Order(), 'check');
     }
@@ -174,32 +182,32 @@ final class VinaTest extends MockeryTestCase
 
     public function testSave(): void
     {
-        /** @var SyncToDBInterface|MockObject $syncToDB */
-        /** @var Vina $vina */
-        /** @var EventDispatcher $dispatcher */
-        /** @var STTLocatorInterface|Mockery\MockInterface $sttLocator */
-        list($vina, , , , $sttLocator) = $this->createVina(true);
+        [$vina, , , $syncToDB, $sttLocator] = $this->createVina(true);
+        assert($syncToDB !== null);
         $ord = new Order();
         $attrs = ['foo' => 'bar'];
 
+        /** @var AbstractSTT|StatefulInterface|MockInterface $stt */
         $stt = Mockery::mock(AbstractSTT::class, StatefulInterface::class);
         $sttLocator->expects('getSTTForClass')
-            ->with(Order::class)->andReturn($stt);
-        $stt->expects('save')->with($ord, $attrs);
+                   ->with(Order::class)
+                   ->andReturn($stt);
+        $stt->expects('save')
+            ->with($ord, $attrs);
+        $syncToDB->expects('syncToDB')->with($ord);
 
         $vina->save($ord, $attrs);
     }
 
     public function testHaveSaveAction(): void
     {
-        /** @var Vina $vina */
-        /** @var STTLocatorInterface|Mockery\MockInterface $sttLocator */
-        list($vina, , , , $sttLocator) = $this->createVina();
+        [$vina, , , , $sttLocator] = $this->createVina();
         $ord = new Order();
 
+        /** @var AbstractSTT&StatefulInterface&MockInterface $stt */
         $stt = Mockery::mock(AbstractSTT::class, StatefulInterface::class);
         $sttLocator->expects('getSTTForClass')
-            ->with(Order::class)->andReturn($stt);
+                   ->with(Order::class)->andReturn($stt);
         $stt->expects('canSave')->with($ord)->andReturn(false);
 
         self::assertFalse($vina->haveSaveAction($ord));
@@ -207,14 +215,12 @@ final class VinaTest extends MockeryTestCase
 
     public function testCanSave(): void
     {
-        /** @var Vina $vina */
-        /** @var STTLocatorInterface|Mockery\MockInterface $sttLocator */
-        list($vina, , , , $sttLocator) = $this->createVina();
+        [$vina, , , , $sttLocator] = $this->createVina();
         $ord = new Order();
 
         $stt = Mockery::mock(AbstractSTT::class, StatefulInterface::class);
         $sttLocator->expects('getSTTForClass')->twice()
-            ->with(Order::class)->andReturn($stt);
+                   ->with(Order::class)->andReturn($stt);
         $stt->expects('canSave')->twice()->with($ord)->andReturn(true);
 
         self::assertTrue($vina->canSave($ord));
@@ -225,13 +231,11 @@ final class VinaTest extends MockeryTestCase
 
     public function testCreateNew(): void
     {
-        /** @var Vina $vina */
-        /** @var STTLocatorInterface|Mockery\MockInterface $sttLocator */
-        list($vina, , , , $sttLocator) = $this->createVina();
+        [$vina, , , , $sttLocator] = $this->createVina();
 
         $stt = Mockery::mock(AbstractSTT::class, StatefulInterface::class);
         $sttLocator->expects('getSTTForClass')
-            ->with(Order::class)->andReturn($stt);
+                   ->with(Order::class)->andReturn($stt);
         $ord = new Order();
         $stt->expects('createNew')->with()->andReturn($ord);
         self::assertSame($ord, $vina->createNew(Order::class));
@@ -240,10 +244,10 @@ final class VinaTest extends MockeryTestCase
     private static function createOrderWorkflow(EventDispatcher $dispatcher): StateMachine
     {
         $trans = [
-          $save = new Transition('save', StatefulInterface::INITIAL_STATE, 'saved'),
-          $update = new Transition('update', 'saved', 'saved'),
-          $print = new Transition('print', 'saved', 'saved'),
-          new Transition('check', 'saved', 'checked'),
+            $save = new Transition('save', StatefulInterface::INITIAL_STATE, 'saved'),
+            $update = new Transition('update', 'saved', 'saved'),
+            $print = new Transition('print', 'saved', 'saved'),
+            new Transition('check', 'saved', 'checked'),
         ];
 
         $transMeta = new SplObjectStorage();
@@ -252,17 +256,19 @@ final class VinaTest extends MockeryTestCase
         $transMeta[$print] = ['title' => '打印'];
 
         $definition = (new DefinitionBuilder())
-          ->setMetadataStore(new InMemoryMetadataStore(
-              [],
-              [
-                  'saved' => ['title' => '已保存'],
-                  'checked' => ['title' => '已审核'],
-              ],
-              $transMeta,
-          ))
-          ->addPlaces([StatefulInterface::INITIAL_STATE, 'saved', 'checked', 'unchecked'])
-          ->addTransitions($trans)
-          ->build();
+            ->setMetadataStore(
+                new InMemoryMetadataStore(
+                    [],
+                    [
+                        'saved' => ['title' => '已保存'],
+                        'checked' => ['title' => '已审核'],
+                    ],
+                    $transMeta,
+                )
+            )
+            ->addPlaces([StatefulInterface::INITIAL_STATE, 'saved', 'checked', 'unchecked'])
+            ->addTransitions($trans)
+            ->build();
 
         $marking = new StatefulInterfaceMarkingStore();
 

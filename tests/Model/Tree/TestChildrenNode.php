@@ -9,6 +9,9 @@ use Bungle\Framework\Model\Tree\ChildrenTreeNode;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
+/**
+ * @implements ChildrenTreeNode<TestChildrenNode>
+ */
 class TestChildrenNode implements ChildrenTreeNode, NameAbleInterface
 {
     private Collection $children;
@@ -30,6 +33,9 @@ class TestChildrenNode implements ChildrenTreeNode, NameAbleInterface
         }
     }
 
+    /**
+     * @return Collection<int, self>
+     */
     public function getChildren(): Collection
     {
         return $this->children;

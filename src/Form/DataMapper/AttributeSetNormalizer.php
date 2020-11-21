@@ -26,8 +26,8 @@ class AttributeSetNormalizer implements DataTransformerInterface
     private $createAttribute;
 
     /**
-     * @param array<int, AttributeDefinitionInterface> $attributeDefinitions
-     * @param callable(string $attrName): AttributeInterface create a new attribute object.
+     * @param array<int, AttributeDefinitionInterface> $definitions
+     * @param callable(string $attrName): AttributeInterface $createAttribute create a new attribute object.
      */
     public function __construct(array $definitions, callable $createAttribute)
     {

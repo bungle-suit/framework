@@ -21,7 +21,7 @@ use Symfony\Component\PropertyInfo\Type;
 
 class PropertyInfoTypeGuesserTest extends MockeryTestCase
 {
-    /** @var Mockery\MockInterface|Mockery\LegacyMockInterface|PropertyInfoExtractorInterface */
+    /** @var Mockery\MockInterface|PropertyInfoExtractorInterface */
     private $propertyInfoExtractor;
     private PropertyInfoTypeGuesser $guesser;
 

@@ -41,7 +41,7 @@ class RoleDefinition
     /**
      * Parse state machine action role name, returns array with two items:
      *
-     * @return string[int]
+     * @return array{string, string}
      */
     public static function parseActionRole(string $roleName): array
     {

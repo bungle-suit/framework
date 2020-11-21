@@ -5,7 +5,7 @@ namespace Bungle\Framework\Import\ExcelReader\LabelledReader;
 
 /**
  * interface to parse a value of @see LabelledReader
- * @phpstan-template T
+ * @phpstan-template T of object
  */
 interface LabelledValueInterface
 {

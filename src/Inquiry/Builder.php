@@ -30,9 +30,6 @@ class Builder implements HasAttributesInterface
     private const AUTO_COLUMN_PREFIX = '__col_';
     private UniqueName $autoColName;
 
-    /**
-     * @param array<string, mixed> $options the value used to init attributes.
-     */
     public function __construct(QueryBuilder $qb, QueryParams $queryParams)
     {
         $this->qb = $qb;

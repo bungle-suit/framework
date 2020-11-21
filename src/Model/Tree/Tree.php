@@ -18,7 +18,7 @@ class Tree
      * @template V of ParentTreeNode
      * @phpstan-param array<ParentTreeNode<V>> $items
      * @phpstan-param callable(V): T $fCreateNode create dest tree node from source.
-     * @phpstan-return ChildrenTreeNode<T>
+     * @phpstan-return array<ChildrenTreeNode<T>>
      */
     public static function toForest(array $items, callable $fCreateNode): array
     {

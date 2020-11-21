@@ -59,7 +59,7 @@ class SectionReader
      * Setup isEmptyRow function, returns true if current row is empty.
      * Default implementation always return false, no empty row support.
      *
-     * @param callable(ExcelReader): bool
+     * @param callable(ExcelReader): bool $isEmptyRow
      */
     public function setIsEmptyRow(callable $isEmptyRow): self
     {

@@ -44,7 +44,7 @@ class RoleRegistry
     }
 
     /**
-     * @param RoleDefinition[int] $arr
+     * @param array<int, RoleDefinition> $arr
      */
     private static function roleExists(array $arr, RoleDefinition $role): bool
     {

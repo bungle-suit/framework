@@ -380,7 +380,7 @@ class FP
 
     /**
      * @template T
-     * @phpstan-param (\ArrayAccess<T>&\Countable)|array<T> $arr
+     * @phpstan-param (\ArrayAccess<mixed, T>&\Countable)|array<T> $arr
      * @phpstan-return null|T null if $arr is empty
      */
     public static function last($arr)

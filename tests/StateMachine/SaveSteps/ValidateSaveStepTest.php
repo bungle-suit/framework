@@ -71,4 +71,10 @@ class ValidateSaveStepTest extends TestCase
         $this->create(false, true);
         self::assertNull($this->callStep());
     }
+
+    public function testValidationListToString(): void
+    {
+        $list = new ConstraintViolationList([]);
+        self::assertEquals('', ValidateSaveStep::validationListToString($list));
+    }
 }

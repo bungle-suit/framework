@@ -26,7 +26,7 @@ class Query
     private string $title;
 
     /**
-     * @phpstan-param QueryStepInterface[] $iterSteps
+     * @phpstan-param QueryStepInterface[] $steps
      */
     public function __construct(EntityManagerInterface $em, array $steps, string $title = 'Query Name Not Set')
     {

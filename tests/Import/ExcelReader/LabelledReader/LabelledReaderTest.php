@@ -20,7 +20,7 @@ class LabelledReaderTest extends MockeryTestCase
         $sheet = $reader->getSheet();
         $obj = (object)['foo1'=> '', 'bar' => '', 'foobar' => ''];
         $context = Mockery::type(Context::class);
-        /** @phpstan-var LabelledReader<mixed[]> $r */
+        /** @phpstan-var LabelledReader<object> $r */
         $r = new LabelledReader($obj, 2, 'C');
         $r->defineValue($lv1 = Mockery::mock(LabelledValueInterface::class));
         $r->defineValue($lv2 = Mockery::mock(LabelledValueInterface::class));

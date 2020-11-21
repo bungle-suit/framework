@@ -6,6 +6,7 @@ namespace Bungle\Framework\StateMachine;
 
 use Bungle\Framework\Entity\CommonTraits\StatefulInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Workflow\Exception\TransitionException;
 use Symfony\Component\Workflow\Registry;
@@ -54,6 +55,8 @@ class Vina
     /**
      * Returns associated array of transition name -> title
      * for StateMachine attached with $subject.
+     *
+     * @return array<string, string>
      */
     public function getTransitionTitles(StatefulInterface $subject): array
     {
@@ -82,7 +85,7 @@ class Vina
             $meta = $store->getPlaceMetadata($place);
             $r[$place] = $meta['title'] ?? (
                 StatefulInterface::INITIAL_STATE == $place ? '未保存' : $place
-            );
+                );
         }
 
         return $r;
@@ -124,8 +127,11 @@ class Vina
      * If succeed, $subject synced to DB.
      * @param array $attrs initial attrs of StepContext.
      */
-    public function applyTransition(StatefulInterface $subject, string $name, array $attrs = []): void
-    {
+    public function applyTransition(
+        StatefulInterface $subject,
+        string $name,
+        array $attrs = []
+    ): void {
         $wf = $this->registry->get($subject);
         try {
             $wf->apply($subject, $name, $attrs);
@@ -136,8 +142,9 @@ class Vina
                 throw $e;
             }
 
-            $request
-                ->getSession()
+            $session = $request->getSession();
+            assert($session instanceof Session);
+            $session
                 ->getFlashBag()
                 ->add(self::FLASH_ERROR_MESSAGE, $e->getMessage());
         }
@@ -149,8 +156,11 @@ class Vina
      * $subject not sync to db.
      * @param array $attrs initial attrs of StepContext.
      */
-    public function applyTransitionRaw(StatefulInterface $subject, string $name, array $attrs = []): void
-    {
+    public function applyTransitionRaw(
+        StatefulInterface $subject,
+        string $name,
+        array $attrs = []
+    ): void {
         $wf = $this->registry->get($subject);
         $wf->apply($subject, $name, $attrs);
     }
@@ -180,6 +190,7 @@ class Vina
     public function haveSaveAction(StatefulInterface $subject): bool
     {
         $stt = $this->sttLocator->getSTTForClass(get_class($subject));
+
         return $stt->canSave($subject);
     }
 
@@ -203,6 +214,7 @@ class Vina
     public function createNew(string $entityClass): StatefulInterface
     {
         $stt = $this->sttLocator->getSTTForClass($entityClass);
+
         return $stt->createNew();
     }
 }

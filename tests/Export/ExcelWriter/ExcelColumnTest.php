@@ -13,7 +13,7 @@ class ExcelColumnTest extends MockeryTestCase
     {
         $col = new ExcelColumn('foo', '[0]');
         self::assertEquals('foo', $col->getHeader());
-        self::assertEquals('foo', $col->getValueConverter()('foo', 1));
+        self::assertEquals('foo', $col->getValueConverter()('foo', 1, ['row']));
         self::assertEquals('[0]', $col->getPropertyPath());
     }
 
@@ -21,8 +21,8 @@ class ExcelColumnTest extends MockeryTestCase
     {
         $col = ExcelColumn::createDate('foo', 'a.b');
         $f = $col->getValueConverter();
-        self::assertIsFloat($f(new DateTime(), 1));
-        self::assertNull($f(null, 2));
+        self::assertIsFloat($f(new DateTime(), 1, ['row']));
+        self::assertNull($f(null, 2, ['row']));
     }
 
     public function testFormula(): void
