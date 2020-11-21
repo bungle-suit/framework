@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Bungle\Framework\Entity;
 
 use Bungle\Framework\Exceptions;
+
 use function in_array;
 
 class EntityRegistry
 {
     // array of entities full class name.
-    /** @var string[] $entities */
+    /** @phpstan-var class-string<mixed>[] $entities */
     private array $entities;
     private HighResolverInterface $highResolver;
     /** @var array<string, class-string<mixed>> */
@@ -29,6 +30,7 @@ class EntityRegistry
     /**
      * Like getHigh(), return empty if not High defined on
      * $clsName instead of throw exception.
+     * @param class-string<mixed> $clsName
      */
     public function getHighSafe(string $clsName): string
     {
@@ -36,10 +38,12 @@ class EntityRegistry
             $this->highClsMap = $this->scanMap($this->getEntities());
         }
 
-        if (!($r = array_search($clsName, $this->highClsMap))) {
-            if (!in_array($clsName, $this->getEntities())) {
-                return '';
-            }
+        $r = array_search($clsName, $this->highClsMap);
+        if ($r === false) {
+            return '';
+        }
+        if (!in_array($clsName, $this->getEntities())) {
+            return '';
         }
 
         return $r;
@@ -47,6 +51,7 @@ class EntityRegistry
 
     /**
      * Get high prefix by clsName.
+     * @param class-string<mixed> $clsName
      */
     public function getHigh(string $clsName): string
     {
@@ -118,6 +123,7 @@ class EntityRegistry
         if (!isset($this->entities)) {
             $this->entities = iterator_to_array($this->discoverer->getAllEntities(), false);
         }
+
         return $this->entities;
     }
 }

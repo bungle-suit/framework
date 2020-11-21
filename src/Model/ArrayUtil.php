@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Model;
@@ -18,11 +19,12 @@ final class ArrayUtil
             array_splice($array, $key, 0, $item);
         } else {
             $pos = array_search($key, array_keys($array));
-            $array = array_merge(
-                array_slice($array, 0, $pos),
-                $item,
-                array_slice($array, $pos)
-            );
+            assert($pos !== false);
+            $part1 = array_slice($array, 0, $pos);
+            $part2 = array_slice($array, $pos);
+            assert($part1 !== false);
+            assert($part2 !== false);
+            $array = array_merge($part1, $item, $part2);
         }
     }
 
@@ -45,6 +47,7 @@ final class ArrayUtil
         if ($reindex) {
             $array = array_values($array);
         }
+
         return true;
     }
 }

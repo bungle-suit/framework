@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\Container;
 class STTLocatorTest extends MockeryTestCase
 {
     private Container $container;
-    /** @var EntityRegistry|Mockery\MockInterface|Mockery\LegacyMockInterface */
+    /** @var EntityRegistry|Mockery\MockInterface */
     private $entityRegistry;
 
     protected function setUp(): void

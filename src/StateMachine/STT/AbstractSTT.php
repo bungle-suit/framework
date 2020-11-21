@@ -30,6 +30,7 @@ abstract class AbstractSTT
     {
         $ctx = new StepContext($event->getWorkflow(), $event->getTransition(), $event->getContext());
         $subject = $event->getSubject();
+        /** @var string $action */
         $action = $event->getTransition()->getName();
         foreach ($this->getTransitionSteps($subject, $action) as $step) {
             $msg = call_user_func($step, $subject, $ctx);
@@ -46,7 +47,7 @@ abstract class AbstractSTT
      *    after?: array<callable(T, StepContext): (void|string)>,
      *    beforeSave?: array<callable(T, SaveStepContext): (void|string)>,
      *    afterSave?: array<callable(T, SaveStepContext): (void|string)>,
-     *    saveActions?: array<string, array<callable(T, SaveStepContext): (void|string)>>,
+     *    saveActions: array<string, array<callable(T, SaveStepContext): (void|string)>>,
      * }
      *
      * 1. 'before', Steps run before transition actions
@@ -68,7 +69,7 @@ abstract class AbstractSTT
 
     /**
      * @phpstan-param T $subject
-     * @return Traversable<array<callable(T, StepContext): (void|string)>>
+     * @return Traversable<callable(T, StepContext): (void|string)>
      */
     private function getTransitionSteps($subject, string $actionName): Traversable
     {
@@ -86,6 +87,7 @@ abstract class AbstractSTT
     /**
      * Execute save action, Handles `vina.high.save` action.
      * @param array<string, mixed> $attrs
+     * @phpstan-param StatefulInterface&T $entity
      */
     public function save(StatefulInterface $entity, array $attrs = []): void
     {
@@ -152,7 +154,7 @@ abstract class AbstractSTT
     }
 
     /**
-     * @return Traversable<array<callable(T, SaveStepContext): (void|string)>>
+     * @return Traversable<callable(T, SaveStepContext): (void|string)>
      */
     private function getSaveSteps(StatefulInterface $entity): Traversable
     {

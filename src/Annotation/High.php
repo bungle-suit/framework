@@ -28,17 +28,19 @@ final class High
      * Resolve high prefix for the specific class.
      *
      * Returns null if the Annotation not defined.
+     * @param class-string<mixed> $clsName
      */
     public static function resolveHigh(string $clsName): ?string
     {
         $cls = new ReflectionClass($clsName);
         $reader = new AnnotationReader();
-        $anno = $reader->getClassAnnotation($cls, High::class);
-        if (!$anno) {
+        /** @var High $annotation */
+        $annotation = $reader->getClassAnnotation($cls, High::class);
+        if (!$annotation) {
             return null;
         }
 
-        $high = $anno->value;
+        $high = $annotation->value;
         if (0 === preg_match('/^[a-z]{3}$/', $high)) {
             throw new UnexpectedValueException("Invalid format of high value '$high' of Entity '$clsName'");
         }

@@ -27,7 +27,7 @@ class Query
     private string $title;
 
     /**
-     * @phpstan-param QueryStepInterface[] $steps
+     * @phpstan-param array<callable(Builder): void> $steps
      */
     public function __construct(
         EntityManagerInterface $em,

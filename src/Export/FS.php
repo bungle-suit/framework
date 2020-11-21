@@ -33,6 +33,6 @@ class FS implements FSInterface
 
     public function filesize(string $path): int
     {
-        return filesize($path);
+        return ErrorHandler::call(fn () => filesize($path));
     }
 }

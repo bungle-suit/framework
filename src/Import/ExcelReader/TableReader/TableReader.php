@@ -67,7 +67,7 @@ class TableReader implements SectionContentReaderInterface
                 continue;
             }
             $idx = array_search($col, $this->cols, true);
-            assert($idx !== false);
+            assert(is_int($idx));
             $this->colIdxes[$idx] = $i;
         }
 

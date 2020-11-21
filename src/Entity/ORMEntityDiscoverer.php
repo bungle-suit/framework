@@ -22,8 +22,10 @@ class ORMEntityDiscoverer implements EntityDiscovererInterface
         $manager = $this->managerRegistry->getManager();
         $list = $manager->getMetadataFactory()->getAllMetadata();
         foreach ($list as $clsMeta) {
-            if (High::resolveHigh($clsMeta->getName())) {
-                yield $clsMeta->getName();
+            /** @var class-string<mixed> $cls */
+            $cls = $clsMeta->getName();
+            if (High::resolveHigh($cls)) {
+                yield $cls;
             }
         }
     }

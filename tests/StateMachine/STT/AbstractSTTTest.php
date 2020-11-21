@@ -171,7 +171,7 @@ final class AbstractSTTTest extends TestBase
             }
 
             protected function steps(): array {
-                return ['actions' => []];
+                return ['actions' => [], 'saveActions' => []];
             }
         };
         $stt->setEntityRegistry($registry);

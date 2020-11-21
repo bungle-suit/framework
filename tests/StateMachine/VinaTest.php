@@ -190,7 +190,7 @@ final class VinaTest extends MockeryTestCase
         $ord = new Order();
         $attrs = ['foo' => 'bar'];
 
-        /** @var AbstractSTT<Order>|StatefulInterface|MockInterface $stt */
+        /** @var AbstractSTT<Order>&StatefulInterface&MockInterface $stt */
         $stt = Mockery::mock(AbstractSTT::class, StatefulInterface::class);
         $sttLocator->expects('getSTTForClass')
                    ->with(Order::class)

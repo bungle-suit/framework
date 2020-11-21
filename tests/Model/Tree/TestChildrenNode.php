@@ -83,7 +83,8 @@ class TestChildrenNode implements ChildrenTreeNode, NameAbleInterface
     {
         $r = [];
         foreach ($arr as $name => $children) {
-            if (is_string($name)) {
+            if (is_array($children)) {
+                assert(is_string($name));
                 $r[] = self::createTree($name, $children);
             } else {
                 $r[] = new self($children);

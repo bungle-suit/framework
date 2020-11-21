@@ -110,16 +110,16 @@ class Tree
      * Return path of the node from root, path is names from root to $node separate with '/'.
      * Not prefixed with '/', i.e., 'a/b/c' instead of '/a/b/c'.
      *
-     * @param ParentTreeNode|NameAbleInterface $node
+     * @param ParentTreeNode&NameAbleInterface $node
      * @param bool $includeRoot exclude root name if false.
      * @phpstan-param ParentTreeNode&NameAbleInterface $node
      */
     public static function path(ParentTreeNode $node, bool $includeRoot = true): string
     {
         $parts = [];
-        /** @var NameAbleInterface|ParentTreeNode $node */
-        foreach (self::iterToRoot($node) as $node) {
-            $parts[] = $node->getName();
+        /** @var NameAbleInterface&ParentTreeNode $n*/
+        foreach (self::iterToRoot($node) as $n) {
+            $parts[] = $n->getName();
         }
         $parts = array_reverse($parts, false);
         if (!$includeRoot) {

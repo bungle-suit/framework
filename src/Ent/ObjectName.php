@@ -37,6 +37,9 @@ class ObjectName
         return $this->cache->get($key, fn () => $this->resolveName($clsOrInstance));
     }
 
+    /**
+     * @param class-string<mixed> $clsName
+     */
     private function resolveName(string $clsName): string
     {
         $cls = new ReflectionClass($clsName);

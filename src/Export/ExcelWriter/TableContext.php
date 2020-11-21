@@ -76,7 +76,7 @@ class TableContext
     }
 
     /**
-     * @return ExcelColumn[]
+     * @return array<int, ExcelColumn>
      */
     public function getColumns(): array
     {

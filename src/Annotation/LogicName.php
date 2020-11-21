@@ -29,6 +29,7 @@ final class LogicName
      * resolve logic name for the specific class.
      *
      * Returns class's short name if LogicName annotation not defined.
+     * @param class-string<mixed> $clsName
      */
     public static function resolveClassName(string $clsName): string
     {
@@ -40,6 +41,7 @@ final class LogicName
         $cls = new ReflectionClass($clsName);
 
         $reader = new AnnotationReader();
+        /** @var LogicName $annotation */
         $annotation = $reader->getClassAnnotation($cls, LogicName::class);
 
         return $annotation ? $annotation->value : self::getShortClassName($clsName);
@@ -56,6 +58,7 @@ final class LogicName
      * Include inherited properties.
      *
      * Ignores private and protected properties.
+     * @param class-string<mixed> $clsName
      * @return array<string, string>
      */
     public static function resolvePropertyNames(string $clsName): array
@@ -76,11 +79,13 @@ final class LogicName
             if ($p->isStatic()) {
                 continue;
             }
+            /** @var LogicName $annotation */
             $annotation = $reader->getPropertyAnnotation($p, LogicName::class);
             $r[$p->getName()] = $annotation ? $annotation->value : $p->getName();
         }
         foreach ($cls->getMethods(ReflectionMethod::IS_PUBLIC) as $m) {
             if (self::isGetter($m)) {
+                /** @var LogicName $annotation */
                 $annotation = $reader->getMethodAnnotation($m, LogicName::class);
                 $propName = self::getPropertyNameFromGetter($m->getName());
                 if ($annotation === null) {

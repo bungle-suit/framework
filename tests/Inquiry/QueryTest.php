@@ -73,7 +73,7 @@ class QueryTest extends MockeryTestCase
             [
                 $step1,
                 $step2,
-                function (Builder $builder) use ($q1, $col1) {
+                function (Builder $builder) use ($q1, $col1): void {
                     $builder->addColumn($col1, 'foo');
                     $builder->addQBE($q1);
                 },
@@ -121,7 +121,7 @@ class QueryTest extends MockeryTestCase
         $q = new class(
             $this->em,
             [
-                function (Builder $builder) use ($col1, &$isBuildForCounts) {
+                function (Builder $builder) use ($col1, &$isBuildForCounts): void {
                     $isBuildForCounts[] = $builder->isBuildForCount();
                     $builder->addColumn($col1, 'foo');
                 },
@@ -190,7 +190,7 @@ class QueryTest extends MockeryTestCase
         $q = new Query(
             $this->em,
             [
-                function (Builder $builder) use ($q1, $col1) {
+                function (Builder $builder) use ($q1, $col1): void {
                     self::assertTrue($builder->isBuildForQBE());
                     $builder->addColumn($col1, 'foo');
                     $builder->addQBE($q1);
