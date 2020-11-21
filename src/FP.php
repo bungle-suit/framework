@@ -344,9 +344,12 @@ class FP
     }
 
     /**
-     * @param callable(mixed...): bool $a
-     * @param callable(mixed...): bool $b
-     * @return callable(mixed...): bool
+     * @template U
+     * @template V
+     * @template W
+     * @param callable $a
+     * @param callable $b
+     * @return callable bool
      */
     public static function and(callable $a, callable $b): callable
     {

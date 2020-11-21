@@ -215,7 +215,7 @@ class FPTest extends TestCase
     public function testAnd(): void
     {
         [$aHit, $bHit] = [0, 0];
-        $a = function (int $a, int $b) use (&$aHit) {
+        $a = function (int $a, int $b) use (&$aHit): bool {
             $aHit ++;
             self::assertEquals(1, $a);
             self::assertEquals(2, $b);
@@ -223,7 +223,7 @@ class FPTest extends TestCase
             return true;
         };
 
-        $b = function (int $a, int $b) use (&$bHit) {
+        $b = function (int $a, int $b) use (&$bHit): bool {
             $bHit ++;
             self::assertEquals(1, $a);
             self::assertEquals(2, $b);
@@ -231,7 +231,7 @@ class FPTest extends TestCase
             return true;
         };
 
-        $a1 = function (int $a, int $b) use (&$aHit) {
+        $a1 = function (int $a, int $b) use (&$aHit): bool {
             $aHit ++;
             self::assertEquals(1, $a);
             self::assertEquals(2, $b);
@@ -254,21 +254,21 @@ class FPTest extends TestCase
     public function testOr(): void
     {
         [$aHit, $bHit] = [0, 0];
-        $a = function (array $v) use (&$aHit) {
+        $a = function (array $v) use (&$aHit): bool {
             $aHit ++;
             self::assertEquals([1, 2], $v);
 
             return true;
         };
 
-        $b = function (array $v) use (&$bHit) {
+        $b = function (array $v) use (&$bHit): bool {
             $bHit ++;
             self::assertEquals([1, 2], $v);
 
             return true;
         };
 
-        $a1 = function (array $v) use (&$aHit) {
+        $a1 = function (array $v) use (&$aHit): bool {
             $aHit ++;
             self::assertEquals([1, 2], $v);
 
@@ -291,7 +291,7 @@ class FPTest extends TestCase
     public function testNot(): void
     {
         $aHit = 0;
-        $a = function (int $v) use (&$aHit) {
+        $a = function (int $v) use (&$aHit): bool {
             $aHit ++;
             self::assertEquals(200, $v);
 

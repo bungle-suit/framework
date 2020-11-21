@@ -35,7 +35,7 @@ class TableReaderTest extends MockeryTestCase
         $this->arr = [];
         $this->r = new TableReader(
             $this->cols,
-            function (array $item) {
+            function (array $item): void {
                 $this->arr[] = $item;
             },
             'C'
@@ -87,7 +87,7 @@ class TableReaderTest extends MockeryTestCase
             'C1'
         );
         $this->r->setOnRowComplete(
-            function (array &$item, Context $context) {
+            function (array &$item, Context $context): void {
                 assert($context !== null);
                 $item['d'] = 'v';
             }

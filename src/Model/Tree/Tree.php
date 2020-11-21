@@ -23,7 +23,10 @@ class Tree
     public static function toForest(array $items, callable $fCreateNode): array
     {
         $map = [];
-        $findOrCreate = function (ParentTreeNode $node) use (
+        /**
+         * @phpstan-param V $node
+         */
+        $findOrCreate = function ($node) use (
             $fCreateNode,
             &$map
         ) : ChildrenTreeNode {

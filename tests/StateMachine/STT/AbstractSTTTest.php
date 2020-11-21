@@ -95,7 +95,7 @@ final class AbstractSTTTest extends TestBase
 
     public function testSaveNotConfigured(): void
     {
-        $old = set_error_handler(fn () => null, E_USER_NOTICE);
+        $old = set_error_handler(fn () => true, E_USER_NOTICE);
         try {
             $stt = new OrderSTT();
             $this->ord->setState('checked');

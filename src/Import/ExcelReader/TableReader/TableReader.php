@@ -54,12 +54,12 @@ class TableReader implements SectionContentReaderInterface
 
         $arrLabels = array_map(fn(ColumnInterface $col) => $col->getTitle(), $this->cols);
         $sheet = $reader->getSheet();
-        $cols = Coordinate::columnIndexFromString($sheet->getHighestColumn($reader->getRow()));
+        $cols = Coordinate::columnIndexFromString($sheet->getHighestColumn("{$reader->getRow()}"));
         $this->colIdxes = [];
         for ($i = $this->startColIdx; $i <= $cols; $i++) {
             $cell = $reader->getSheet()->getCellByColumnAndRow($i, $reader->getRow());
             $col = FP::firstOrNull(
-                fn(Column $c) => $c->getHeaderCellMatcher()->matches($cell),
+                fn(ColumnInterface $c): bool => $c->getHeaderCellMatcher()->matches($cell),
                 $this->cols
             );
             if ($col === null) {
