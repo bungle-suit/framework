@@ -12,12 +12,12 @@ class PagedData
     private int $count;
 
     /**
-     * @phpstan-var array<string, mixed[]>
+     * @phpstan-var array<mixed[]>
      */
     private array $data;
 
     /**
-     * @param array<string, mixed[]> $data
+     * @param array<mixed[]> $data
      */
     public function __construct(array $data, int $count = PHP_INT_MAX)
     {
