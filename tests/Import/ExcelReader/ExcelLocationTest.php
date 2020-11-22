@@ -13,5 +13,8 @@ class ExcelLocationTest extends MockeryTestCase
     {
         $loc = new ExcelLocation('foo', 3);
         self::assertEquals('工作表"foo"第3行', (string)$loc);
+
+        $loc = new ExcelLocation('bar', 3, 'B');
+        self::assertEquals('工作表"bar"单元格B3', (string)$loc);
     }
 }

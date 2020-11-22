@@ -6,10 +6,11 @@ namespace Bungle\Framework\Import\ExcelReader;
 
 class ExcelLocation
 {
-    public function __construct(string $sheetName, int $row)
+    public function __construct(string $sheetName, int $row, ?string $col = null)
     {
         $this->sheetName = $sheetName;
         $this->row = $row;
+        $this->col = $col;
     }
 
     private string $sheetName;
@@ -17,11 +18,6 @@ class ExcelLocation
     public function getSheetName(): string
     {
         return $this->sheetName;
-    }
-
-    public function setSheetName(string $sheetName): void
-    {
-        $this->sheetName = $sheetName;
     }
 
     /**
@@ -34,13 +30,20 @@ class ExcelLocation
         return $this->row;
     }
 
-    public function setRow(int $row): void
+    /**
+     * Column start from 'A'
+     */
+    private ?string $col;
+
+    public function getCol(): ?string
     {
-        $this->row = $row;
+        return $this->col;
     }
 
     public function __toString(): string
     {
-        return '工作表"'.$this->sheetName.'"第'.$this->row.'行';
+        return $this->col === null ?
+            "工作表\"{$this->sheetName}\"第{$this->row}行" :
+            "工作表\"{$this->sheetName}\"单元格{$this->col}{$this->row}";
     }
 }
