@@ -19,7 +19,7 @@ class QueryParams
     private int $pageNo;
 
     /**
-     * @var object|array<string, mixed>
+     * @var array<string, mixed>
      */
     private $qbe;
 
@@ -37,7 +37,7 @@ class QueryParams
     private array $options;
 
     /**
-     * @param object|array<string, mixed> $qbe
+     * @param array<string, mixed> $qbe
      * @param array<string, mixed> $options
      * @phpstan-param array<array{string, boolean}> $sort
      */
@@ -55,7 +55,7 @@ class QueryParams
     }
 
     /**
-     * @return object|array<string, mixed>
+     * @return array<string, mixed>
      */
     public function getQbe()
     {
