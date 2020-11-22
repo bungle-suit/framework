@@ -99,4 +99,12 @@ class ExcelReader extends ExcelOperator
             $section->getBoundary()->onReadComplete($this);
         }
     }
+
+    /**
+     * Return current location.
+     */
+    public function getLocation(): ExcelLocation
+    {
+        return new ExcelLocation($this->getSheet()->getTitle(), $this->row);
+    }
 }

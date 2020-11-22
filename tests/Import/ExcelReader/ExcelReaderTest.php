@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Import\ExcelReader;
 
+use Bungle\Framework\Import\ExcelReader\ExcelLocation;
 use Bungle\Framework\Import\ExcelReader\ExcelReader;
 use Bungle\Framework\Import\ExcelReader\SectionBoundaryInterface;
 use Bungle\Framework\Import\ExcelReader\SectionContentReaderInterface;
@@ -211,6 +212,12 @@ class ExcelReaderTest extends MockeryTestCase
 
         $this->reader->getSheet()->setCellValue('A31', 'foo');
         $this->reader->read();
+    }
+
+    public function testGetLocation(): void
+    {
+        $exp = new ExcelLocation('Worksheet', 1);
+        self::assertEquals($exp, $this->reader->getLocation());
     }
 
     private static function validCurrentRow(int ...$expRows): Closure
