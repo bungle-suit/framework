@@ -103,8 +103,8 @@ class ExcelReader extends ExcelOperator
     /**
      * Return current location.
      */
-    public function getLocation(): ExcelLocation
+    public function getLocation(?string $col = null): ExcelLocation
     {
-        return new ExcelLocation($this->getSheet()->getTitle(), $this->row);
+        return new ExcelLocation($this->getSheet()->getTitle(), $this->row, $col);
     }
 }

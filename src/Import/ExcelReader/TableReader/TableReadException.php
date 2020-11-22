@@ -17,6 +17,8 @@ class TableReadException extends RuntimeException
     public function __construct(array $rowErrors)
     {
         parent::__construct(self::genMessage($rowErrors), 0, null);
+
+        $this->rowErrors = $rowErrors;
     }
 
     public function getRowErrors(): array

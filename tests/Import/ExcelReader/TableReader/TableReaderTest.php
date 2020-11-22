@@ -8,6 +8,7 @@ use Bungle\Framework\Import\ExcelReader\ExcelReader;
 use Bungle\Framework\Import\ExcelReader\TableReader\Column;
 use Bungle\Framework\Import\ExcelReader\TableReader\Context;
 use Bungle\Framework\Import\ExcelReader\TableReader\TableReader;
+use Bungle\Framework\Import\ExcelReader\TableReader\TableReadException;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use RuntimeException;
@@ -76,6 +77,44 @@ class TableReaderTest extends MockeryTestCase
             $this->arr
         );
         // create item, onRowComplete
+    }
+
+    public function testReadRowErrors(): void
+    {
+        $this->reader->setRow(2);
+        $sheet = $this->reader->getSheet();
+        $sheet->fromArray(
+            [
+                ['lbl3', 'lbl1', '', 'lbl2'],
+                ['foo', 'bar', '', 'foobar'],
+                ['1', '2', '', '10'],
+            ],
+            null,
+            'C2'
+        );
+        $this->col2->setConverter(function ($v)
+        {
+            throw new RuntimeException(strval($v));
+        });
+
+        $r = $this->r;
+        $r->onSectionStart($this->reader);
+        $r->readRow($this->reader);
+
+        $this->reader->nextRow();
+        $r->readRow($this->reader);
+        $this->reader->nextRow();
+        $r->readRow($this->reader);
+
+        self::assertEquals([], $this->arr);
+        self::expectException(TableReadException::class);
+        self::expectExceptionMessage(<<<msg
+            导入Excel出现错误:
+
+            工作表"sheet 1"单元格F3: foobar
+            工作表"sheet 1"单元格F4: 10
+            msg);
+        $r->onSectionEnd($this->reader);
     }
 
     public function testOnRowComplete(): void

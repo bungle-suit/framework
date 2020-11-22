@@ -33,6 +33,8 @@ class TableReader implements SectionContentReaderInterface
     private int $startColIdx;
     private Context $context;
     private PropertyAccessor $propertyAccessor;
+    /** @var TableReadRowError[] */
+    private array $rowErrors;
 
     /**
      * @param ColumnInterface[] $cols
@@ -51,6 +53,7 @@ class TableReader implements SectionContentReaderInterface
 
     public function onSectionStart(ExcelReader $reader): void
     {
+        $this->rowErrors = [];
         $this->context = new Context($reader);
         $this->firstRow = true;
 
@@ -90,19 +93,35 @@ class TableReader implements SectionContentReaderInterface
             return;
         }
 
+        $hasError = false;
         $item = ($this->createItem)();
         foreach ($this->colIdxes as $i => $colIdx) {
-            $col = $this->cols[$i];
-            $v = $reader->getCellValueByColumn($colIdx);
-            $v = $col->read($v, $this->context);
-            $this->propertyAccessor->setValue($item, $col->getPath(), $v);
+            try {
+                $col = $this->cols[$i];
+                $v = $reader->getCellValueByColumn($colIdx);
+                $v = $col->read($v, $this->context);
+                $this->propertyAccessor->setValue($item, $col->getPath(), $v);
+            } catch (RuntimeException $e) {
+                $hasError = true;
+                $this->rowErrors[] = new TableReadRowError(
+                    $reader->getLocation(Coordinate::stringFromColumnIndex($colIdx)), $e
+                );
+            }
         }
-        ($this->onRowComplete)($item, $this->context);
-        ($this->appendItem)($item);
+        if (!$hasError) {
+            ($this->onRowComplete)($item, $this->context);
+            ($this->appendItem)($item);
+        }
     }
 
+    /**
+     * @throws TableReadException if any exception during reading rows.
+     */
     public function onSectionEnd(ExcelReader $reader): void
     {
+        if ($this->rowErrors) {
+            throw new TableReadException($this->rowErrors);
+        }
     }
 
     /**
