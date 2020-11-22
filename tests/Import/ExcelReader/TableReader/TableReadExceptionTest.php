@@ -8,13 +8,14 @@ use Bungle\Framework\Import\ExcelReader\ExcelLocation;
 use Bungle\Framework\Import\ExcelReader\TableReader\TableReadException;
 use Bungle\Framework\Import\ExcelReader\TableReader\TableReadRowError;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use RuntimeException;
 
 class TableReadExceptionTest extends MockeryTestCase
 {
     public function testMessage(): void
     {
-        $err1 = new TableReadRowError(new ExcelLocation('foo', 3), 'err1');
-        $err2 = new TableReadRowError(new ExcelLocation('foo', 4), 'err2');
+        $err1 = new TableReadRowError(new ExcelLocation('foo', 3), new RuntimeException('err1'));
+        $err2 = new TableReadRowError(new ExcelLocation('foo', 4), new RuntimeException('err2'));
         $ex = new TableReadException([$err1, $err2]);
         self::assertEquals(
             <<<Err
