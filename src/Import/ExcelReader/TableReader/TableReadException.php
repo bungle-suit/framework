@@ -14,6 +14,9 @@ class TableReadException extends RuntimeException
     /** @var TableReadRowError[] */
     private array $rowErrors;
 
+    /**
+     * @param TableReadRowError[] $rowErrors
+     */
     public function __construct(array $rowErrors)
     {
         parent::__construct(self::genMessage($rowErrors), 0, null);
@@ -21,6 +24,9 @@ class TableReadException extends RuntimeException
         $this->rowErrors = $rowErrors;
     }
 
+    /**
+     * @return TableReadRowError[]
+     */
     public function getRowErrors(): array
     {
         return $this->rowErrors;
