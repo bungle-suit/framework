@@ -44,6 +44,13 @@ class TableReaderTest extends MockeryTestCase
             },
             'C'
         );
+        $this->r->setCreateItem(
+            function (TableReader $reader) {
+                self::assertEquals($this->r, $reader);
+
+                return [];
+            }
+        );
     }
 
     public function test(): void
@@ -76,7 +83,8 @@ class TableReaderTest extends MockeryTestCase
             ],
             $this->arr
         );
-        // create item, onRowComplete
+
+        self::assertEquals(['lbl1', 'lbl2', 'lbl3'], $r->getColumnTexts());
     }
 
     public function testReadRowErrors(): void

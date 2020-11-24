@@ -7,6 +7,7 @@ namespace Bungle\Framework\Import\ExcelReader\TableReader;
 use Bungle\Framework\FP;
 use Bungle\Framework\Import\ExcelReader\ExcelReader;
 use Bungle\Framework\Import\ExcelReader\SectionContentReaderInterface;
+use LogicException;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use RuntimeException;
@@ -17,7 +18,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
  */
 class TableReader implements SectionContentReaderInterface
 {
-    /** @var callable(): T */
+    /** @var callable(self<T>): T */
     private $createItem;
     /** @var callable(T, Context): void */
     private $onRowComplete;
@@ -35,6 +36,8 @@ class TableReader implements SectionContentReaderInterface
     private PropertyAccessor $propertyAccessor;
     /** @var TableReadRowError[] */
     private array $rowErrors;
+    /** @var string[] */
+    private array $columnTexts;
 
     /**
      * @param ColumnInterface[] $cols
@@ -57,10 +60,10 @@ class TableReader implements SectionContentReaderInterface
         $this->context = new Context($reader);
         $this->firstRow = true;
 
-        $arrLabels = array_map(fn(ColumnInterface $col) => $col->getTitle(), $this->cols);
         $sheet = $reader->getSheet();
         $cols = Coordinate::columnIndexFromString($sheet->getHighestColumn("{$reader->getRow()}"));
         $this->colIdxes = [];
+        $headerTexts = [];
         for ($i = $this->startColIdx; $i <= $cols; $i++) {
             /** @var Cell $cell */
             $cell = $reader->getSheet()->getCellByColumnAndRow($i, $reader->getRow());
@@ -74,8 +77,11 @@ class TableReader implements SectionContentReaderInterface
             $idx = array_search($col, $this->cols, true);
             assert(is_int($idx));
             $this->colIdxes[$idx] = $i;
+            $headerTexts[$idx] = $cell->getValue();
         }
+        $this->columnTexts = $headerTexts;
 
+        $arrLabels = array_map(fn(ColumnInterface $col) => $col->getTitle(), $this->cols);
         foreach ($arrLabels as $i => $lbl) {
             if (!$this->cols[$i]->isOptional() && !isset($this->colIdxes[$i])) {
                 throw new RuntimeException(
@@ -94,7 +100,7 @@ class TableReader implements SectionContentReaderInterface
         }
 
         $hasError = false;
-        $item = ($this->createItem)();
+        $item = ($this->createItem)($this);
         foreach ($this->colIdxes as $i => $colIdx) {
             try {
                 $col = $this->cols[$i];
@@ -119,13 +125,15 @@ class TableReader implements SectionContentReaderInterface
      */
     public function onSectionEnd(ExcelReader $reader): void
     {
+        unset($this->columnTexts);
+
         if ($this->rowErrors) {
             throw new TableReadException($this->rowErrors);
         }
     }
 
     /**
-     * @phpstan-param callable(): T $createItem
+     * @phpstan-param callable(self<T>): T $createItem
      * @phpstan-return self<T>
      */
     public function setCreateItem(callable $createItem): self
@@ -137,7 +145,7 @@ class TableReader implements SectionContentReaderInterface
 
     /**
      * Callback to create the item object.
-     * @phpstan-return callable(): T
+     * @phpstan-return callable(self<T>): T
      */
     public function getCreateItem(): callable
     {
@@ -162,5 +170,17 @@ class TableReader implements SectionContentReaderInterface
         $this->onRowComplete = $onRowComplete;
 
         return $this;
+    }
+
+    /**
+     * @return string[] actual column header texts.
+     */
+    public function getColumnTexts(): array
+    {
+        if (!isset($this->columnTexts)) {
+            throw new LogicException('Header texts not available before onSectionStart()');
+        }
+
+        return $this->columnTexts;
     }
 }
