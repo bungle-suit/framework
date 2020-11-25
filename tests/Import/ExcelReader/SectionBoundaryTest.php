@@ -91,6 +91,18 @@ class SectionBoundaryTest extends MockeryTestCase
         self::assertTrue($f($this->reader));
     }
 
+    public function testRowIs(): void
+    {
+        $f = SectionBoundary::rowIs(3);
+
+        $this->reader->setRow(2);
+        self::assertFalse($f($this->reader));
+        $this->reader->nextRow();
+        self::assertTrue($f($this->reader));
+        $this->reader->nextRow();
+        self::assertFalse($f($this->reader));
+    }
+
     public function testIsEmptyRow(): void
     {
         $sheet = $this->reader->getSheet();

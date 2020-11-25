@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Import\ExcelReader;
@@ -69,7 +70,10 @@ class SectionBoundary implements SectionBoundaryInterface
      */
     public static function colIs(array $keywords, string $col = 'A'): callable
     {
-        return fn(ExcelReader $reader): bool => in_array($reader->getCellValue($col.$reader->getRow()), $keywords);
+        return fn(ExcelReader $reader): bool => in_array(
+            $reader->getCellValue($col.$reader->getRow()),
+            $keywords
+        );
     }
 
     /**
@@ -79,7 +83,17 @@ class SectionBoundary implements SectionBoundaryInterface
      */
     public static function rowAfter(int $rowIdx): callable
     {
-        return fn (ExcelReader $reader): bool => $reader->getRow() > $rowIdx;
+        return fn(ExcelReader $reader): bool => $reader->getRow() > $rowIdx;
+    }
+
+    /**
+     * Section start detect function, matched if current row index is $rowIdx.
+     *
+     * @param int $rowIdx row no start from 1
+     */
+    public static function rowIs(int $rowIdx): callable
+    {
+        return fn(ExcelReader $reader): bool => $reader->getRow() === $rowIdx;
     }
 
     /**
@@ -90,6 +104,7 @@ class SectionBoundary implements SectionBoundaryInterface
         return function (ExcelReader $reader) use ($col): bool {
             /** @var Cell $cell */
             $cell = $reader->getSheet()->getCell($col.$reader->getRow());
+
             return $cell->isMergeRangeValueCell();
         };
     }
@@ -110,6 +125,7 @@ class SectionBoundary implements SectionBoundaryInterface
                     return false;
                 }
             }
+
             return true;
         };
     }
