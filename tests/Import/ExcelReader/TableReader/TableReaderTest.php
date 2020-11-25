@@ -87,6 +87,36 @@ class TableReaderTest extends MockeryTestCase
         self::assertEquals(['lbl1', 'lbl2', 'lbl3'], $r->getColumnTexts());
     }
 
+    public function testNewIsColumnEmpty(): void
+    {
+        $r = $this->r;
+        $f = $r->newIsColumnEmpty($this->col2);
+
+        $this->reader->setRow(2);
+        $sheet = $this->reader->getSheet();
+        $sheet->fromArray(
+            [
+                ['lbl3', 'lbl1', '', 'lbl2'],
+                ['foo', 'bar', '', ''],
+                ['foo', 'bar', '', null],
+                ['1', '2', '', '10'],
+            ],
+            null,
+            'C2'
+        );
+
+        // before section start, always return false
+        self::assertFalse($f($this->reader));
+
+        // on header row, return false
+        $r->onSectionStart($this->reader);
+        $r->readRow($this->reader);
+        self::assertFalse($f($this->reader));
+        $this->reader->nextRow();
+
+        self::assertTrue($f($this->reader));
+    }
+
     public function testReadRowErrors(): void
     {
         $this->reader->setRow(2);

@@ -22,9 +22,7 @@ class TableReader implements SectionContentReaderInterface
     private $createItem;
     /** @var callable(T, Context): void */
     private $onRowComplete;
-    /**
-     * @var ColumnInterface[]
-     */
+    /** @var ColumnInterface[] */
     private array $cols;
     /** @var callable(T): void */
     private $appendItem;
@@ -182,5 +180,32 @@ class TableReader implements SectionContentReaderInterface
         }
 
         return $this->columnTexts;
+    }
+
+    /**
+     * Return a function can be used as @return callable(ExcelReader): bool
+     * @see SectionReader::getIsEmptyRow(),
+     * return true if the specific column is null / empty string.
+     *
+     */
+    public function newIsColumnEmpty(ColumnInterface $col): callable
+    {
+        $colIdx = -1;
+
+        return function (ExcelReader $reader) use ($col, &$colIdx): bool
+        {
+            if ($colIdx === -1) {
+                if (!isset($this->colIdxes)) {
+                    return false;
+                }
+
+                $idx = array_search($col, $this->cols);
+                assert($idx !== false);
+                $colIdx = $this->colIdxes[$idx];
+            }
+            $val = $reader->getCellValueByColumn($colIdx);
+
+            return $val === null || $val === '';
+        };
     }
 }
