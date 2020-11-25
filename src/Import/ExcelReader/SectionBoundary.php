@@ -99,13 +99,21 @@ class SectionBoundary implements SectionBoundaryInterface
     /**
      * Returns callback that returns true if specific column of current row is head of merged cell.
      */
-    public static function colIsMergedStart(string $col = 'A'): callable
+    public static function colIsMergedStart(string $col = 'A', int $minMergedCells = 2): callable
     {
-        return function (ExcelReader $reader) use ($col): bool {
+        return function (ExcelReader $reader) use ($minMergedCells, $col): bool {
             /** @var Cell $cell */
             $cell = $reader->getSheet()->getCell($col.$reader->getRow());
 
-            return $cell->isMergeRangeValueCell();
+            if (!$cell->isMergeRangeValueCell()) {
+                return false;
+            }
+
+            if ($minMergedCells === 2) {
+                return true;
+            }
+
+            return Coordinate::rangeDimension($cell->getMergeRange())[0] >= $minMergedCells;
         };
     }
 

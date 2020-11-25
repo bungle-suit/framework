@@ -17,7 +17,7 @@ class SectionBoundaryTest extends MockeryTestCase
     public function test(): void
     {
         $reader = Mockery::Mock(ExcelReader::class);
-        list($startHit, $endHit) = [0, 0];
+        [$startHit, $endHit] = [0, 0];
         $isStart = function (ExcelReader $r) use ($reader, &$startHit) {
             self::assertSame($r, $reader);
             $startHit ++;
@@ -131,19 +131,39 @@ class SectionBoundaryTest extends MockeryTestCase
         $sheet->setCellValue('B9', false);
     }
 
-    public function testColIsMergedStart(): void
+    /**
+     * @dataProvider colIsMergedStartProvider
+     * @param callable(ExcelReader): bool $f
+     */
+    public function testColIsMergedStart(bool $exp, string $range, int $row, callable $f): void
     {
         $sheet = $this->reader->getSheet();
-        $f = SectionBoundary::colIsMergedStart('B');
-        $sheet->getCell('B1');
-        $sheet->mergeCells('B1:C1');
-        self::assertTrue($f($this->reader));
-        $this->reader->nextRow();
-        self::assertFalse($f($this->reader));
+        $sheet->mergeCells($range);
+        $this->reader->setRow($row);
+        self::assertEquals($exp, $f($this->reader));
+    }
 
-        $sheet->getCell('B4');
-        $sheet->mergeCells('A4:C4');
-        $this->reader->setRow(4);
-        self::assertFalse($f($this->reader));
+    /**
+     * @return array<mixed[]>
+     */
+    public function colIsMergedStartProvider(): array
+    {
+        $f1 = SectionBoundary::colIsMergedStart('B');
+        $f2 = SectionBoundary::colIsMergedStart('B', 4);
+
+        return [
+            [true, 'B1:C1', 1, $f1],
+            // not merged
+            [false, 'B1:C1', 2, $f1],
+            // not merged start
+            [false, 'A3:C3', 3, $f1],
+
+            // minimal merged cells: not enough cells
+            [false, 'B5:D5', 5, $f2],
+            // minimal merged cells: equal minimal cells
+            [true, 'B6:E6', 6, $f2],
+            // minimal merged cells: more than minimal cells
+            [true, 'B7:F7', 7, $f2],
+        ];
     }
 }
