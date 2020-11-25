@@ -12,15 +12,16 @@ use Bungle\Framework\FP;
 class LabelledValue implements LabelledValueInterface
 {
     private string $path;
-    private string $label;
+    /** @var string[] */
+    private array $labels;
 
     /** @var callable(mixed, Context<T>): mixed; */
     private $converter;
 
-    public function __construct(string $path, string $label)
+    public function __construct(string $path, string ...$labels)
     {
         $this->path = $path;
-        $this->label = $label;
+        $this->labels = $labels;
         $this->converter = [FP::class, 'identity'];
     }
 
@@ -29,7 +30,7 @@ class LabelledValue implements LabelledValueInterface
      */
     public function labelMatches(string $label, Context $context): bool
     {
-        return $this->label === $label;
+        return in_array($label, $this->labels);
     }
 
     public function getPath(): string

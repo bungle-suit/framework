@@ -11,16 +11,19 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 class LabelledValueTest extends MockeryTestCase
 {
-    /** @var LabelledValue<object> */
-    private LabelledValue $lv;
     /** @var Context<object>|Mockery\MockInterface */
     private $context;
+    /** @var LabelledValue<object> */
+    private LabelledValue $lv;
+    /** @var LabelledValue<object> */
+    private LabelledValue $lvs;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->lv = new LabelledValue('prop', 'lbl');
+        $this->lvs = new LabelledValue('prop', 'lbl1', 'lbl2');
         $this->context = Mockery::mock(Context::class);
     }
 
@@ -29,6 +32,10 @@ class LabelledValueTest extends MockeryTestCase
         self::assertTrue($this->lv->labelMatches('lbl', $this->context));
         self::assertFalse($this->lv->labelMatches('lbl ', $this->context));
         self::assertFalse($this->lv->labelMatches('foo', $this->context));
+
+        self::assertTrue($this->lvs->labelMatches('lbl1', $this->context));
+        self::assertTrue($this->lvs->labelMatches('lbl2', $this->context));
+        self::assertFalse($this->lvs->labelMatches('foo', $this->context));
     }
 
     public function testRead(): void
