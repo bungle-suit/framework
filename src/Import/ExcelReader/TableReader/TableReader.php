@@ -52,6 +52,14 @@ class TableReader implements SectionContentReaderInterface
         };
     }
 
+    /**
+     * @return ColumnInterface[]
+     */
+    public function getColumns(): array
+    {
+        return $this->cols;
+    }
+
     public function onSectionStart(ExcelReader $reader): void
     {
         $this->rowErrors = [];
