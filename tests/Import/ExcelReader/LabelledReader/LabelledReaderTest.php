@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Import\ExcelReader\LabelledReader;
@@ -18,13 +19,13 @@ class LabelledReaderTest extends MockeryTestCase
         $book = new Spreadsheet();
         $reader = new ExcelReader($book);
         $sheet = $reader->getSheet();
-        $obj = (object)['foo1'=> '', 'bar' => '', 'foobar' => ''];
+        $obj = (object)['foo1' => '', 'bar' => '', 'foobar' => ''];
         $context = Mockery::type(Context::class);
         /** @phpstan-var LabelledReader<object> $r */
         $r = new LabelledReader($obj, 2, 'C');
-        $r->defineValue($lv1 = Mockery::mock(LabelledValueInterface::class));
-        $r->defineValue($lv2 = Mockery::mock(LabelledValueInterface::class));
-        $r->defineValue($lv3 = Mockery::mock(LabelledValueInterface::class));
+        $r->defineValue($lv1 = Mockery::mock(LabelledValueInterface::class))
+          ->defineValue($lv2 = Mockery::mock(LabelledValueInterface::class))
+          ->defineValue($lv3 = Mockery::mock(LabelledValueInterface::class));
         $lv1->allows('labelMatches')->with('foo', $context)->andReturnTrue();
         $lv2->allows('labelMatches')->with('bar', $context)->andReturnTrue();
         $lv3->allows('labelMatches')->with('foobar', $context)->andReturnTrue();

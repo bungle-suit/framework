@@ -38,10 +38,12 @@ class LabelledReader implements SectionContentReaderInterface
 
     /**
      * @phpstan-param LabelledValueInterface<mixed> $labelledValue
+     * @phpstan-return self<T>
      */
-    public function defineValue(LabelledValueInterface $labelledValue): void
+    public function defineValue(LabelledValueInterface $labelledValue): self
     {
         $this->values[] = $labelledValue;
+        return $this;
     }
 
     public function onSectionStart(ExcelReader $reader): void
