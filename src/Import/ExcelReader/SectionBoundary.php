@@ -105,6 +105,11 @@ class SectionBoundary implements SectionBoundaryInterface
             /** @var Cell $cell */
             $cell = $reader->getSheet()->getCell($col.$reader->getRow());
 
+            $range = $cell->getMergeRange();
+            if ($range === false) {
+                return false;
+            }
+
             if (!$cell->isMergeRangeValueCell()) {
                 return false;
             }
@@ -113,7 +118,7 @@ class SectionBoundary implements SectionBoundaryInterface
                 return true;
             }
 
-            return Coordinate::rangeDimension($cell->getMergeRange())[0] >= $minMergedCells;
+            return Coordinate::rangeDimension($range)[0] >= $minMergedCells;
         };
     }
 
