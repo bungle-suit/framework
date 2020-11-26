@@ -305,9 +305,16 @@ class FPTest extends TestCase
 
     public function testLast(): void
     {
-        self::assertNull(FP::last([]));
+        self::assertNull(FP::last([null]));
         self::assertEquals(1, FP::last([1]));
         self::assertEquals(2, FP::last([1, 2]));
+    }
+
+    public function testLastRaiseExceptionOnEmpty(): void
+    {
+        $this->expectException(LogicException::class);
+
+        FP::last([]);
     }
 
     public function testFilter(): void

@@ -20,7 +20,7 @@ class DefaultStyleTablePlugin extends AbstractTablePlugin
     {
         $sheet = $context->getWriter()->getSheet();
         /** @var ExcelColumn $lastCol */
-        $lastCol = FP::notNull(FP::last($context->getColumns()));
+        $lastCol = FP::last($context->getColumns());
         $sheet->getStyleByColumnAndRow(
             $context->getStartCol(),
             $context->getRowIndex(),
@@ -49,7 +49,7 @@ class DefaultStyleTablePlugin extends AbstractTablePlugin
         $sheet = $context->getWriter()->getSheet();
         $startCol = $context->getColumnName($cols[0]);
         /** @var ExcelColumn $lastCol */
-        $lastCol = FP::notNull(FP::last($cols));
+        $lastCol = FP::last($cols);
         $endCol = $context->getColumnEndName($lastCol);
         $endRow = $context->getRowIndex() - 1;
         $sheet->getStyle("$startCol{$context->getStartRow()}:$endCol{$endRow}")
