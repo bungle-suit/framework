@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Model\ExtAttribute;
@@ -20,5 +21,15 @@ class AttributeUtilsTest extends MockeryTestCase
         // attribute exist but true
         $attr->setBool(true);
         self::assertTrue(AttributeUtils::getBoolAttribute([$attr], 'foo'));
+    }
+
+    public function testGetFloatAttribute(): void
+    {
+        // attribute not exist
+        self::assertEquals(0.0, AttributeUtils::getFloatAttribute([], 'foo'));
+
+        // attribute exist but false
+        $attr = new TestAttribute('foo', '123.45');
+        self::assertEquals(123.45, AttributeUtils::getFloatAttribute([$attr], 'foo'));
     }
 }
