@@ -65,4 +65,14 @@ trait AttributeTrait
     {
         $this->setValue($v ? '1' : '');
     }
+
+    public function asInt(): int
+    {
+        return intval($this->value);
+    }
+
+    public function setInt(int $v): void
+    {
+        $this->value = $v === 0 ? '' : strval($v);
+    }
 }

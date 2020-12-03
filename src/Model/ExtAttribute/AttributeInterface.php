@@ -22,4 +22,7 @@ interface AttributeInterface
      */
     public function asBool(): bool;
     public function setBool(bool $v): void;
+
+    public function asInt(): int;
+    public function setInt(int $v): void;
 }

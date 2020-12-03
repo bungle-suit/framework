@@ -9,21 +9,44 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 
 class AttributeTraitTest extends MockeryTestCase
 {
-    public function testAsBool(): void
+    /** @var AttributeInterface  */
+    private $attr;
+
+    protected function setUp(): void
     {
-        $attr = new class() implements AttributeInterface {
+        parent::setUp();
+
+        $this->attr = new class() implements AttributeInterface {
             use AttributeTrait;
         };
+    }
 
-        $attr->setBool(true);
-        self::assertTrue($attr->asBool());
-        self::assertEquals('1', $attr->getValue());
+    public function testAsBool(): void
+    {
+        $this->attr->setBool(true);
+        self::assertTrue($this->attr->asBool());
+        self::assertEquals('1', $this->attr->getValue());
 
-        $attr->setBool(false);
-        self::assertFalse($attr->asBool());
-        self::assertEquals('', $attr->getValue());
+        $this->attr->setBool(false);
+        self::assertFalse($this->attr->asBool());
+        self::assertEquals('', $this->attr->getValue());
 
-        $attr->setValue('');
-        self::assertFalse($attr->asBool());
+        $this->attr->setValue('');
+        self::assertFalse($this->attr->asBool());
+    }
+
+    public function testAsInt(): void
+    {
+        self::assertEquals(0, $this->attr->asInt());
+
+        $this->attr->setInt(100);
+        self::assertEquals(100, $this->attr->asInt());
+        self::assertSame('100', $this->attr->getValue());
+
+        $this->attr->setValue('abc');
+        self::assertEquals(0, $this->attr->asInt());
+
+        $this->attr->setInt(0);
+        self::assertSame('', $this->attr->getValue());
     }
 }
