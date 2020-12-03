@@ -75,4 +75,14 @@ trait AttributeTrait
     {
         $this->value = $v === 0 ? '' : strval($v);
     }
+
+    public function asFloat(): float
+    {
+        return floatval($this->value);
+    }
+
+    public function setFloat(float $v): void
+    {
+        $this->value = $v === 0.0 ? '' : strval($v);
+    }
 }

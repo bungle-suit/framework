@@ -49,4 +49,19 @@ class AttributeTraitTest extends MockeryTestCase
         $this->attr->setInt(0);
         self::assertSame('', $this->attr->getValue());
     }
+
+    public function testAsFloat(): void
+    {
+        self::assertSame(0.0, $this->attr->asFloat());
+
+        $this->attr->setFloat(100.5);
+        self::assertEquals(100.5, $this->attr->asFloat());
+        self::assertSame('100.5', $this->attr->getValue());
+
+        $this->attr->setValue('abc');
+        self::assertEquals(0, $this->attr->asFloat());
+
+        $this->attr->setFloat(0);
+        self::assertSame('', $this->attr->getValue());
+    }
 }

@@ -25,4 +25,7 @@ interface AttributeInterface
 
     public function asInt(): int;
     public function setInt(int $v): void;
+
+    public function asFloat(): float;
+    public function setFloat(float $v): void;
 }
