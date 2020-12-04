@@ -22,4 +22,9 @@ interface FSInterface
     public function removeFile(string $path): void;
 
     public function filesize(string $path): int;
+
+    /**
+     * Read file content.
+     */
+    public function readFile(string $path): string;
 }

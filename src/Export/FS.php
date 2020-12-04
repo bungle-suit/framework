@@ -35,4 +35,13 @@ class FS implements FSInterface
     {
         return ErrorHandler::call(fn () => filesize($path));
     }
+
+    public function readFile(string $path): string
+    {
+        $r = file_get_contents($path);
+        if ($r === false) {
+            throw new RuntimeException("Read file %path failed");
+        }
+        return $r;
+    }
 }
