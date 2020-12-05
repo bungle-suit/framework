@@ -185,7 +185,8 @@ class FP
      * @phpstan-param (callable(T): bool)|null $fIsUninitialized accept the value to tell the value
      * is uninitialized, by default use `isEmpty().
      *
-     * @return mixed returns &v
+     * @return mixed returns $v
+     * @phpstan-return T
      */
     public static function initVariable(&$v, callable $fInit, callable $fIsUninitialized = null)
     {
