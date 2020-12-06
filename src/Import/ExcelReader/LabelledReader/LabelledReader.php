@@ -17,7 +17,7 @@ class LabelledReader implements SectionContentReaderInterface
     /** @phpstan-var T */
     private $obj;
     private int $maxValuesPerRow;
-    /** @var LabelledValueInterface<mixed>[] */
+    /** @phpstan-var LabelledValue<T>[] */
     private array $values;
     /** @phpstan-var Context<T> */
     private Context $context;
@@ -37,10 +37,10 @@ class LabelledReader implements SectionContentReaderInterface
     }
 
     /**
-     * @phpstan-param LabelledValueInterface<mixed> $labelledValue
+     * @phpstan-param LabelledValue<T> $labelledValue
      * @phpstan-return self<T>
      */
-    public function defineValue(LabelledValueInterface $labelledValue): self
+    public function defineValue(LabelledValue $labelledValue): self
     {
         $this->values[] = $labelledValue;
         return $this;
@@ -63,7 +63,7 @@ class LabelledReader implements SectionContentReaderInterface
             $v = $reader->getCellValueByColumn($colIdx);
             $colIdx += self::getCellWidth($reader, $colIdx);
             foreach ($this->values as $value) {
-                if ($value->labelMatches($lbl, $context)) {
+                if ($value->labelMatches($lbl)) {
                     $v = $value->read($v, $context);
                     $this->propertyAccessor->setValue($this->obj, $value->getPath(), $v);
                     break;

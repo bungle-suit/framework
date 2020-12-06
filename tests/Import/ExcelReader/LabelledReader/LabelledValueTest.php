@@ -29,13 +29,13 @@ class LabelledValueTest extends MockeryTestCase
 
     public function testLabelMatches(): void
     {
-        self::assertTrue($this->lv->labelMatches('lbl', $this->context));
-        self::assertFalse($this->lv->labelMatches('lbl ', $this->context));
-        self::assertFalse($this->lv->labelMatches('foo', $this->context));
+        self::assertTrue($this->lv->labelMatches('lbl'));
+        self::assertFalse($this->lv->labelMatches('lbl '));
+        self::assertFalse($this->lv->labelMatches('foo'));
 
-        self::assertTrue($this->lvs->labelMatches('lbl1', $this->context));
-        self::assertTrue($this->lvs->labelMatches('lbl2', $this->context));
-        self::assertFalse($this->lvs->labelMatches('foo', $this->context));
+        self::assertTrue($this->lvs->labelMatches('lbl1'));
+        self::assertTrue($this->lvs->labelMatches('lbl2'));
+        self::assertFalse($this->lvs->labelMatches('foo'));
     }
 
     public function testRead(): void

@@ -6,16 +6,15 @@ namespace Bungle\Framework\Import\ExcelReader\LabelledReader;
 use Bungle\Framework\FP;
 
 /**
- * @phpstan-template T of object
- * @implements LabelledValueInterface<T>
+ * @phpstan-template T
  */
-class LabelledValue implements LabelledValueInterface
+class LabelledValue
 {
     private string $path;
     /** @var string[] */
     private array $labels;
 
-    /** @var callable(mixed, Context<T>): mixed; */
+    /** @var callable(mixed, Context<T>): mixed */
     private $converter;
 
     public function __construct(string $path, string ...$labels)
@@ -25,10 +24,7 @@ class LabelledValue implements LabelledValueInterface
         $this->converter = [FP::class, 'identity'];
     }
 
-    /**
-     * @phpstan-param Context<T> $context
-     */
-    public function labelMatches(string $label, Context $context): bool
+    public function labelMatches(string $label): bool
     {
         return in_array($label, $this->labels);
     }
@@ -39,7 +35,9 @@ class LabelledValue implements LabelledValueInterface
     }
 
     /**
+     * @param mixed $val
      * @phpstan-param Context<T> $context
+     * @return mixed
      */
     public function read($val, Context $context)
     {

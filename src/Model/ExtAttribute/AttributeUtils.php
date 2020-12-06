@@ -25,7 +25,7 @@ class AttributeUtils
     /**
      * Get float attribute value.
      * @param AttributeInterface[] $attributes
-     * @return 0 if attribute not exist.
+     * return 0 if attribute not exist.
      */
     public static function getFloatAttribute(array $attributes, string $attrName): float
     {
@@ -39,6 +39,7 @@ class AttributeUtils
 
     /**
      * @template T
+     * @param AttributeInterface[] $attributes
      * @phpstan-param T $defValue
      * @phpstan-param callable(AttributeInterface): T $getValue
      * @phpstan-return T

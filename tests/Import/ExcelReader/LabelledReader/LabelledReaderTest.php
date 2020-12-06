@@ -7,7 +7,7 @@ namespace Bungle\Framework\Tests\Import\ExcelReader\LabelledReader;
 use Bungle\Framework\Import\ExcelReader\ExcelReader;
 use Bungle\Framework\Import\ExcelReader\LabelledReader\Context;
 use Bungle\Framework\Import\ExcelReader\LabelledReader\LabelledReader;
-use Bungle\Framework\Import\ExcelReader\LabelledReader\LabelledValueInterface;
+use Bungle\Framework\Import\ExcelReader\LabelledReader\LabelledValue;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -23,12 +23,12 @@ class LabelledReaderTest extends MockeryTestCase
         $context = Mockery::type(Context::class);
         /** @phpstan-var LabelledReader<object> $r */
         $r = new LabelledReader($obj, 2, 'C');
-        $r->defineValue($lv1 = Mockery::mock(LabelledValueInterface::class))
-          ->defineValue($lv2 = Mockery::mock(LabelledValueInterface::class))
-          ->defineValue($lv3 = Mockery::mock(LabelledValueInterface::class));
-        $lv1->allows('labelMatches')->with('foo', $context)->andReturnTrue();
-        $lv2->allows('labelMatches')->with('bar', $context)->andReturnTrue();
-        $lv3->allows('labelMatches')->with('foobar', $context)->andReturnTrue();
+        $r->defineValue($lv1 = Mockery::mock(LabelledValue::class))
+          ->defineValue($lv2 = Mockery::mock(LabelledValue::class))
+          ->defineValue($lv3 = Mockery::mock(LabelledValue::class));
+        $lv1->allows('labelMatches')->with('foo')->andReturnTrue();
+        $lv2->allows('labelMatches')->with('bar')->andReturnTrue();
+        $lv3->allows('labelMatches')->with('foobar')->andReturnTrue();
         $lv1->allows('labelMatches')->andReturnFalse();
         $lv2->allows('labelMatches')->andReturnFalse();
         $lv3->allows('labelMatches')->andReturnFalse();
