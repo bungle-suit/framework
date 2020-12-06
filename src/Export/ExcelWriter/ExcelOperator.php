@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Export\ExcelWriter;
@@ -68,6 +69,7 @@ class ExcelOperator
     public function getCellValue(string $loc)
     {
         $cell = $this->sheet->getCell($loc, false);
+
         return self::cellValue($cell);
     }
 
@@ -77,6 +79,7 @@ class ExcelOperator
     public function getCellValueByColumn(int $col)
     {
         $cell = $this->sheet->getCellByColumnAndRow($col, $this->row, false);
+
         return self::cellValue($cell);
     }
 
@@ -86,5 +89,15 @@ class ExcelOperator
     private static function cellValue(?Cell $cell)
     {
         return $cell === null ? null : $cell->getCalculatedValue();
+    }
+
+    /**
+     * @param mixed $v
+     */
+    public function setCellValue(int $col, $v): void
+    {
+        $cell = $this->sheet->getCellByColumnAndRow($col, $this->row, true);
+        assert($cell !== null);
+        $cell->setValue($v);
     }
 }

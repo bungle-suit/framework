@@ -1,10 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Import\ExcelReader\LabelledReader;
 
 use Bungle\Framework\Import\ExcelReader\ExcelReader;
 use Bungle\Framework\Import\ExcelReader\SectionContentReaderInterface;
+use LogicException;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
@@ -43,6 +45,7 @@ class LabelledReader implements SectionContentReaderInterface
     public function defineValue(LabelledValue $labelledValue): self
     {
         $this->values[] = $labelledValue;
+
         return $this;
     }
 
@@ -61,14 +64,30 @@ class LabelledReader implements SectionContentReaderInterface
             $lbl = (string)($reader->getCellValueByColumn($colIdx));
             $colIdx += self::getCellWidth($reader, $colIdx);
             $v = $reader->getCellValueByColumn($colIdx);
-            $colIdx += self::getCellWidth($reader, $colIdx);
+            /**
+             * @var LabelledValue $value
+             * @phpstan-var LabelledValue<T> $value
+             */
             foreach ($this->values as $value) {
                 if ($value->labelMatches($lbl)) {
-                    $v = $value->read($v, $context);
-                    $this->propertyAccessor->setValue($this->obj, $value->getPath(), $v);
-                    break;
+                    switch ($value->getMode()) {
+                        case LabelledValue::MODE_READ:
+                            $v = $value->read($v, $context);
+                            $this->propertyAccessor->setValue($this->obj, $value->getPath(), $v);
+                            break;
+                        case LabelledValue::MODE_WRITE:
+                            $v = $this->propertyAccessor->getValue($this->obj, $value->getPath());
+                            $v = ($value->getWriteConverter())($v, $context);
+                            $reader->setCellValue($colIdx, $v);
+                            break;
+                        default:
+                            throw new LogicException(
+                                'Unknown LabelledValue mode: '.$value->getMode()
+                            );
+                    }
                 }
             }
+            $colIdx += self::getCellWidth($reader, $colIdx);
         }
     }
 

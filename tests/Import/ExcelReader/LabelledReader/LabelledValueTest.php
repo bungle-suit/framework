@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Import\ExcelReader\LabelledReader;
 
+use Bungle\Framework\FP;
 use Bungle\Framework\Import\ExcelReader\LabelledReader\Context;
 use Bungle\Framework\Import\ExcelReader\LabelledReader\LabelledValue;
 use Mockery;
@@ -46,5 +47,14 @@ class LabelledValueTest extends MockeryTestCase
         // use custom converter
         $this->lv->setConverter(fn($v) => intval($v));
         self::assertEquals(1, $this->lv->read('1', $this->context));
+    }
+
+    public function testWriteMode(): void
+    {
+        self::assertEquals(LabelledValue::MODE_READ, $this->lv->getMode());
+
+        $this->lv->setWriteMode();
+        self::assertEquals(LabelledValue::MODE_WRITE, $this->lv->getMode());
+        self::assertEquals([FP::class, 'identity'], $this->lv->getWriteConverter());
     }
 }

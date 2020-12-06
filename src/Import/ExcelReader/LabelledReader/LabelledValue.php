@@ -17,6 +17,13 @@ class LabelledValue
     /** @var callable(mixed, Context<T>): mixed */
     private $converter;
 
+    public const MODE_READ = 0;
+    public const MODE_WRITE = 1;
+
+    private int $mode = self::MODE_READ;
+    /** @var callable(mixed, Context<T>): mixed */
+    private $writeConverter;
+
     public function __construct(string $path, string ...$labels)
     {
         $this->path = $path;
@@ -64,5 +71,38 @@ class LabelledValue
         $this->converter = $converter;
 
         return $this;
+    }
+
+    /**
+     * Read or write mode.
+     */
+    public function getMode(): int
+    {
+        return $this->mode;
+    }
+
+    /**
+     * Enable write mode.
+     *
+     * Note: currently no read/write mode, after setWriteMode(), current value
+     * will act as write only labelled value.
+     *
+     * @param callable(mixed, Context<T>): mixed $fWriteConverter
+     */
+    public function setWriteMode(callable $fWriteConverter = null): void
+    {
+        $this->mode = self::MODE_WRITE;
+        $this->writeConverter = $fWriteConverter ?? [FP::class, 'identity'];
+    }
+
+    /**
+     * Write converter converts object value to excel value, if returns null,
+     * skip set cell value, return empty string, if want set the cell to empty.
+     *
+     * @return callable(mixed, Context<T>): mixed
+     */
+    public function getWriteConverter(): callable
+    {
+        return $this->writeConverter;
     }
 }

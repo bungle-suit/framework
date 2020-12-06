@@ -19,25 +19,34 @@ class LabelledReaderTest extends MockeryTestCase
         $book = new Spreadsheet();
         $reader = new ExcelReader($book);
         $sheet = $reader->getSheet();
-        $obj = (object)['foo1' => '', 'bar' => '', 'foobar' => ''];
+        $obj = (object)['foo1' => '', 'bar' => '', 'foobar' => '', 'name'=>123];
         $context = Mockery::type(Context::class);
         /** @phpstan-var LabelledReader<object> $r */
         $r = new LabelledReader($obj, 2, 'C');
         $r->defineValue($lv1 = Mockery::mock(LabelledValue::class))
           ->defineValue($lv2 = Mockery::mock(LabelledValue::class))
-          ->defineValue($lv3 = Mockery::mock(LabelledValue::class));
+          ->defineValue($lv3 = Mockery::mock(LabelledValue::class))
+          ->defineValue($lv4 = Mockery::mock(LabelledValue::class));
         $lv1->allows('labelMatches')->with('foo')->andReturnTrue();
         $lv2->allows('labelMatches')->with('bar')->andReturnTrue();
         $lv3->allows('labelMatches')->with('foobar')->andReturnTrue();
+        $lv4->allows('labelMatches')->with('fill')->andReturnTrue();
         $lv1->allows('labelMatches')->andReturnFalse();
         $lv2->allows('labelMatches')->andReturnFalse();
         $lv3->allows('labelMatches')->andReturnFalse();
+        $lv4->allows('labelMatches')->andReturnFalse();
+        $lv1->expects('getMode')->andReturn(LabelledValue::MODE_READ);
+        $lv2->expects('getMode')->andReturn(LabelledValue::MODE_READ);
+        $lv3->expects('getMode')->andReturn(LabelledValue::MODE_READ);
+        $lv4->expects('getMode')->andReturn(LabelledValue::MODE_WRITE);
         $lv1->expects('read')->with('fooValue', $context)->andReturn('alter fooValue');
         $lv2->expects('read')->with('barValue', $context)->andReturn('barValue');
         $lv3->expects('read')->with('foobarValue', $context)->andReturn('foobarValue');
+        $lv4->expects('getWriteConverter')->with()->andReturn(fn ($v, Context $context) => 456);
         $lv1->allows('getPath')->andReturn('foo1');
         $lv2->allows('getPath')->andReturn('bar');
         $lv3->allows('getPath')->andReturn('foobar');
+        $lv4->allows('getPath')->andReturn('name');
 
         // case 1: no label matches
         $sheet->setCellValue('C2', 'unknown');
@@ -60,8 +69,14 @@ class LabelledReaderTest extends MockeryTestCase
         // case 5: ignore empty line
         $sheet->setCellValue('I4', '');
 
+        // write
+        $sheet->setCellValue('C5', 'fill');
+
         $r->onSectionStart($reader);
         $reader->setRow(2);
+        $r->readRow($reader);
+        $reader->nextRow();
+
         $r->readRow($reader);
         $reader->nextRow();
 
@@ -79,6 +94,11 @@ class LabelledReaderTest extends MockeryTestCase
         $lv1->expects('onSectionEnd')->with($context);
         $lv2->expects('onSectionEnd')->with($context);
         $lv3->expects('onSectionEnd')->with($context);
+        $lv4->expects('onSectionEnd')->with($context);
         $r->onSectionEnd($reader);
+
+        $c = $sheet->getCell('D5', false);
+        self::assertNotNull($c);
+        self::assertEquals(456, $c->getValue());
     }
 }
