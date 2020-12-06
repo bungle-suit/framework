@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Import\ExcelReader\LabelledReader;
@@ -89,10 +90,12 @@ class LabelledValue
      *
      * @param callable(mixed, Context<T>): mixed $fWriteConverter
      */
-    public function setWriteMode(callable $fWriteConverter = null): void
+    public function setWriteMode(callable $fWriteConverter = null): self
     {
         $this->mode = self::MODE_WRITE;
         $this->writeConverter = $fWriteConverter ?? [FP::class, 'identity'];
+
+        return $this;
     }
 
     /**
