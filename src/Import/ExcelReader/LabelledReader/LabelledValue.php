@@ -25,6 +25,8 @@ class LabelledValue
     /** @var callable(mixed, Context<T>): mixed */
     private $writeConverter;
 
+    private string $cellFormat = '';
+
     public function __construct(string $path, string ...$labels)
     {
         $this->path = $path;
@@ -107,5 +109,20 @@ class LabelledValue
     public function getWriteConverter(): callable
     {
         return $this->writeConverter;
+    }
+
+    /**
+     * Set cell format for write mode, empty string means no explicit format.
+     */
+    public function getCellFormat(): string
+    {
+        return $this->cellFormat;
+    }
+
+    public function setCellFormat(string $cellFormat): self
+    {
+        $this->cellFormat = $cellFormat;
+
+        return $this;
     }
 }

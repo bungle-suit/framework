@@ -79,6 +79,10 @@ class LabelledReader implements SectionContentReaderInterface
                             $v = $this->propertyAccessor->getValue($this->obj, $value->getPath());
                             $v = ($value->getWriteConverter())($v, $context);
                             $reader->setCellValue($colIdx, $v);
+                            if ($fmt = $value->getCellFormat()) {
+                                $cell = $reader->getSheet()->getCellByColumnAndRow($colIdx, $reader->getRow());
+                                $cell->getStyle()->getNumberFormat()->setFormatCode($fmt);
+                            }
                             break;
                         default:
                             throw new LogicException(

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Import\ExcelReader\LabelledReader;
 
+use Bungle\Framework\Export\ExcelWriter\TablePlugins\NumberFormatTablePlugin;
 use Bungle\Framework\Import\ExcelReader\ExcelReader;
 use Bungle\Framework\Import\ExcelReader\LabelledReader\Context;
 use Bungle\Framework\Import\ExcelReader\LabelledReader\LabelledReader;
@@ -11,6 +12,7 @@ use Bungle\Framework\Import\ExcelReader\LabelledReader\LabelledValue;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class LabelledReaderTest extends MockeryTestCase
 {
@@ -31,6 +33,7 @@ class LabelledReaderTest extends MockeryTestCase
         $lv2->allows('labelMatches')->with('bar')->andReturnTrue();
         $lv3->allows('labelMatches')->with('foobar')->andReturnTrue();
         $lv4->allows('labelMatches')->with('fill')->andReturnTrue();
+        $lv4->allows('getCellFormat')->andReturn(NumberFormat::FORMAT_TEXT);
         $lv1->allows('labelMatches')->andReturnFalse();
         $lv2->allows('labelMatches')->andReturnFalse();
         $lv3->allows('labelMatches')->andReturnFalse();
@@ -100,5 +103,6 @@ class LabelledReaderTest extends MockeryTestCase
         $c = $sheet->getCell('D5', false);
         self::assertNotNull($c);
         self::assertEquals(456, $c->getValue());
+        self::assertEquals(NumberFormat::FORMAT_TEXT, $c->getStyle()->getNumberFormat()->getFormatCode());
     }
 }
