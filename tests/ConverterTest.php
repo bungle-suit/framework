@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests;
@@ -67,5 +68,24 @@ class ConverterTest extends TestCase
         self::assertNull(Converter::parseNullDateTime(null));
         self::assertNull(Converter::parseNullDateTime(''));
         self::assertEquals(new DateTime('2020-09-18'), Converter::parseNullDateTime('2020-09-18'));
+    }
+
+    /**
+     * @dataProvider formatYMDProvider
+     */
+    public function testFormatYMD(string $exp, ?DateTime $d): void
+    {
+        self::assertEquals($exp, Converter::formatYMD($d));
+    }
+
+    /**
+     * @return array<mixed[]>
+     */
+    public function formatYMDProvider(): array
+    {
+        return [
+            ['', null],
+            ['2020-09-03', new DateTime('2020-09-03')],
+        ];
     }
 }

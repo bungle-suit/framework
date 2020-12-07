@@ -53,6 +53,15 @@ class Converter
         return $v->format('yy-m');
     }
 
+    public static function formatYMD(?DateTimeInterface $v): string
+    {
+        if ($v === null) {
+            return '';
+        }
+
+        return $v->format('yy-m-d');
+    }
+
     private const HALF_SPACE = ' ';
     private const FULL_SPACE = '　';
 
