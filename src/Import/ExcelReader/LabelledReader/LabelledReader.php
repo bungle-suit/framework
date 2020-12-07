@@ -81,6 +81,7 @@ class LabelledReader implements SectionContentReaderInterface
                             $reader->setCellValue($colIdx, $v);
                             if ($fmt = $value->getCellFormat()) {
                                 $cell = $reader->getSheet()->getCellByColumnAndRow($colIdx, $reader->getRow());
+                                assert($cell !== null);
                                 $cell->getStyle()->getNumberFormat()->setFormatCode($fmt);
                             }
                             break;

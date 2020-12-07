@@ -91,6 +91,7 @@ class LabelledValue
      * will act as write only labelled value.
      *
      * @param callable(mixed, Context<T>): mixed $fWriteConverter
+     * @phpstan-return self<T>
      */
     public function setWriteMode(callable $fWriteConverter = null): self
     {
@@ -119,6 +120,9 @@ class LabelledValue
         return $this->cellFormat;
     }
 
+    /**
+     * @phpstan-return self<T>
+     */
     public function setCellFormat(string $cellFormat): self
     {
         $this->cellFormat = $cellFormat;
