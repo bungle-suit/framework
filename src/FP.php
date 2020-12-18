@@ -346,25 +346,45 @@ class FP
 
     /**
      * @param callable $a
-     * @param callable $b
-     * @return callable bool
+     * @param array<callable(mixed...): bool> $b
+     * @return callable(mixed...): bool bool
      */
-    public static function and(callable $a, callable $b): callable
+    public static function and(callable $a, ...$b): callable
     {
         return function (...$args) use ($b, $a) {
-            return $a(...$args) && $b(...$args);
+            if (!$a(...$args)) {
+                return false;
+            }
+            /** @var callable(mixed...):bool $f */
+            foreach ($b as $f) {
+                if (!$f(...$args)) {
+                    return false;
+                }
+            }
+
+            return true;
         };
     }
 
     /**
      * @param callable(mixed...): bool $a
-     * @param callable(mixed...): bool $b
+     * @param array<callable(mixed...): bool> $b
      * @return callable(mixed...): bool
      */
-    public static function or(callable $a, callable $b): callable
+    public static function or(callable $a, ...$b): callable
     {
         return function (...$args) use ($b, $a) {
-            return $a(...$args) || $b(...$args);
+            if ($a(...$args)) {
+                return true;
+            }
+            /** @var callable(mixed...):bool $f */
+            foreach ($b as $f) {
+                if ($f(...$args)) {
+                    return true;
+                }
+            }
+
+            return false;
         };
     }
 
@@ -391,6 +411,7 @@ class FP
         if ($lastIdx < 0) {
             throw new LogicException('No last element, collection is empty');
         }
+
         return $arr[$lastIdx];
     }
 
@@ -434,8 +455,9 @@ class FP
         $r = 0;
         /** @noinspection PhpUnusedLocalVariableInspection */
         foreach ($iterable as $_) {
-            $r ++;
+            $r++;
         }
+
         return $r;
     }
 }
