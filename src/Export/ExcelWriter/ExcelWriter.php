@@ -70,10 +70,12 @@ class ExcelWriter extends ExcelOperator
 
     /**
      * @param ExcelColumn[] $cols ,
-     * @param TablePluginInterface[] $userPlugins
+     * @param array<string, mixed> $options
      */
-    private static function createPlugin(array $cols, array $userPlugins): TablePluginInterface
+    private static function createPlugins(array $cols, array $options): TablePluginInterface
     {
+        /** @var array<TablePluginInterface> $userPlugins */
+        $userPlugins =$options['plugins'];
         foreach ($cols as $col) {
             if ($col->formulaEnabled()) {
                 $userPlugins[] = new FormulaColumnTablePlugin();
@@ -95,7 +97,9 @@ class ExcelWriter extends ExcelOperator
             }
         }
 
-        $userPlugins[] = new DefaultStyleTablePlugin();
+        if (!$options['disableDefaultStyle']) {
+            $userPlugins[] = new DefaultStyleTablePlugin();
+        }
 
         return new CompositeTablePlugin($userPlugins);
     }
@@ -112,7 +116,7 @@ class ExcelWriter extends ExcelOperator
         array $options = []
     ): void {
         $options = self::resolveTableOptions($options);
-        $plugin = self::createPlugin($cols, $options['plugins']);
+        $plugin = self::createPlugins($cols, $options);
 
         $sheet = $this->sheet;
         $startRow = $this->row;
@@ -254,6 +258,9 @@ class ExcelWriter extends ExcelOperator
                     return is_array($val) ? $val : [$val];
                 }
             );
+        $resolver
+            ->setDefault('disableDefaultStyle', false)
+            ->setAllowedTypes('disableDefaultStyle', 'bool');
 
         return $resolver->resolve($options);
     }
