@@ -345,7 +345,7 @@ class FP
     }
 
     /**
-     * @param callable $a
+     * @param callable(mixed...): bool $a
      * @param array<callable(mixed...): bool> $b
      * @return callable(mixed...): bool bool
      */
