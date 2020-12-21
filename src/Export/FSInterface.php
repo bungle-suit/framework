@@ -25,6 +25,9 @@ interface FSInterface
 
     /**
      * Read file content.
+     *
+     * @param string $charset convert file content from $charset to UTF-8 before return,
+     * if specified.
      */
-    public function readFile(string $path): string;
+    public function readFile(string $path, string $charset = ''): string;
 }
