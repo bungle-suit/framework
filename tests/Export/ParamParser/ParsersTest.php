@@ -143,6 +143,18 @@ class ParsersTest extends MockeryTestCase
         self::assertEquals(['foo' => 100], $this->successParse($p));
     }
 
+    public function testFromContextAttribute(): void
+    {
+        $f = Parsers::fromContextAttribute('foo', 'bar');
+
+        // use default if not exist
+        self::assertEquals('bar', $f($this->ctx));
+
+        // exist in context
+        $this->ctx->set('foo', 'blah');
+        self::assertEquals('blah', $f($this->ctx));
+    }
+
     /**
      * @phpstan-param callable(ExportContext): (mixed[]|string|null) $parser
      * @return array<string, mixed>

@@ -39,6 +39,17 @@ class Parsers
     }
 
     /**
+     * Parse parameter from ExportContext attribute.
+     *
+     * @param mixed $default
+     * @return callable(ExportContext): mixed
+     */
+    public static function fromContextAttribute(string $attrName, $default = null): callable
+    {
+        return fn (ExportContext $context) => $context->get($attrName, $default);
+    }
+
+    /**
      * Create value converter that get param from request argument (query string or post).
      *
      * If $paramName not exist in request, null value saved into context.
