@@ -148,11 +148,14 @@ class ParsersTest extends MockeryTestCase
         $f = Parsers::fromContextAttribute('foo', 'bar');
 
         // use default if not exist
-        self::assertEquals('bar', $f($this->ctx));
+        self::assertNull($f($this->ctx));
+        self::assertEquals('bar', $this->ctx->get('foo'));
+
 
         // exist in context
         $this->ctx->set('foo', 'blah');
-        self::assertEquals('blah', $f($this->ctx));
+        self::assertNull($f($this->ctx));
+        self::assertEquals('blah', $this->ctx->get('foo'));
     }
 
     /**

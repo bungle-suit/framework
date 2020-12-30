@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Export\ParamParser;
@@ -34,6 +35,7 @@ class Parsers
             if (!$context->has($attrName)) {
                 return "Required \"$attrName\" attribute";
             }
+
             return null;
         };
     }
@@ -42,11 +44,16 @@ class Parsers
      * Parse parameter from ExportContext attribute.
      *
      * @param mixed $default
-     * @return callable(ExportContext): mixed
+     * @return callable(ExportContext): ?string
      */
     public static function fromContextAttribute(string $attrName, $default = null): callable
     {
-        return fn (ExportContext $context) => $context->get($attrName, $default);
+        return function (ExportContext $context) use ($attrName, $default) {
+            $v = $context->get($attrName, $default);
+            $context->set($attrName, $v);
+
+            return null;
+        };
     }
 
     /**
@@ -58,8 +65,11 @@ class Parsers
      * @param callable(string): mixed $converter, by default use identity, raise RuntimeException on
      * error.
      */
-    public static function fromRequest(string $paramName, $default = null, callable $converter = null): callable
-    {
+    public static function fromRequest(
+        string $paramName,
+        $default = null,
+        callable $converter = null
+    ): callable {
         return function (ExportContext $ctx) use ($default, $paramName, $converter): ?string {
             $f = $converter ?? [FP::class, 'identity'];
             $request = $ctx->getRequest();
@@ -70,6 +80,7 @@ class Parsers
                 $v = $f($v);
             }
             $ctx->set($paramName, $v);
+
             return null;
         };
     }
@@ -80,6 +91,7 @@ class Parsers
     public function currentUser(ExportContext $context): ?string
     {
         $context->set(self::PARAM_CURRENT_USER, $this->basal->currentUser());
+
         return null;
     }
 
@@ -98,7 +110,12 @@ class Parsers
         string $endName,
         int $maxDateRange = 0
     ): callable {
-        return function (ExportContext $context) use ($maxDateRange, $paramName, $endName, $startName): ?string {
+        return function (ExportContext $context) use (
+            $maxDateRange,
+            $paramName,
+            $endName,
+            $startName
+        ): ?string {
             $start = self::parseDate($context->getRequest()->get($startName));
             $end = self::parseDate($context->getRequest()->get($endName));
             $range = new DateRange($start, $end);
@@ -106,6 +123,7 @@ class Parsers
                 return "只能导出{$maxDateRange}天内的数据";
             }
             $context->set($paramName, $range);
+
             return null;
         };
     }
@@ -124,6 +142,7 @@ class Parsers
                     return null;
                 }
             }
+
             return "只能导出${maxDays}天内的数据";
         };
     }
@@ -152,6 +171,7 @@ class Parsers
                 $words = explode($sep, $s);
             }
             $context->set($attrName, $words);
+
             return null;
         };
     }
