@@ -118,4 +118,15 @@ class Converter
 
         return new DateTime($s);
     }
+
+    public static function formatBytes(int $size, int $precision = 2): string
+    {
+        if ($size === 0) {
+            return '0';
+        }
+        $base = log($size, 1024);
+        $suffixes = ['', 'K', 'M', 'G', 'T', 'P', 'E'];
+
+        return round(pow(1024, $base - floor($base)), $precision).$suffixes[floor($base)];
+    }
 }

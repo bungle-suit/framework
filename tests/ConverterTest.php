@@ -88,4 +88,32 @@ class ConverterTest extends TestCase
             ['2020-09-03', new DateTime('2020-09-03')],
         ];
     }
+
+    /**
+     * @dataProvider formatBytesProvider
+     */
+    public function testFormatBytes(string $exp, int $size): void
+    {
+        self::assertEquals($exp, Converter::formatBytes($size));
+    }
+
+    /**
+     * @return array<mixed[]>
+     */
+    public function formatBytesProvider(): array
+    {
+        return [
+            ['0', 0],
+            ['1023', 1023],
+            ['1K', 1024],
+            ['1K', 1025],
+            ['1.48K', 1512],
+            ['1024K', 1048575],
+            ['1M', 1048576],
+            ['1G', 1048576 * 1024],
+            ['1T', 1048576 * 1024 * 1024],
+            ['1P', 1048576 * 1024 * 1024 * 1024],
+            ['1E', 1048576 * 1024 * 1024 * 1024 * 1024],
+        ];
+    }
 }
