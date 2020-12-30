@@ -26,8 +26,10 @@ abstract class AbstractExporter
     /**
      * If runtime error occurred during export, will save error messages
      * in a text file, logic name is 'error.txt'.
+     * @param bool $throws throws RuntimeException if true, by
+     * default RuntimeException message dumped into error file.
      */
-    public function export(ExportContext $context): ExportResult
+    public function export(ExportContext $context, bool $throws = false): ExportResult
     {
         try {
             $params = $this->parseParams($context);
@@ -40,6 +42,9 @@ abstract class AbstractExporter
             }
             if (isset($fn)) {
                 $this->fs->removeFile($fn);
+            }
+            if ($throws) {
+                throw $e;
             }
             return $this->genErrorFile($e);
         }
