@@ -17,7 +17,7 @@ interface FSInterface
     public function createTempFile(string $prefix, ?string $content = null): string;
 
     /**
-     * Delete the file at $path.
+     * Delete the file at $path if exist.
      */
     public function removeFile(string $path): void;
 

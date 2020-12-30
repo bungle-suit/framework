@@ -30,7 +30,9 @@ class FS implements FSInterface
 
     public function removeFile(string $path): void
     {
-        unlink($path);
+        if (file_exists($path)) {
+            unlink($path);
+        }
     }
 
     public function filesize(string $path): int
