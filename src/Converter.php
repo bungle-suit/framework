@@ -50,7 +50,7 @@ class Converter
             return '';
         }
 
-        return $v->format('yy-m');
+        return $v->format('Y-m');
     }
 
     public static function formatYMD(?DateTimeInterface $v): string
@@ -59,7 +59,7 @@ class Converter
             return '';
         }
 
-        return $v->format('yy-m-d');
+        return $v->format('Y-m-d');
     }
 
     private const HALF_SPACE = ' ';

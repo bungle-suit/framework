@@ -45,6 +45,7 @@ class ConverterTest extends TestCase
     {
         self::assertEquals('', Converter::formatYearMonth(null));
         self::assertEquals('2020-09', Converter::formatYearMonth(new DateTime('2020-09-30')));
+        self::assertEquals('2021-09', Converter::formatYearMonth(new DateTime('2021-09-30')));
     }
 
     public function testMinLength(): void
@@ -86,6 +87,7 @@ class ConverterTest extends TestCase
         return [
             ['', null],
             ['2020-09-03', new DateTime('2020-09-03')],
+            ['2021-09-03', new DateTime('2021-09-03')],
         ];
     }
 
