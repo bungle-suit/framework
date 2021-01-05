@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Request;
 
+use Assert\Assertion;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
@@ -36,6 +37,7 @@ class JsonRequestDataResolver implements ArgumentValueResolverInterface
         }
 
         $interfaces = class_implements($argument->getType());
+        Assertion::isArray($interfaces);
         return in_array(JsonRequestDataInterface::class, $interfaces);
     }
 
