@@ -16,9 +16,9 @@ class FS implements FSInterface
         $this->temDir = $temDir ?? sys_get_temp_dir();
     }
 
-    public function createTempFile(string $prefix, ?string $content = null): string
+    public function tempFile(?string $content = null): string
     {
-        if (($r = tempnam($this->temDir, $prefix)) === false) {
+        if (($r = tempnam($this->temDir, 'bungle-')) === false) {
             throw new RuntimeException('Failed create tmpFile');
         }
         if ($content !== null) {

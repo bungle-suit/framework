@@ -50,7 +50,7 @@ class AbstractSingleTableExporterTest extends MockeryTestCase
         $context = new ExportContext(new Request());
         $rec = $this->exporter->export($context);
         $fn = $rec->tempFile;
-        self::assertStringContainsString('bungle-export', $fn);
+        self::assertNotEquals('', $fn);
 
         $sheet = (new Xlsx())->load($fn);
         self::assertEquals(1, $sheet->getSheetCount());

@@ -33,7 +33,7 @@ abstract class AbstractExporter
     {
         try {
             $params = $this->parseParams($context);
-            $fn = $this->fs->createTempFile('bungle-export');
+            $fn = $this->fs->tempFile();
             $this->doBuild($fn, $params);
             return new ExportResult($fn, $this->buildFilename($params));
         } catch (RuntimeException $e) {
@@ -74,7 +74,7 @@ abstract class AbstractExporter
     private function genErrorFile(RuntimeException $e): ExportResult
     {
         return new ExportResult(
-            $this->fs->createTempFile('bungle-export-error', $e->getMessage()),
+            $this->fs->tempFile($e->getMessage()),
             'error.txt'
         );
     }

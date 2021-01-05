@@ -37,7 +37,7 @@ class AbstractExporterTest extends MockeryTestCase
 
     public function testExportParamParseError(): void
     {
-        $this->fs->expects('createTempFile')->with('bungle-export-error', 'blah')->andReturn(
+        $this->fs->expects('tempFile')->with('blah')->andReturn(
             'errorFile'
         );
         $this->exporter->expects('buildParamParser')
@@ -55,9 +55,9 @@ class AbstractExporterTest extends MockeryTestCase
 
     public function testExportExportError(): void
     {
-        $this->fs->expects('createTempFile')->with('bungle-export')->andReturn('exportFile');
+        $this->fs->expects('tempFile')->with()->andReturn('exportFile');
         $this->fs->expects('removeFile')->with('exportFile');
-        $this->fs->expects('createTempFile')->with('bungle-export-error', 'export error')
+        $this->fs->expects('tempFile')->with('export error')
                  ->andReturn('errorFile');
         $this->exporter->expects('buildParamParser')->andReturn(new ArrayIterator([]));
         $this->exporter->expects('doBuild')->with('exportFile', [])->andThrow(
@@ -71,7 +71,7 @@ class AbstractExporterTest extends MockeryTestCase
 
     public function testExportSucceed(): void
     {
-        $this->fs->expects('createTempFile')->with('bungle-export')->andReturn('exportFile');
+        $this->fs->expects('tempFile')->with()->andReturn('exportFile');
         $this
             ->exporter
             ->expects('buildParamParser')

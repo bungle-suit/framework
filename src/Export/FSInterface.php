@@ -11,10 +11,9 @@ interface FSInterface
     /**
      * Create a temp file, returns temp file name.
      *
-     * @param string $prefix prefix of the newly created filename.
      * @param ?string $content fill the created file with $content if not null.
      */
-    public function createTempFile(string $prefix, ?string $content = null): string;
+    public function tempFile(?string $content = null): string;
 
     /**
      * Delete the file at $path if exist.
