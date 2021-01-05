@@ -14,7 +14,7 @@ use RuntimeException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
- * @phpstan-template T
+ * @template T
  */
 class TableReader implements SectionContentReaderInterface
 {

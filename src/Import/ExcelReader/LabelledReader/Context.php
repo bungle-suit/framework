@@ -8,7 +8,7 @@ use Bungle\Framework\Model\HasAttributes;
 use Bungle\Framework\Model\HasAttributesInterface;
 
 /**
- * @phpstan-template T
+ * @template T
  */
 class Context implements HasAttributesInterface
 {

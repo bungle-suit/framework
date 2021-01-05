@@ -7,7 +7,7 @@ namespace Bungle\Framework\Import\ExcelReader\LabelledReader;
 use Bungle\Framework\FP;
 
 /**
- * @phpstan-template T
+ * @template T
  */
 class LabelledValue
 {

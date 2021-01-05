@@ -48,8 +48,8 @@ class FP
     /**
      * Group array/iterator, key returned by $fKey.
      *
-     * @phpstan-template T
-     * @phpstan-template K
+     * @template T
+     * @template K
      * @phpstan-param callable(T): K $fKey
      * @phpstan-param iterable<T> $values
      * @phpstan-return array<K, T[]>
@@ -68,7 +68,7 @@ class FP
     /**
      * Group by $fEqual, items that equals will grouped together
      *
-     * @phpstan-template T
+     * @template T
      * @phpstan-param callable(T, T): bool $fEqual
      * @phpstan-param iterable<T> $values
      * @phpstan-return array<T[]>
@@ -98,7 +98,7 @@ class FP
      * Call $fCheck on item of $values, returns true if any callback result is true.
      * Returns false if $values is empty.
      *
-     * @phpstan-template T
+     * @template T
      * @phpstan-param callable(T): bool $fCheck
      * @phpstan-param iterable<T> $values
      */
@@ -117,7 +117,7 @@ class FP
      * Call fCheck on item of $values, returns false if any callback result is false.
      * Return true if $values is empty.
      *
-     * @phpstan-template T
+     * @template T
      * @phpstan-param callable(T): bool $fCheck
      * @phpstan-param iterable<T> $values
      */
@@ -150,7 +150,7 @@ class FP
     /**
      * Function that returns argument.
      *
-     * @phpstan-template T
+     * @template T
      * @phpstan-param T $v
      * @phpstan-return T
      */
@@ -179,7 +179,7 @@ class FP
     /**
      * Call init function to init variable if not set.
      *
-     * @phpstan-template T
+     * @template T
      * @phpstan-param T $v
      * @phpstan-param callable(): T $fInit
      * @phpstan-param (callable(T): bool)|null $fIsUninitialized accept the value to tell the value
@@ -227,8 +227,8 @@ class FP
      * If the property not set (isset() returns false), always init the property, ignores
      * $fIsUninitialized.
      *
-     * @phpstan-template K
-     * @phpstan-template T
+     * @template K
+     * @template T
      *
      * @phpstan-param T[] $arr
      * @phpstan-param K $idx
@@ -250,8 +250,8 @@ class FP
     }
 
     /**
-     * @phpstan-template K
-     * @phpstan-template V
+     * @template K
+     * @template V
      * @phpstan-param callable(V): K $fKey, accept one argument: array item, returns key normally
      *     string.
      * @phpstan-param V[] $arr
@@ -273,7 +273,7 @@ class FP
      * Test array or iterator, returns first item the $test callback returns true.
      * Returns $default value if no item matched.
      *
-     * @phpstan-template T
+     * @template T
      * @phpstan-param callable(T): bool $test
      * @phpstan-param iterable<T> $items
      * @phpstan-param T $default
@@ -294,7 +294,7 @@ class FP
      * Test array or iterator, returns first item the $test callback returns true.
      * Returns null value if no item matched.
      *
-     * @phpstan-template T
+     * @template T
      * @phpstan-param callable(T): bool $test
      * @phpstan-param iterable<T> $items
      * @phpstan-return T|null
@@ -311,8 +311,8 @@ class FP
     }
 
     /**
-     * @phpstan-template T
-     * @phpstan-template K
+     * @template T
+     * @template K
      * @phpstan-param array<K, T> $arr
      * @phpstan-param K $key
      * @phpstan-param callable(K): T $fCreate, called if $key not exist in $arr,
@@ -331,9 +331,9 @@ class FP
     /**
      * Assert that the value is not null.
      *
-     * @phpstan-template T
+     * @template T
      * @phpstan-param T|null $v
-     * @phpstanreturn T
+     * @phpstan-return T
      */
     public static function notNull($v, string $message = '')
     {

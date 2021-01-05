@@ -62,7 +62,7 @@ class BasalInfoService
     }
 
     /**
-     * @phpstan-template T
+     * @template T
      * @phpstan-param class-string<T> $cls
      * @param int|string $id
      * @phpstan-return T

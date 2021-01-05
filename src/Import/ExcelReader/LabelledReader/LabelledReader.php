@@ -11,7 +11,7 @@ use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
- * @phpstan-template T
+ * @template T
  * Section content reader that value after the specific label.
  */
 class LabelledReader implements SectionContentReaderInterface
