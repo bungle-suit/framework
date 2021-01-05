@@ -80,6 +80,23 @@ class ExcelReaderTest extends MockeryTestCase
         $this->reader->switchWorksheet('bar');
     }
 
+    public function testSwitchWorksheetByName(): void
+    {
+        $this->reader->setRow(100);
+        $sheet = $this->book->createSheet();
+        $sheet->setTitle('bar');
+
+        self::assertTrue($this->reader->switchWorksheet(['foo', 'bar']));
+        self::assertSame($sheet, $this->reader->getSheet());
+        self::assertEquals(1, $this->reader->getRow());
+        $this->reader->setRow(2);
+
+        // not found
+        self::assertFalse($this->reader->switchWorksheet(['foo', 'blah'], true));
+        self::assertSame($sheet, $this->reader->getSheet());
+        self::assertEquals(2, $this->reader->getRow());
+    }
+
     // case 1: match section 2, read until section end
     public function testReadUntilSectionEnd(): void
     {

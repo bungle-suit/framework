@@ -23,23 +23,29 @@ class ExcelReader extends ExcelOperator
     /**
      * Switch current work sheet, reset current row counter.
      *
+     * @param string|string[] $sheetName try all names before return or raise exception.
      * @param bool $allowNotExist
      * @return bool returns true if sheet exist, and switch to it successfully.
      * If $allowNotExist is false, always returns tree.
      * @throws RuntimeException if $allowNotExist is false, and worksheet not exist.
      */
-    public function switchWorksheet(string $sheetName, bool $allowNotExist = false): bool
+    public function switchWorksheet($sheetName, bool $allowNotExist = false): bool
     {
-        $sheet = $this->book->getSheetByName($sheetName);
-        if ($sheet === null) {
-            if ($allowNotExist) {
-                return false;
+        $sheetNames = is_array($sheetName) ? $sheetName : [$sheetName];
+        foreach ($sheetNames as $name) {
+            $sheet = $this->book->getSheetByName($name);
+            if ($sheet !== null) {
+                $this->sheet = $sheet;
+                $this->row = 1;
+                return true;
             }
-            throw new RuntimeException("找不到工作表: $sheetName");
         }
-        $this->sheet = $sheet;
-        $this->row = 1;
-        return true;
+
+        if ($allowNotExist) {
+            return false;
+        }
+        $names = implode(', ', $sheetNames);
+        throw new RuntimeException("找不到工作表: $names");
     }
 
     /**
