@@ -8,6 +8,8 @@ use DateTime;
 use DateTimeInterface;
 use Symfony\Component\String\UnicodeString;
 
+use function Symfony\Component\String\u;
+
 class Converter
 {
     /**
@@ -128,5 +130,17 @@ class Converter
         $suffixes = ['', 'K', 'M', 'G', 'T', 'P', 'E'];
 
         return round(pow(1024, $base - floor($base)), $precision).$suffixes[floor($base)];
+    }
+
+    /**
+     * Truncate $s and add '…' to the end if longer than $n.
+     */
+    public static function ellipsis(int $n, string $s): string
+    {
+        $s = u($s);
+        if ($s->length() > $n) {
+            return $s->slice(0, $n-1).'…';
+        }
+        return $s->toString();
     }
 }

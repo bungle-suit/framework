@@ -118,4 +118,28 @@ class ConverterTest extends TestCase
             ['1E', 1048576 * 1024 * 1024 * 1024 * 1024],
         ];
     }
+
+    /**
+     * @dataProvider ellipsisProvider
+     */
+    public function testEllipsis(string $exp, string $s, int $n = 5): void
+    {
+        self::assertEquals($exp, Converter::ellipsis($n, $s));
+    }
+
+    /**
+     * @return array<mixed[]>
+     */
+    public function ellipsisProvider(): array
+    {
+        return [
+            'empty' => ['', ''],
+            'less than' => ['abcd', 'abcd'],
+            'exact' => ['abcde', 'abcde'],
+            'more' => ['abcd…', 'abcdef'],
+            'utf' => ['汉字abc', '汉字abc'],
+            'utf2' => ['汉字又如何', '汉字又如何'],
+            'utf ellipsis' => ['汉字又如…', '汉字又如何啊'],
+        ];
+    }
 }
