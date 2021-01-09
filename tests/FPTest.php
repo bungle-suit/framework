@@ -42,6 +42,12 @@ class FPTest extends TestCase
         self::assertFalse($f());
     }
 
+    public function testNull(): void
+    {
+        $f = FP::null();
+        self::assertEquals(null, $f());
+    }
+
     public function testGroup(): void
     {
         $arr = range(0, 10);

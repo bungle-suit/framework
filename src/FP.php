@@ -30,7 +30,15 @@ class FP
     }
 
     /**
-     * @return callable that always returns true.
+     * @return callable(): null do nothing but returns null.
+     */
+    public static function null(): callable
+    {
+        return fn () => null;
+    }
+
+    /**
+     * @return callable(): true that always returns true.
      */
     public static function t(): callable
     {
@@ -38,7 +46,7 @@ class FP
     }
 
     /**
-     * @return callable that always returns false.
+     * @return callable(): false that always returns false.
      */
     public static function f(): callable
     {
