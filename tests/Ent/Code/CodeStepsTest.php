@@ -24,13 +24,13 @@ class CodeStepsTest extends TestCase
             $d = new DateTime($sd);
             CodeSteps::compactYearMonth($o, $ctx, $d);
         }
-        self::assertEquals(['191', '20X', '20Y', '20Z'], $ctx->sections);
+        self::assertEquals(['191', '20X', '20Y', '20Z'], $ctx->getSections());
 
         // ensure COMPACT_YEAR_MONTH const is valid.
         $ctx = new CodeContext();
         $f = CodeSteps::COMPACT_YEAR_MONTH;
         $f($o, $ctx);
-        self::assertNotEmpty($ctx->sections);
+        self::assertNotEmpty($ctx->getSections());
     }
 
     public function testLiteral(): void
@@ -41,7 +41,7 @@ class CodeStepsTest extends TestCase
         $s1((object)[], $ctx);
         $s2((object)[], $ctx);
 
-        self::assertEquals(['Foo', 'Bar'], $ctx->sections);
+        self::assertEquals(['Foo', 'Bar'], $ctx->getSections());
     }
 
     public function testJoin(): void
