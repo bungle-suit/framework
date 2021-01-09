@@ -41,4 +41,20 @@ class CodeContext implements HasAttributesInterface
             $this->sections[] = $section;
         }
     }
+
+    /**
+     * Get the code result.
+     *
+     * Normally the last step will set self::result field, and __toString()
+     * return it as the end result.
+     * But if not, __toString() join sections up by '-'.
+     */
+    public function __toString(): string
+    {
+        if ($this->result) {
+            return $this->result;
+        }
+
+        return implode('-', $this->sections);
+    }
 }
