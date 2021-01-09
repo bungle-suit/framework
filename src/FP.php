@@ -401,6 +401,23 @@ class FP
 
     /**
      * @template T
+     * @param callable(mixed...): bool $cond call $a if returns true, $b otherwise.
+     * @param callable(mixed...): T $a
+     * @param callable(mixed...): T $b
+     * @return callable(mixed...): T
+     */
+    public static function if(callable $cond, callable $a, callable $b): callable
+    {
+        return function(...$args) use ($cond, $a, $b) {
+            if ($cond(...$args)) {
+                return $a(...$args);
+            }
+            return $b(...$args);
+        };
+    }
+
+    /**
+     * @template T
      * @phpstan-param (\ArrayAccess<mixed, T>&\Countable)|array<T> $arr
      * @phpstan-return T
      * @throws LogicException if no last element

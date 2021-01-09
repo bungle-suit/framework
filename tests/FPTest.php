@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests;
@@ -44,28 +45,34 @@ class FPTest extends TestCase
     public function testGroup(): void
     {
         $arr = range(0, 10);
-        self::assertEquals([
-            0 => [0, 2, 4, 6, 8, 10],
-            1 => [1, 3, 5, 7, 9],
-        ], FP::group(fn(int $v) => $v % 2, $arr));
+        self::assertEquals(
+            [
+                0 => [0, 2, 4, 6, 8, 10],
+                1 => [1, 3, 5, 7, 9],
+            ],
+            FP::group(fn(int $v) => $v % 2, $arr)
+        );
     }
 
     public function testEqualGroup(): void
     {
         $arr = range(1, 10);
-        self::assertEquals([
-            [1, 6],
-            [2, 7],
-            [3, 8],
-            [4, 9],
-            [5, 10],
-        ], FP::equalGroup(fn(int $a, int $b) => $a + 5 === $b, $arr));
+        self::assertEquals(
+            [
+                [1, 6],
+                [2, 7],
+                [3, 8],
+                [4, 9],
+                [5, 10],
+            ],
+            FP::equalGroup(fn(int $a, int $b) => $a + 5 === $b, $arr)
+        );
     }
 
     public function testAny(): void
     {
         // empty always return false
-        self::assertFalse(FP::any(fn (int $v) => true, []));
+        self::assertFalse(FP::any(fn(int $v) => true, []));
 
         self::assertTrue(FP::any(fn(int $v) => $v % 2 === 0, [1, 3, 6, 9]));
         self::assertFalse(FP::any(fn(int $v) => $v % 2 === 0, [1, 9, 111]));
@@ -74,7 +81,7 @@ class FPTest extends TestCase
     public function testAll(): void
     {
         // empty always return true
-        self::assertTrue(FP::all(fn (int $v) => false, []));
+        self::assertTrue(FP::all(fn(int $v) => false, []));
 
         self::assertFalse(FP::all(fn(int $v) => $v % 2 === 0, [1, 3, 6, 9]));
         self::assertTrue(FP::all(fn(int $v) => $v % 2 === 1, [1, 9, 111]));
@@ -116,7 +123,10 @@ class FPTest extends TestCase
         self::assertEquals('foo', $a);
 
         $a = 'foo';
-        self::assertEquals('bar', FP::initVariable($a, FP::constant('bar'), fn($v) => $v === 'foo'));
+        self::assertEquals(
+            'bar',
+            FP::initVariable($a, FP::constant('bar'), fn($v) => $v === 'foo')
+        );
     }
 
     public function testInitProperty(): void
@@ -127,11 +137,17 @@ class FPTest extends TestCase
         self::assertEquals('foo', FP::initProperty($o, 'a', FP::constant('foo')));
         self::assertEquals('foo', $o->a);
 
-        self::assertEquals('bar', FP::initProperty($o, 'a', FP::constant('bar'), fn($v) => $v === 'foo'));
+        self::assertEquals(
+            'bar',
+            FP::initProperty($o, 'a', FP::constant('bar'), fn($v) => $v === 'foo')
+        );
         self::assertEquals('bar', $o->a);
 
         // Ignore fIsUninitialized if the property is unset.
-        self::assertEquals('blah', FP::initProperty($o, 'b', FP::constant('blah'), fn($v) => $v === 'foo'));
+        self::assertEquals(
+            'blah',
+            FP::initProperty($o, 'b', FP::constant('blah'), fn($v) => $v === 'foo')
+        );
     }
 
     public function testInitArrayItem(): void
@@ -140,8 +156,14 @@ class FPTest extends TestCase
         self::assertEquals('foo', FP::initArrayItem($arr, 3, FP::constant('foo')));
         self::assertEquals('foo', $arr[3]);
 
-        self::assertEquals('bar', FP::initArrayItem($arr, 'a', FP::constant('bar'), fn($v) => $v === 'foo'));
-        self::assertEquals(345, FP::initArrayItem($arr, 'a', FP::constant(345), fn($v) => $v === 'bar'));
+        self::assertEquals(
+            'bar',
+            FP::initArrayItem($arr, 'a', FP::constant('bar'), fn($v) => $v === 'foo')
+        );
+        self::assertEquals(
+            345,
+            FP::initArrayItem($arr, 'a', FP::constant(345), fn($v) => $v === 'bar')
+        );
         self::assertEquals('345', $arr['a']);
     }
 
@@ -150,10 +172,13 @@ class FPTest extends TestCase
         self::assertEquals([], FP::toKeyed(fn(int $v): int => $v, []));
 
         $arr = [['foo', 1], ['bar', 2]];
-        self::assertEquals([
-            'foo' => ['foo', 1],
-            'bar' => ['bar', 2],
-        ], FP::toKeyed(fn($v) => $v[0], $arr));
+        self::assertEquals(
+            [
+                'foo' => ['foo', 1],
+                'bar' => ['bar', 2],
+            ],
+            FP::toKeyed(fn($v) => $v[0], $arr)
+        );
     }
 
     public function testGetOrCreate(): void
@@ -183,7 +208,7 @@ class FPTest extends TestCase
 
     public function testFirstArray(): void
     {
-        self::assertNull(FP::firstOrNull(fn (int $v) => true, []));
+        self::assertNull(FP::firstOrNull(fn(int $v) => true, []));
         self::assertEquals(33, FP::first(FP::t(), [], 33));
         self::assertEquals(
             4,
@@ -216,7 +241,7 @@ class FPTest extends TestCase
     {
         [$aHit, $bHit] = [0, 0];
         $a = function (int $a, int $b) use (&$aHit): bool {
-            $aHit ++;
+            $aHit++;
             self::assertEquals(1, $a);
             self::assertEquals(2, $b);
 
@@ -224,7 +249,7 @@ class FPTest extends TestCase
         };
 
         $b = function (int $a, int $b) use (&$bHit): bool {
-            $bHit ++;
+            $bHit++;
             self::assertEquals(1, $a);
             self::assertEquals(2, $b);
 
@@ -232,7 +257,7 @@ class FPTest extends TestCase
         };
 
         $a1 = function (int $a, int $b) use (&$aHit): bool {
-            $aHit ++;
+            $aHit++;
             self::assertEquals(1, $a);
             self::assertEquals(2, $b);
 
@@ -255,21 +280,21 @@ class FPTest extends TestCase
     {
         [$aHit, $bHit] = [0, 0];
         $a = function (array $v) use (&$aHit): bool {
-            $aHit ++;
+            $aHit++;
             self::assertEquals([1, 2], $v);
 
             return true;
         };
 
         $b = function (array $v) use (&$bHit): bool {
-            $bHit ++;
+            $bHit++;
             self::assertEquals([1, 2], $v);
 
             return true;
         };
 
         $a1 = function (array $v) use (&$aHit): bool {
-            $aHit ++;
+            $aHit++;
             self::assertEquals([1, 2], $v);
 
             return false;
@@ -292,7 +317,7 @@ class FPTest extends TestCase
     {
         $aHit = 0;
         $a = function (int $v) use (&$aHit): bool {
-            $aHit ++;
+            $aHit++;
             self::assertEquals(200, $v);
 
             return true;
@@ -319,15 +344,18 @@ class FPTest extends TestCase
 
     public function testFilter(): void
     {
-        $isOdd = fn (int $v) => $v % 2 !== 0;
+        $isOdd = fn(int $v) => $v % 2 !== 0;
 
-        self::assertEquals([1,3 ,5 ,7], iterator_to_array(FP::filter($isOdd, [0, 1, 2, 3, 4, 5, 6, 7, 8])));
+        self::assertEquals(
+            [1, 3, 5, 7],
+            iterator_to_array(FP::filter($isOdd, [0, 1, 2, 3, 4, 5, 6, 7, 8]))
+        );
     }
 
     public function testMap(): void
     {
-        $double = fn (int $v) => $v * 2;
-        self::assertEquals([2,4,6,8], iterator_to_array(FP::map($double, [1,2,3,4])));
+        $double = fn(int $v) => $v * 2;
+        self::assertEquals([2, 4, 6, 8], iterator_to_array(FP::map($double, [1, 2, 3, 4])));
     }
 
     public function testCount(): void
@@ -336,5 +364,17 @@ class FPTest extends TestCase
         $vars = [];
         self::assertEquals(0, FP::count($vars));
         self::assertEquals(3, FP::count(range(0, 2)));
+    }
+
+    public function testIf(): void
+    {
+        $f = FP::if(
+            fn(int $a, int $b) => ($a + $b) % 2 === 0,
+            fn(int $a, int $b) => $a + $b,
+            fn(int $a, int $b) => $a * $b,
+        );
+
+        self::assertEquals(12, $f(3, 4));
+        self::assertEquals(6, $f(2, 4));
     }
 }
