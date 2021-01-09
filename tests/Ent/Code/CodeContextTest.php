@@ -12,15 +12,15 @@ class CodeContextTest extends TestCase
     {
         $ctx = new CodeContext();
         $ctx->addSection('foo');
-        self::assertEquals(['foo'], $ctx->sections);
+        self::assertEquals(['foo'], $ctx->getSections());
 
         $ctx->addSection('bar');
-        self::assertEquals(['foo', 'bar'], $ctx->sections);
+        self::assertEquals(['foo', 'bar'], $ctx->getSections());
 
         $ctx->addSection('');
-        self::assertEquals(['foo', 'bar', ''], $ctx->sections);
+        self::assertEquals(['foo', 'bar', ''], $ctx->getSections());
 
         $ctx->addSection('', true);
-        self::assertEquals(['foo', 'bar', ''], $ctx->sections);
+        self::assertEquals(['foo', 'bar', ''], $ctx->getSections());
     }
 }

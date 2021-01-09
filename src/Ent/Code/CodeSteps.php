@@ -56,6 +56,6 @@ class CodeSteps
      */
     public static function join(string $sep): callable
     {
-        return fn (object $subject, CodeContext $ctx) => $ctx->result = implode($sep, $ctx->sections);
+        return fn (object $subject, CodeContext $ctx) => $ctx->result = implode($sep, $ctx->getSections());
     }
 }
