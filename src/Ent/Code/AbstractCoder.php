@@ -26,12 +26,8 @@ abstract class AbstractCoder implements CoderInterface
     function __invoke($entity, CodeContext $context = null): string
     {
         $context = $context ?? new CodeContext();
-        foreach ($this->steps as $step) {
-            $r = $step($entity, $context);
-            if (is_string($r)) {
-                $context->addSection($r);
-            }
-        }
+        CodeSteps::runSteps($this->steps, $entity, $context);
+
         return strval($context);
     }
 }

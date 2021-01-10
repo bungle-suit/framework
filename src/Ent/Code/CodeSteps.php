@@ -54,4 +54,33 @@ class CodeSteps
     {
         return fn(): string => $this->basal->now()->format($format);
     }
+
+    /**
+     * Compose a set of steps into one step.
+     *
+     * @template T
+     * @param array<CoderStepInterface<T>|callable(T, CodeContext): (string|void)> $steps
+     * @return callable(T, CodeContext): void
+     */
+    public static function compose(array $steps): callable
+    {
+        return function ($entity, CodeContext $context) use ($steps): void {
+            self::runSteps($steps, $entity, $context);
+        };
+    }
+
+    /**
+     * @template T
+     * @param T $entity
+     * @param array<CoderStepInterface<T>|callable(T, CodeContext): (string|void)> $steps
+     */
+    public static function runSteps(array $steps, $entity, CodeContext $context): void
+    {
+        foreach ($steps as $step) {
+            $r = $step($entity, $context);
+            if (is_string($r)) {
+                $context->addSection($r);
+            }
+        }
+    }
 }

@@ -6,10 +6,12 @@ namespace Bungle\Framework\Tests\Ent\Code;
 
 use Bungle\Framework\Ent\BasalInfoService;
 use Bungle\Framework\Ent\Code\CodeContext;
+use Bungle\Framework\Ent\Code\CoderStepInterface;
 use Bungle\Framework\Ent\Code\CodeSteps;
 use DateTime;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class CodeStepsTest extends TestCase
 {
@@ -62,5 +64,28 @@ class CodeStepsTest extends TestCase
 
         $this->basal->expects('now')->andReturn(new DateTime('2020-01-03'));
         self::assertEquals('20200103', $f());
+    }
+
+    /** @noinspection PhpUnusedParameterInspection */
+    public function testCompose(): void
+    {
+        $steps = [
+            $c1 = Mockery::mock(CoderStepInterface::class),
+            $c2 = Mockery::mock(CoderStepInterface::class),
+            $c3 = Mockery::mock(CoderStepInterface::class),
+        ];
+
+        $ctx = new CodeContext();
+        $o = new StdClass();
+        $steps[] = function (StdClass $o, CodeContext $context): void {
+            $context->addSection('4');
+        };
+        $c1->expects('__invoke')->with($o, $ctx)->andReturnNull();
+        $c2->expects('__invoke')->with($o, $ctx)->andReturn('2nd');
+        $c3->expects('__invoke')->with($o, $ctx)->andReturn('3rd');
+
+        $step = CodeSteps::compose($steps);
+        $step($o, $ctx);
+        self::assertEquals('2nd-3rd-4', strval($ctx));
     }
 }
