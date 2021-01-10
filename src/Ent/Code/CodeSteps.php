@@ -1,10 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Ent\Code;
 
-use DateTime;
-use DateTimeInterface;
+use Bungle\Framework\Ent\BasalInfoService;
 
 /**
  * Define common code steps.
@@ -16,28 +16,11 @@ class CodeSteps
      */
     public const COMPACT_YEAR_MONTH = self::class.'::compactYearMonth';
 
-    /**
-     * Year preserve two digits, such as '20' for '2020', month is one char:
-     * 123456789XYZ, X for 10, Y for 11, Z for 12.
-     * @noinspection PhpUnusedParameterInspection
-     */
-    public static function compactYearMonth(object $subject, CodeContext $ctx, DateTimeInterface $d = null): void
+    private BasalInfoService $basal;
+
+    public function __construct(BasalInfoService $basal)
     {
-        $d = $d ?? new DateTime();
-        $y = $d->format('y');
-        $m = $d->format('n');
-        switch ($m) {
-            case '10':
-                $m = 'X';
-                break;
-            case '11':
-                $m = 'Y';
-                break;
-            case '12':
-                $m = 'Z';
-                break;
-        }
-        $ctx->addSection($y.$m);
+        $this->basal = $basal;
     }
 
     /**
@@ -56,6 +39,19 @@ class CodeSteps
      */
     public static function join(string $sep): callable
     {
-        return fn (object $subject, CodeContext $ctx) => $ctx->result = implode($sep, $ctx->getSections());
+        return fn(object $subject, CodeContext $ctx) => $ctx->result = implode(
+            $sep,
+            $ctx->getSections()
+        );
+    }
+
+    /**
+     * Return a code step that format current datetime using $format.
+     *
+     * @return callable(): string
+     */
+    public function dateTime(string $format): callable
+    {
+        return fn(): string => $this->basal->now()->format($format);
     }
 }

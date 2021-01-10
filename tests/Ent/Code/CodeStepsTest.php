@@ -1,36 +1,28 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Ent\Code;
 
+use Bungle\Framework\Ent\BasalInfoService;
 use Bungle\Framework\Ent\Code\CodeContext;
 use Bungle\Framework\Ent\Code\CodeSteps;
 use DateTime;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 
 class CodeStepsTest extends TestCase
 {
-    public function testCompactYearMonth(): void
-    {
-        $recs = [
-            '2019-01-02' => '191',
-            '2020-10-02' => '20X',
-            '2020-11-02' => '20Y',
-            '2020-12-02' => '20Z',
-        ];
-        $o = (object)[];
-        $ctx = new CodeContext();
-        foreach ($recs as $sd => $exp) {
-            $d = new DateTime($sd);
-            CodeSteps::compactYearMonth($o, $ctx, $d);
-        }
-        self::assertEquals(['191', '20X', '20Y', '20Z'], $ctx->getSections());
+    /** @var BasalInfoService|Mockery\MockInterface */
+    private $basal;
+    private CodeSteps $steps;
 
-        // ensure COMPACT_YEAR_MONTH const is valid.
-        $ctx = new CodeContext();
-        $f = CodeSteps::COMPACT_YEAR_MONTH;
-        $f($o, $ctx);
-        self::assertNotEmpty($ctx->getSections());
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->basal = Mockery::mock(BasalInfoService::class);
+        $this->steps = new CodeSteps($this->basal);
     }
 
     public function testLiteral(): void
@@ -62,5 +54,13 @@ class CodeStepsTest extends TestCase
         $j = CodeSteps::join('-');
         $j((object)[], $ctx);
         self::assertEquals('foo-bar-123', $ctx->result);
+    }
+
+    public function testDateTime(): void
+    {
+        $f = $this->steps->dateTime('Ymd');
+
+        $this->basal->expects('now')->andReturn(new DateTime('2020-01-03'));
+        self::assertEquals('20200103', $f());
     }
 }
