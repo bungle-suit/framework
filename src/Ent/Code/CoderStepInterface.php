@@ -11,7 +11,7 @@ interface CoderStepInterface
 {
     /**
      * @param T $entity
-     * @return string|void if returns string, will append to code section.
+     * If returns string, will append to code section.
      */
-    function __invoke($entity, CodeContext $context);
+    function __invoke($entity, CodeContext $context): ?string;
 }

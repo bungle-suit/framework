@@ -59,7 +59,7 @@ class CodeSteps
      * Compose a set of steps into one step.
      *
      * @template T
-     * @param array<CoderStepInterface<T>|callable(T, CodeContext): (string|void)> $steps
+     * @param array<CoderStepInterface<T>|callable(T, CodeContext): ?string> $steps
      * @return callable(T, CodeContext): void
      */
     public static function compose(array $steps): callable
@@ -72,7 +72,7 @@ class CodeSteps
     /**
      * @template T
      * @param T $entity
-     * @param array<CoderStepInterface<T>|callable(T, CodeContext): (string|void)> $steps
+     * @param array<CoderStepInterface<T>|callable(T, CodeContext): ?string> $steps
      */
     public static function runSteps(array $steps, $entity, CodeContext $context): void
     {

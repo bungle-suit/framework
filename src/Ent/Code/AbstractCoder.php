@@ -11,12 +11,12 @@ namespace Bungle\Framework\Ent\Code;
 abstract class AbstractCoder implements CoderInterface
 {
     /**
-     * @var array<CoderStepInterface<T>|callable(T, CodeContext): (string|void)> $steps
+     * @var array<CoderStepInterface<T>|callable(T, CodeContext): ?string> $steps
      */
     private array $steps;
 
     /**
-     * @param array<CoderStepInterface<T>|callable(T, CodeContext): (string|void)> $steps
+     * @param array<CoderStepInterface<T>|callable(T, CodeContext): ?string> $steps
      */
     public function __construct(array $steps)
     {
