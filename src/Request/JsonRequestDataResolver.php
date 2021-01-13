@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Request;
 
-use Assert\Assertion;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\Serializer\SerializerInterface;
 use Traversable;
+use Webmozart\Assert\Assert;
 
 /**
  * Inject JsonRequestDataInterface argument from post data into controller argument.
@@ -37,7 +37,7 @@ class JsonRequestDataResolver implements ArgumentValueResolverInterface
         }
 
         $interfaces = class_implements($argument->getType());
-        Assertion::isArray($interfaces);
+        Assert::isArray($interfaces);
         return in_array(JsonRequestDataInterface::class, $interfaces);
     }
 

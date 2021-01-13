@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Encoding\CSV;
 
-use Assert\Assertion;
 use Generator;
+use Webmozart\Assert\Assert;
 
 class CSVDecoder
 {
@@ -34,7 +34,7 @@ class CSVDecoder
                 return [];
             }
 
-            Assertion::notNull($header, 'read csv file failed');
+            Assert::notNull($header, 'read csv file failed');
             if ($header[0] === null) {
                 continue;
             }
@@ -48,7 +48,7 @@ class CSVDecoder
         }
 
         while (($line = fgetcsv($f)) !== false) {
-            Assertion::notNull($line, 'read csv file failed 2');
+            Assert::notNull($line, 'read csv file failed 2');
             if ($line[0] === null) {
                 continue;
             }

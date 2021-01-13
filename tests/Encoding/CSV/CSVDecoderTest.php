@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Encoding\CSV;
 
-use Assert\Assertion;
 use Bungle\Framework\Encoding\CSV\CSVDecoder;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Webmozart\Assert\Assert;
 
 class CSVDecoderTest extends MockeryTestCase
 {
@@ -149,7 +149,7 @@ class CSVDecoderTest extends MockeryTestCase
             'GB18030',
             'utf-8'
         );
-        Assertion::string($s);
+        Assert::string($s);
         $f = self::stringStream($s);
         $gen = CSVDecoder::decode($f, ['charset' => 'GB18030']);
         foreach ($gen as $row) {

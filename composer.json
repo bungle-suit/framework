@@ -16,7 +16,7 @@
     "symfony/string": "^5.1",
     "phpstan/phpstan-phpunit": "^0.12.11",
     "phpoffice/phpspreadsheet": "^1.14",
-    "beberlei/assert": "^3.3",
+    "webmozart/assert": "^1.9",
     "doctrine/orm": "^2.7"
   },
   "autoload": {
