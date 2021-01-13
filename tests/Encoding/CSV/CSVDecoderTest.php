@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\Tests\Encoding\CSV;
 
 use Bungle\Framework\Encoding\CSV\CSVDecoder;
+use Bungle\Framework\Export\FS;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Webmozart\Assert\Assert;
 
@@ -12,13 +13,13 @@ class CSVDecoderTest extends MockeryTestCase
 {
     public function testDecodeHasHeader(): void
     {
-        $f = self::stringStream(
+        $f = FS::stringStream(
             <<<'CSV'
             a,b,c,d
             1,2,3,4
             5,6,7,8
             CSV
-        );
+    );
 
         $gen = CSVDecoder::decode($f);
         $rowIdx = 0;
@@ -41,7 +42,7 @@ class CSVDecoderTest extends MockeryTestCase
         // test not enable auto_detect_line_endings can still compatible with dos end-line.
         self::assertEquals('0', ini_get('auto_detect_line_endings'));
 
-        $f = self::stringStream(
+        $f = FS::stringStream(
             str_replace(
                 "\n",
                 "\r\n",
@@ -49,8 +50,8 @@ class CSVDecoderTest extends MockeryTestCase
             1,2,3
             a,b,c
             CSV
-            )
-        );
+        )
+            );
 
         $gen = CSVDecoder::decode($f, ['noHeader' => true]);
         $rowIdx = 0;
@@ -70,12 +71,12 @@ class CSVDecoderTest extends MockeryTestCase
 
     public function testDecodeNoHeader(): void
     {
-        $f = self::stringStream(
+        $f = FS::stringStream(
             <<<'CSV'
             1,2,3
             a,b,c
             CSV
-        );
+    );
 
         $gen = CSVDecoder::decode($f, ['noHeader' => true]);
         $rowIdx = 0;
@@ -95,19 +96,26 @@ class CSVDecoderTest extends MockeryTestCase
 
     public function testEmpty(): void
     {
-        $f = self::stringStream('');
+        $f = FS::stringStream('');
         $gen = CSVDecoder::decode($f);
+        self::assertEquals(0, iterator_count($gen));
+        self::assertEquals([], $gen->getReturn());
+    }
+
+    public function testDecodeFromString(): void
+    {
+        $gen = CSVDecoder::decodeString("");
         self::assertEquals(0, iterator_count($gen));
         self::assertEquals([], $gen->getReturn());
     }
 
     public function testHasHeaderNoRows(): void
     {
-        $f = self::stringStream(
+        $f = FS::stringStream(
             <<<'CSV'
             a,b,c,d
             CSV
-        );
+    );
 
         $gen = CSVDecoder::decode($f);
         self::assertEquals(0, iterator_count($gen));
@@ -116,7 +124,7 @@ class CSVDecoderTest extends MockeryTestCase
 
     public function testIgnoreEmptyRows(): void
     {
-        $f = self::stringStream(
+        $f = FS::stringStream(
             <<<'CSV'
 
             a,b,c,d
@@ -127,7 +135,7 @@ class CSVDecoderTest extends MockeryTestCase
 
 
             CSV
-        );
+    );
 
         $gen = CSVDecoder::decode($f);
         $rows = iterator_to_array($gen);
@@ -150,25 +158,12 @@ class CSVDecoderTest extends MockeryTestCase
             'utf-8'
         );
         Assert::string($s);
-        $f = self::stringStream($s);
+        $f = FS::stringStream($s);
         $gen = CSVDecoder::decode($f, ['charset' => 'GB18030']);
         foreach ($gen as $row) {
             self::assertEquals('文明', $row['A']);
             self::assertEquals('blah', $row['啊']);
         }
         self::assertEquals(['汉字', '啊'], $gen->getReturn());
-    }
-
-    /**
-     * @return resource
-     */
-    private static function stringStream(string $s)
-    {
-        $f = fopen('php://memory', 'r+');
-        self::assertNotFalse($f);
-        fwrite($f, $s);
-        rewind($f);
-
-        return $f;
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Encoding\CSV;
 
+use Bungle\Framework\Export\FS;
 use Generator;
 use Webmozart\Assert\Assert;
 
@@ -56,5 +57,23 @@ class CSVDecoder
         }
 
         return $header;
+    }
+
+    /**
+     * @param array{charset?: string, noHeader?: bool} $options
+     * @return Generator<CSVRow>
+     */
+    public static function decodeString(string $s, array $options = []): Generator
+    {
+        $f = FS::stringStream($s);
+        try {
+            $gen = self::decode($f, $options);
+            foreach ($gen as $row) {
+                yield $row;
+            }
+            return $gen->getReturn();
+        } finally {
+            fclose($f);
+        }
     }
 }
