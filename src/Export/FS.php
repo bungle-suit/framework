@@ -6,6 +6,7 @@ namespace Bungle\Framework\Export;
 
 use RuntimeException;
 use Symfony\Component\ErrorHandler\ErrorHandler;
+use Webmozart\Assert\Assert;
 
 class FS implements FSInterface
 {
@@ -50,6 +51,20 @@ class FS implements FSInterface
         if ($charset !== '') {
             $r = mb_convert_encoding($r, 'UTF-8', $charset);
         }
+
+        return $r;
+    }
+
+    /**
+     * Create php stream from string.
+     * @return resource
+     */
+    public static function stringStream(string $s)
+    {
+        $r = fopen('php://memory', 'r+');
+        Assert::notFalse($r);
+        Assert::notFalse(fwrite($r, $s));
+        Assert::notFalse(rewind($r));
 
         return $r;
     }
