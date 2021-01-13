@@ -25,7 +25,7 @@ class CSVDecoder
     public static function decode($f, array $options = []): Generator
     {
         if ($charset = $options['charset'] ?? false) {
-            stream_filter_append($f, 'convert.iconv.'.$charset.'.utf-8');
+            stream_filter_append($f, 'convert.iconv.'.$charset.'.utf-8', STREAM_FILTER_READ);
         }
 
         while (true) {
