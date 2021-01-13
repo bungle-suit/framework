@@ -36,6 +36,38 @@ class CSVDecoderTest extends MockeryTestCase
         self::assertEquals(['a', 'b', 'c', 'd'], $gen->getReturn());
     }
 
+    public function testDOSEOL(): void
+    {
+        // test not enable auto_detect_line_endings can still compatible with dos end-line.
+        self::assertEquals('0', ini_get('auto_detect_line_endings'));
+
+        $f = self::stringStream(
+            str_replace(
+                "\n",
+                "\r\n",
+                <<<'CSV'
+            1,2,3
+            a,b,c
+            CSV
+            )
+        );
+
+        $gen = CSVDecoder::decode($f, ['noHeader' => true]);
+        $rowIdx = 0;
+        foreach ($gen as $row) {
+            if ($rowIdx === 0) {
+                self::assertEquals('1', $row[0]);
+                self::assertEquals('3', $row['C']);
+            } elseif ($rowIdx === 1) {
+                self::assertEquals('b', $row[1]);
+                self::assertEquals('a', $row['A']);
+            }
+            $rowIdx++;
+        }
+        self::assertEquals(2, $rowIdx);
+        self::assertEquals([0, 1, 2], $gen->getReturn());
+    }
+
     public function testDecodeNoHeader(): void
     {
         $f = self::stringStream(
