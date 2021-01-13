@@ -17,7 +17,7 @@ class CSVDecoderTest extends MockeryTestCase
             <<<'CSV'
             a,b,c,d
             1,2,3,4
-            5,6,7,8
+            5, 6 ,7,8
             CSV
     );
 
@@ -28,6 +28,7 @@ class CSVDecoderTest extends MockeryTestCase
                 self::assertEquals('1', $row['a']);
                 self::assertEquals('4', $row['D']);
             } elseif ($rowIdx === 1) {
+                // auto trim value ' 6 ' to '6'.
                 self::assertEquals('6', $row['b']);
                 self::assertEquals('7', $row['C']);
             }
@@ -150,7 +151,7 @@ class CSVDecoderTest extends MockeryTestCase
     {
         $s = mb_convert_encoding(
             <<<'CSV'
-            汉字,啊
+            汉字 , 啊
             文明,blah
             CSV
             ,

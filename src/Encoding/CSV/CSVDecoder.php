@@ -8,6 +8,8 @@ use Bungle\Framework\Export\FS;
 use Generator;
 use Webmozart\Assert\Assert;
 
+use function Symfony\Component\String\u;
+
 class CSVDecoder
 {
     /**
@@ -18,6 +20,8 @@ class CSVDecoder
      *
      * If contains only head row, returns empty Traversable, to access
      * the header, use result value ->getReturn() method.
+     *
+     * Trim begin/end from values.
      *
      * @param resource $f
      * @param array{charset?: string, noHeader?: bool} $options
@@ -39,6 +43,7 @@ class CSVDecoder
             if ($header[0] === null) {
                 continue;
             }
+            array_walk($header, fn (string &$s) => $s = u($s)->trim()->toString());
 
             if ($options['noHeader'] ?? false) {
                 $row = $header;
@@ -53,6 +58,7 @@ class CSVDecoder
             if ($line[0] === null) {
                 continue;
             }
+            array_walk($line, fn (string &$s) => $s = u($s)->trim()->toString());
             yield new CSVRow($header, $line);
         }
 
