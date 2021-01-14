@@ -17,6 +17,7 @@ class CSVDecoder
      *
      * charset: convert from charset to utf-8, if specified.
      * noHeader: treat first row as data, CSVRow indexed as [0..n).
+     * doNotCloseFile: do not close $f.
      *
      * If contains only head row, returns empty Traversable, to access
      * the header, use result value ->getReturn() method.
@@ -24,7 +25,7 @@ class CSVDecoder
      * Trim begin/end from values.
      *
      * @param resource $f
-     * @param array{charset?: string, noHeader?: bool} $options
+     * @param array{charset?: string, noHeader?: bool, doNotCloseFile?: bool} $options
      * @return Generator<CSVRow>
      */
     public static function decode($f, array $options = []): Generator
@@ -33,53 +34,52 @@ class CSVDecoder
             stream_filter_append($f, 'convert.iconv.'.$charset.'.utf-8', STREAM_FILTER_READ);
         }
 
-        while (true) {
-            $header = fgetcsv($f);
-            if ($header === false) {
-                return [];
+        try {
+            while (true) {
+                $header = fgetcsv($f);
+                if ($header === false) {
+                    return [];
+                }
+
+                Assert::notNull($header, 'read csv file failed');
+                if ($header[0] === null) {
+                    continue;
+                }
+                array_walk($header, fn(string &$s) => $s = u($s)->trim()->toString());
+
+                if ($options['noHeader'] ?? false) {
+                    $row = $header;
+                    $header = range(0, count($row) - 1);
+                    yield new CSVRow($header, $row);
+                }
+                break;
             }
 
-            Assert::notNull($header, 'read csv file failed');
-            if ($header[0] === null) {
-                continue;
+            while (($line = fgetcsv($f)) !== false) {
+                Assert::notNull($line, 'read csv file failed 2');
+                if ($line[0] === null) {
+                    continue;
+                }
+                array_walk($line, fn(string &$s) => $s = u($s)->trim()->toString());
+                yield new CSVRow($header, $line);
             }
-            array_walk($header, fn (string &$s) => $s = u($s)->trim()->toString());
 
-            if ($options['noHeader'] ?? false) {
-                $row = $header;
-                $header = range(0, count($row) - 1);
-                yield new CSVRow($header, $row);
+            return $header;
+        } finally {
+            if (!($options['doNotCloseFile'] ?? false)) {
+                fclose($f);
             }
-            break;
         }
-
-        while (($line = fgetcsv($f)) !== false) {
-            Assert::notNull($line, 'read csv file failed 2');
-            if ($line[0] === null) {
-                continue;
-            }
-            array_walk($line, fn (string &$s) => $s = u($s)->trim()->toString());
-            yield new CSVRow($header, $line);
-        }
-
-        return $header;
     }
 
     /**
-     * @param array{charset?: string, noHeader?: bool} $options
+     * @param array{charset?: string, noHeader?: bool, doNotCloseFile?: bool} $options
      * @return Generator<CSVRow>
      */
     public static function decodeString(string $s, array $options = []): Generator
     {
         $f = FS::stringStream($s);
-        try {
-            $gen = self::decode($f, $options);
-            foreach ($gen as $row) {
-                yield $row;
-            }
-            return $gen->getReturn();
-        } finally {
-            fclose($f);
-        }
+
+        return self::decode($f, $options);
     }
 }

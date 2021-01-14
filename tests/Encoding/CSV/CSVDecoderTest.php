@@ -167,4 +167,13 @@ class CSVDecoderTest extends MockeryTestCase
         }
         self::assertEquals(['汉字', '啊'], $gen->getReturn());
     }
+
+    public function testDoNotCloseFile(): void
+    {
+        $f = FS::stringStream('');
+        $gen = CSVDecoder::decode($f, ['doNotCloseFile' => true]);
+        self::assertEquals(0, iterator_count($gen));
+        self::assertEquals([], $gen->getReturn());
+        self::assertTrue(fclose($f));
+    }
 }
