@@ -68,4 +68,27 @@ class FS implements FSInterface
 
         return $r;
     }
+
+    /**
+     * Helps capture save to file/stream output to string.
+     * @return array{resource, callable(): string}
+     *
+     * First return value is opened stream, after all write done, call 2nd return
+     * value to get the content as string, and close the stream.
+     */
+    public static function writeToString(): array
+    {
+        $f = fopen('php://temp', 'r+');
+        Assert::notFalse($f);
+
+        $capture = function () use ($f) {
+            Assert::notFalse(rewind($f));
+            $r = stream_get_contents($f);
+            Assert::notFalse($r);
+            Assert::notFalse(fclose($f));
+            return $r;
+        };
+
+        return [$f, $capture];
+    }
 }
