@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Security;
 
+use InvalidArgumentException;
 use Bungle\Framework\Security\ArrayRoleDefinitionProvider;
 use Bungle\Framework\Security\RoleDefinition;
 use Bungle\Framework\Security\RoleRegistry;
@@ -37,6 +38,19 @@ final class RoleRegistryTest extends TestCase
         self::assertEquals([$r1, $r2], $reg->getDefinitions());
 
         return $reg;
+    }
+
+    public function testGetByName(): void
+    {
+        $reg = new RoleRegistry();
+        $reg->adds([$r1 = new RoleDefinition('ROLE_1_1', '', '', '')]);
+        $reg->adds([$r2 = new RoleDefinition('ROLE_1_2', '', '', '')]);
+
+        self::assertEquals($r1, $reg->getByName('ROLE_1_1'));
+        self::assertEquals($r2, $reg->getByName('ROLE_1_2'));
+
+        $this->expectException(InvalidArgumentException::class);
+        $reg->getByName('not-exist-role');
     }
 
     /**

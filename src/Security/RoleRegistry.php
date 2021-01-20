@@ -6,6 +6,7 @@ namespace Bungle\Framework\Security;
 
 use Bungle\Framework\FP;
 use LogicException;
+use Webmozart\Assert\Assert;
 
 class RoleRegistry
 {
@@ -90,5 +91,15 @@ class RoleRegistry
     public function getGroups(): array
     {
         return FP::group(FP::getter('getGroup'), $this->getDefinitions());
+    }
+
+    /**
+     * Get role definition by its name.
+     */
+    public function getByName(string $roleName): RoleDefinition
+    {
+        $r = FP::firstOrNull(fn (RoleDefinition $role) => $role->name() === $roleName, $this->defs);
+        Assert::notNull($r, "no role named $roleName");
+        return $r;
     }
 }
