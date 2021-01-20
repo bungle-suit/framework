@@ -15,18 +15,24 @@ final class RoleRegistryTest extends TestCase
 {
     public function testRoleDefinitionProviders(): void
     {
-        $reg = new RoleRegistry([
-          new ArrayRoleDefinitionProvider([
-            $r1 = new RoleDefinition('a', '', '', ''),
-            $r2 = new RoleDefinition('b', '', '', ''),
-          ]),
-          new ArrayRoleDefinitionProvider([]),
-          new ArrayRoleDefinitionProvider([
-            $r3 = new RoleDefinition('c', '', '', ''),
-          ]),
-        ]);
+        $reg = new RoleRegistry(
+            [
+                new ArrayRoleDefinitionProvider(
+                    [
+                        $r1 = new RoleDefinition('a', '', '', ''),
+                        $r2 = new RoleDefinition('b', '', '', ''),
+                    ]
+                ),
+                new ArrayRoleDefinitionProvider([]),
+                new ArrayRoleDefinitionProvider(
+                    [
+                        $r3 = new RoleDefinition('c', '', '', ''),
+                    ]
+                ),
+            ]
+        );
 
-        self::assertEquals([$r1, $r2, $r3], $reg->getDefinitions());
+        self::assertEquals(['a' => $r1, 'b' => $r2, 'c' => $r3], $reg->getDefinitions());
     }
 
     public function testAdd(): RoleRegistry
@@ -35,7 +41,7 @@ final class RoleRegistryTest extends TestCase
         self::assertEmpty($reg->getDefinitions());
         $reg->adds([$r1 = new RoleDefinition('ROLE_1_1', '', '', '')]);
         $reg->adds([$r2 = new RoleDefinition('ROLE_1_2', '', '', '')]);
-        self::assertEquals([$r1, $r2], $reg->getDefinitions());
+        self::assertEquals(['ROLE_1_1' => $r1, 'ROLE_1_2' => $r2], $reg->getDefinitions());
 
         return $reg;
     }
@@ -61,10 +67,12 @@ final class RoleRegistryTest extends TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage("Duplicate role name: ROLE_1_1");
 
-        $reg->adds([
-            new RoleDefinition('ROLE_1_1', 'a', 'b', ''),
-            new RoleDefinition('ROLE_1_1', 'a', 'b', ''),
-        ]);
+        $reg->adds(
+            [
+                new RoleDefinition('ROLE_1_1', 'a', 'b', ''),
+                new RoleDefinition('ROLE_1_1', 'a', 'b', ''),
+            ]
+        );
     }
 
     /**
@@ -73,23 +81,30 @@ final class RoleRegistryTest extends TestCase
     public function testAdds(RoleRegistry $reg): void
     {
         $expRoles = $reg->getDefinitions();
-        $reg->adds([
-          $r3 = new RoleDefinition('ROLE_2_1', '', '', ''),
-          $r4 = new RoleDefinition('ROLE_2_2', '', '', ''),
-        ]);
+        $reg->adds(
+            [
+                $r3 = new RoleDefinition('ROLE_2_1', '', '', ''),
+                $r4 = new RoleDefinition('ROLE_2_2', '', '', ''),
+            ]
+        );
 
-        self::assertEquals(array_merge($expRoles, [$r3, $r4]), $reg->getDefinitions());
+        self::assertEquals(
+            array_merge($expRoles, ['ROLE_2_1' => $r3, 'ROLE_2_2' => $r4]),
+            $reg->getDefinitions()
+        );
     }
 
     public function testGetGroups(): void
     {
         $reg = new RoleRegistry();
-        $reg->adds([
-            $ra1 = new RoleDefinition('ROLE_2_1', '', '', 'ga'),
-            $rb1 = new RoleDefinition('ROLE_3_1', '', '', 'gb'),
-            $ra2 = new RoleDefinition('ROLE_2_2', '', '', 'ga'),
-            $rb2 = new RoleDefinition('ROLE_3_2', '', '', 'gb'),
-        ]);
+        $reg->adds(
+            [
+                $ra1 = new RoleDefinition('ROLE_2_1', '', '', 'ga'),
+                $rb1 = new RoleDefinition('ROLE_3_1', '', '', 'gb'),
+                $ra2 = new RoleDefinition('ROLE_2_2', '', '', 'ga'),
+                $rb2 = new RoleDefinition('ROLE_3_2', '', '', 'gb'),
+            ]
+        );
         $exp = [
             'ga' => [$ra1, $ra2],
             'gb' => [$rb1, $rb2],

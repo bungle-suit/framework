@@ -10,9 +10,7 @@ use Webmozart\Assert\Assert;
 
 class RoleRegistry
 {
-    /**
-     * @var RoleDefinition[] $defs
-     */
+    /** @var array<string, RoleDefinition> $defs name => def */
     private array $defs;
     /** @var RoleDefinitionProviderInterface[]  */
     private array $providers;
@@ -31,7 +29,7 @@ class RoleRegistry
             throw new LogicException("Duplicate role name: {$roleDef->name()}");
         }
 
-        $this->defs[] = $roleDef;
+        $this->defs[$roleDef->name()] = $roleDef;
     }
 
     /**
@@ -46,17 +44,11 @@ class RoleRegistry
     }
 
     /**
-     * @param array<int, RoleDefinition> $arr
+     * @param array<string, RoleDefinition> $arr
      */
     private static function roleExists(array $arr, RoleDefinition $role): bool
     {
-        foreach ($arr as $item) {
-            if ($item->name() === $role->name()) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_key_exists($role->name(), $arr);
     }
 
     /**
@@ -72,7 +64,8 @@ class RoleRegistry
     }
 
     /**
-     * @return RoleDefinition[]
+     * Return definitions, indexed by role name.
+     * @return array<string, RoleDefinition>
      */
     public function getDefinitions(): array
     {
@@ -98,7 +91,7 @@ class RoleRegistry
      */
     public function getByName(string $roleName): RoleDefinition
     {
-        $r = FP::firstOrNull(fn (RoleDefinition $role) => $role->name() === $roleName, $this->defs);
+        $r = $this->defs[$roleName] ?? null;
         Assert::notNull($r, "no role named $roleName");
         return $r;
     }
