@@ -6,9 +6,11 @@ namespace Bungle\Framework\Import\ExcelReader\LabelledReader;
 
 use Bungle\Framework\Import\ExcelReader\ExcelReader;
 use Bungle\Framework\Import\ExcelReader\SectionContentReaderInterface;
+use Bungle\Framework\Model\BunglePropertyAccessor;
 use LogicException;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * @template T
@@ -24,7 +26,7 @@ class LabelledReader implements SectionContentReaderInterface
     /** @phpstan-var Context<T> */
     private Context $context;
     private int $startColIdx;
-    private PropertyAccessor $propertyAccessor;
+    private PropertyAccessorInterface $propertyAccessor;
 
     /**
      * @phpstan-param T $obj Object that parsed value will assign to.
@@ -35,7 +37,7 @@ class LabelledReader implements SectionContentReaderInterface
         $this->obj = $obj;
         $this->startColIdx = Coordinate::columnIndexFromString($startCol);
         $this->maxValuesPerRow = $maxValuesPerRow;
-        $this->propertyAccessor = new PropertyAccessor();
+        $this->propertyAccessor = new BunglePropertyAccessor(new PropertyAccessor());
     }
 
     /**
