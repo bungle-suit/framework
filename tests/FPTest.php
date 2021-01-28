@@ -6,7 +6,9 @@ namespace Bungle\Framework\Tests;
 
 use ArrayIterator;
 use Bungle\Framework\FP;
+use Bungle\Framework\FuncInterface;
 use LogicException;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 
 class FPTest extends TestCase
@@ -382,5 +384,40 @@ class FPTest extends TestCase
 
         self::assertEquals(12, $f(3, 4));
         self::assertEquals(6, $f(2, 4));
+    }
+
+    public function testSelectOnlyDefaultCase(): void
+    {
+        $f = FP::select(fn(int $v) => $v + 1, fn(int $v) => $v + 100);
+        self::assertEquals(150, $f(50));
+    }
+
+    public function testSelect(): void
+    {
+        $f = FP::select(
+            $fPrep = Mockery::mock(FuncInterface::class),
+            10,
+            $fCase1 = Mockery::namedMock('case1', FuncInterface::class),
+            $fSelect2 = Mockery::namedMock('select2', FuncInterface::class),
+            $fCase2 = Mockery::namedMock('case2', FuncInterface::class),
+            $fDefaultCase = Mockery::namedMock('defaultCase', FuncInterface::class),
+        );
+
+        // equal to value
+        $fPrep->expects('__invoke')->with(100)->andReturn(10);
+        $fCase1->expects('__invoke')->with(100)->andReturn('foo');
+        self::assertEquals('foo', $f(100));
+
+        // matched by select func
+        $fPrep->expects('__invoke')->with(100)->andReturn(11);
+        $fSelect2->expects('__invoke')->with(100)->andReturnTrue();
+        $fCase2->expects('__invoke')->with(100)->andReturn('bar');
+        self::assertEquals('bar', $f(100));
+
+        // fall over to default case
+        $fPrep->expects('__invoke')->with(100)->andReturn(11);
+        $fSelect2->expects('__invoke')->with(100)->andReturnFalse();
+        $fDefaultCase->expects('__invoke')->with(100)->andReturn('foobar');
+        self::assertEquals('foobar', $f(100));
     }
 }

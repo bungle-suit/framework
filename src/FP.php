@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework;
 
+use InvalidArgumentException;
 use LogicException;
 use Traversable;
 
@@ -421,6 +422,36 @@ class FP
                 return $a(...$args);
             }
             return $b(...$args);
+        };
+    }
+
+    /**
+     * @template T, V
+     * Like @see self::if(), but a select/case expression, must provide function
+     * to handle default case, because it is an expression, must has return value.
+     * If case value, provided use strict equal (===).
+     *
+     * @param callable(mixed...): V $fValue prepare value for case function/values.
+     * @param array<(array{V|callable(V, mixed...): bool, callable(mixed...): T}>)|callable(mixed...): T> $cases
+     */
+    public static function select(callable $fValue, ...$cases): callable
+    {
+        return function (...$args) use ($fValue, $cases)
+        {
+            if (count($cases) % 2 === 0) {
+                throw new InvalidArgumentException('select must provide default case');
+            }
+
+            $v = $fValue(...$args);
+            for ($i = 0, $l = count($cases); ($i + 1) < $l; $i+=2) {
+                $fSelect = $cases[$i] ;
+                if (is_callable($fSelect) ? $fSelect(...$args) : $v === $fSelect) {
+                    return ($cases[$i + 1])(...$args);
+                }
+            }
+
+            $defCase = end($cases);
+            return $defCase(...$args);
         };
     }
 
