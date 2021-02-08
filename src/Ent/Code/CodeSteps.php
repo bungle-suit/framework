@@ -79,7 +79,11 @@ class CodeSteps
         foreach ($steps as $step) {
             $r = $step($entity, $context);
             if (is_string($r)) {
-                $context->addSection($r);
+                if ($step instanceof CarriagableCoderStepInterface) {
+                   $context->addSection($r, false, $step);
+                } else {
+                    $context->addSection($r);
+                }
             }
         }
     }

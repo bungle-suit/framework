@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\Tests\Ent\Code;
 
 use Bungle\Framework\Ent\BasalInfoService;
+use Bungle\Framework\Ent\Code\CarriagableCoderStepInterface;
 use Bungle\Framework\Ent\Code\CodeContext;
 use Bungle\Framework\Ent\Code\CoderStepInterface;
 use Bungle\Framework\Ent\Code\CodeSteps;
@@ -73,19 +74,22 @@ class CodeStepsTest extends TestCase
             $c1 = Mockery::mock(CoderStepInterface::class),
             $c2 = Mockery::mock(CoderStepInterface::class),
             $c3 = Mockery::mock(CoderStepInterface::class),
+            $c4 = Mockery::mock(CarriagableCoderStepInterface::class),
         ];
 
         $ctx = new CodeContext();
         $o = new StdClass();
-        $steps[] = function (StdClass $o, CodeContext $context): void {
-            $context->addSection('4');
-        };
         $c1->expects('__invoke')->with($o, $ctx)->andReturnNull();
         $c2->expects('__invoke')->with($o, $ctx)->andReturn('2nd');
         $c3->expects('__invoke')->with($o, $ctx)->andReturn('3rd');
+        $c4->expects('__invoke')->with($o, $ctx)->andReturn('4nd');
+        $steps[] = function (StdClass $o, CodeContext $context): void {
+            $context->addSection('5');
+        };
 
         $step = CodeSteps::compose($steps);
         $step($o, $ctx);
-        self::assertEquals('2nd-3rd-4', strval($ctx));
+        self::assertEquals('2nd-3rd-4nd-5', strval($ctx));
+        self::assertEquals([2 => $c4], $ctx->getCarriageSteps());
     }
 }
