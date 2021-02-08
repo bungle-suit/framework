@@ -1,10 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Ent\Code;
 
 use Bungle\Framework\Model\HasAttributes;
 use Bungle\Framework\Model\HasAttributesInterface;
+use Webmozart\Assert\Assert;
 
 class CodeContext implements HasAttributesInterface
 {
@@ -30,16 +32,40 @@ class CodeContext implements HasAttributesInterface
         return $this->sections;
     }
 
+    /** @var array<int, CarriagableCoderStepInterface<mixed>> */
+    private array $carriageSteps = [];
+
     /**
      * Append $section to $sections
      *
      * If $ignoreEmpty, section not added if $section is empty.
+     *
+     * @param CarriagableCoderStepInterface<mixed> $carriageStep register carriage step if not null.
      */
-    public function addSection(string $section, bool $ignoreEmpty = false): void
-    {
+    public function addSection(
+        string $section,
+        bool $ignoreEmpty = false,
+        CarriagableCoderStepInterface $carriageStep = null
+    ): void {
         if (!$ignoreEmpty || $section !== '') {
             $this->sections[] = $section;
         }
+
+        if ($carriageStep) {
+            Assert::false(
+                $ignoreEmpty,
+                'Must not ignore empty for '.CarriagableCoderStepInterface::class
+            );
+            $this->carriageSteps[count($this->sections) - 1] = $carriageStep;
+        }
+    }
+
+    /**
+     * @return array<int, CarriagableCoderStepInterface<mixed>>
+     */
+    public function getCarriageSteps(): array
+    {
+        return $this->carriageSteps;
     }
 
     /**
