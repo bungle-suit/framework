@@ -77,13 +77,23 @@ class CodeSteps
     public static function runSteps(array $steps, $entity, CodeContext $context): void
     {
         foreach ($steps as $step) {
-            $r = $step($entity, $context);
-            if (is_string($r)) {
-                if ($step instanceof CarriagableCoderStepInterface) {
-                   $context->addSection($r, false, $step);
-                } else {
-                    $context->addSection($r);
-                }
+            self::runStep($step,$entity, $context);
+        }
+    }
+
+    /**
+     * @template T
+     * @param T $entity
+     * @param CoderStepInterface<T>|callable(T, CodeContext): ?string $step
+     */
+    public static function runStep($step, $entity, CodeContext $context): void
+    {
+        $r = $step($entity, $context);
+        if (is_string($r)) {
+            if ($step instanceof CarriagableCoderStepInterface) {
+                $context->addSection($r, false, $step);
+            } else {
+                $context->addSection($r);
             }
         }
     }

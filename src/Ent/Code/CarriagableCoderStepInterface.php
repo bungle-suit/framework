@@ -14,4 +14,8 @@ namespace Bungle\Framework\Ent\Code;
  */
 interface CarriagableCoderStepInterface extends CoderStepInterface
 {
+    /**
+     * @param T $entity
+     */
+    public function carry($entity, CodeContext $context): string;
 }
