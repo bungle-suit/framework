@@ -32,6 +32,15 @@ class CodeContext implements HasAttributesInterface
         return $this->sections;
     }
 
+    /**
+     * Set section by index, index must exist, used to replace exist value with
+     * regenerated value.
+     */
+    public function setSection(int $idx, string $val): void
+    {
+        $this->sections[$idx] = $val;
+    }
+
     /** @var array<int, CarriagableCoderStepInterface<mixed>> */
     private array $carriageSteps = [];
 
