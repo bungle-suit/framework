@@ -7,6 +7,7 @@ namespace Bungle\Framework;
 use InvalidArgumentException;
 use LogicException;
 use Traversable;
+use Webmozart\Assert\Assert;
 
 /**
  * Common functional program functions
@@ -341,8 +342,8 @@ class FP
      * Assert that the value is not null.
      *
      * @template T
-     * @phpstan-param T|null $v
-     * @phpstanreturn T
+     * @param T|null $v
+     * @return T
      */
     public static function notNull($v, string $message = '')
     {
@@ -427,14 +428,13 @@ class FP
     }
 
     /**
-     * @template T, V
-     * Like @param callable(mixed...): V $fValue prepare value for case function/values.
-     * @param array<(array{V|callable(V, mixed...): bool, callable(mixed...):
-     *     T}>)|callable(mixed...): T> $cases
-     * @see self::if(), but a select/case expression, must provide function
+     * @template T
+     * @template V
+     * @param callable(mixed...): V $fValue prepare value for case function/values.
+     * @param array<(array{V|callable(V, mixed...): bool, callable(mixed...): T})|(callable(mixed...): T)> $cases
+     * Like @see self::if(), but a select/case expression, must provide function
      * to handle default case, because it is an expression, must has return value.
      * If case value, provided use strict equal (===).
-     *
      */
     public static function select(callable $fValue, ...$cases): callable
     {
@@ -447,11 +447,14 @@ class FP
             for ($i = 0, $l = count($cases); ($i + 1) < $l; $i += 2) {
                 $fSelect = $cases[$i];
                 if (is_callable($fSelect) ? $fSelect(...$args) : $v === $fSelect) {
-                    return ($cases[$i + 1])(...$args);
+                    $action = $cases[$i + 1];
+                    Assert::isCallable($action);
+                    return $action(...$args);
                 }
             }
 
             $defCase = end($cases);
+            Assert::isCallable($defCase);
 
             return $defCase(...$args);
         };

@@ -24,12 +24,12 @@ class BunglePropertyAccessor implements PropertyAccessorInterface
 
     /**
      * @inheritDoc
-     * @param object|array                 $objectOrArray The object or array to modify
+     * @param object|mixed[]               $objectOrArray The object or array to modify
      * @param string|PropertyPathInterface $propertyPath  The property path to modify
      * @param mixed                        $value         The value to set at the end of the property path
      * @return void
      */
-    public function setValue(&$objectOrArray, $propertyPath, $value)
+    public function setValue(&$objectOrArray, $propertyPath, mixed $value)
     {
         if ($propertyPath === '') {
             throw new InvalidArgumentException('BunglePropertyAccessor: setValue on self');

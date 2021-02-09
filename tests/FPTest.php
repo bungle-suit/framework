@@ -99,6 +99,7 @@ class FPTest extends TestCase
     {
         self::assertTrue(FP::isEmpty([]));
         self::assertFalse(FP::isEmpty([1]));
+        self::assertFalse(FP::isEmpty(new ArrayIterator([1])));
     }
 
     public function testIdentity(): void
