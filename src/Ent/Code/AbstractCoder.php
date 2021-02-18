@@ -30,10 +30,10 @@ abstract class AbstractCoder implements CoderInterface
     {
         $context = $context ?? new CodeContext();
 
-        for ($step = current($this->steps); $step !== false; $step = next($this->steps)) {
+        for ($step = reset($this->steps); $step !== false; $step = next($this->steps)) {
             try {
                 CodeSteps::runStep($step, $entity, $context);
-            } catch (CoderOverflowException $e) {
+            } catch (CoderOverflowException) {
                 $carries = $context->getCarriageSteps();
                 $allOverflowed = true;
                 for ($carry = end($carries); $carry !== false; $carry = prev($carries)) {
@@ -43,7 +43,7 @@ abstract class AbstractCoder implements CoderInterface
                         $context->setSection($idx, $carry->carry($entity, $context));
                         $allOverflowed = false;
                         break;
-                    } catch (CoderOverflowException $e) {
+                    } catch (CoderOverflowException) {
                     }
                 }
                 if ($allOverflowed) {
