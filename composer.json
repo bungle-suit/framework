@@ -15,7 +15,7 @@
     "ext-json": "*",
     "symfony/string": "^5.2",
     "phpoffice/phpspreadsheet": "^1.16",
-    "webmozart/assert": "^1.9",
+    "webmozart/assert": "^1.9"
   },
   "autoload": {
     "psr-4": { "Bungle\\Framework\\": "src/" }
