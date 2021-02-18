@@ -8,13 +8,7 @@ use ArrayIterator;
 use Bungle\Framework\Ent\BasalInfoService;
 use Bungle\Framework\Export\ExcelWriter\ExcelColumn;
 use Bungle\Framework\Export\ExcelWriter\ExcelWriter;
-use Bungle\Framework\Export\ParamParser\ExportContext;
-use PhpOffice\PhpSpreadsheet\Settings;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use Psr\Cache\CacheItemPoolInterface;
-use Psr\SimpleCache\CacheInterface;
-use Symfony\Component\Cache\Psr16Cache;
-use Symfony\Contracts\Service\Attribute\Required;
 use Traversable;
 
 /**
@@ -27,7 +21,6 @@ abstract class AbstractSingleTableExporter extends AbstractExcelExporter
 {
     private string $title;
     private bool $titleBuilt = false;
-    private CacheInterface $cache;
 
     /** @required */
     public BasalInfoService $basal;
@@ -39,22 +32,6 @@ abstract class AbstractSingleTableExporter extends AbstractExcelExporter
     public function __construct(string $title)
     {
         $this->title = $title;
-    }
-
-    #[Required]
-    public function setCache(
-        CacheItemPoolInterface $cache
-    ): void {
-        $this->cache = new Psr16Cache($cache);
-    }
-
-    public function export(ExportContext $context, bool $throws = false): ExportResult
-    {
-        if (isset($this->cache)) {
-            Settings::setCache($this->cache);
-        }
-
-        return parent::export($context, $throws);
     }
 
     public function getTitle(): string
