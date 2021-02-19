@@ -1,0 +1,5 @@
+services:
+	-
+		class: Bungle\Framework\PHPStan\FPTypeSpecifyingExtension
+		tags:
+			- phpstan.typeSpecifier.staticMethodTypeSpecifyingExtension
