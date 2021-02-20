@@ -184,7 +184,6 @@ class ExcelWriter extends ExcelOperator
         foreach ($cells as $row) {
             $colIdx = $startColIdx;
             foreach ($row as $cv) {
-                /** @var Cell $c */
                 $c = FP::notNull($this->sheet->getCellByColumnAndRow($colIdx, $this->getRow()));
                 if (!($cv instanceof ExcelCell)) {
                     $c->setValue($cv);

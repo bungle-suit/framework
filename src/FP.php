@@ -340,12 +340,8 @@ class FP
 
     /**
      * Assert that the value is not null.
-     *
-     * @template T
-     * @param T|null $v
-     * @return T
      */
-    public static function notNull($v, string $message = '')
+    public static function notNull(mixed $v, string $message = ''): mixed
     {
         if ($v === null) {
             throw new LogicException($message ?: "Expect value not null");
