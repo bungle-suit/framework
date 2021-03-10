@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Encoding\CSV;
 
+use ArrayIterator;
 use Bungle\Framework\Encoding\CSV\CSVDecoder;
+use Bungle\Framework\Encoding\CSV\CSVRow;
 use Bungle\Framework\Export\FS;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Webmozart\Assert\Assert;
@@ -19,7 +21,7 @@ class CSVDecoderTest extends MockeryTestCase
             1,2,3,4
             5, 6 ,7,8
             CSV
-    );
+        );
 
         $gen = CSVDecoder::decode($f);
         $rowIdx = 0;
@@ -51,8 +53,8 @@ class CSVDecoderTest extends MockeryTestCase
             1,2,3
             a,b,c
             CSV
-        )
-            );
+            )
+        );
 
         $gen = CSVDecoder::decode($f, ['noHeader' => true]);
         $rowIdx = 0;
@@ -77,7 +79,7 @@ class CSVDecoderTest extends MockeryTestCase
             1,2,3
             a,b,c
             CSV
-    );
+        );
 
         $gen = CSVDecoder::decode($f, ['noHeader' => true]);
         $rowIdx = 0;
@@ -116,14 +118,14 @@ class CSVDecoderTest extends MockeryTestCase
             <<<'CSV'
             a,b,c,d
             CSV
-    );
+        );
 
         $gen = CSVDecoder::decode($f);
         self::assertEquals(0, iterator_count($gen));
         self::assertEquals(['a', 'b', 'c', 'd'], $gen->getReturn());
     }
 
-    public function testIgnoreEmptyRows(): void
+    public function testIgnoreEmptyLines(): void
     {
         $f = FS::stringStream(
             <<<'CSV'
@@ -136,7 +138,7 @@ class CSVDecoderTest extends MockeryTestCase
 
 
             CSV
-    );
+        );
 
         $gen = CSVDecoder::decode($f);
         $rows = iterator_to_array($gen);
@@ -175,5 +177,21 @@ class CSVDecoderTest extends MockeryTestCase
         self::assertEquals(0, iterator_count($gen));
         self::assertEquals([], $gen->getReturn());
         self::assertTrue(fclose($f));
+    }
+
+    public function testIgnoreEmptyRows(): void
+    {
+        $headers = ['a', 'b', 'c'];
+        $rows = [
+            new CSVRow($headers, []),
+            new CSVRow($headers, ['1', '2']),
+            new CSVRow($headers, ['', '', '3']),
+            new CSVRow($headers, ['', '', '']),
+        ];
+
+        self::assertEquals(
+            [$rows[1], $rows[2]],
+            iterator_to_array(CSVDecoder::ignoreEmptyRows(new ArrayIterator($rows)), false)
+        );
     }
 }

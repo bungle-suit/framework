@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Bungle\Framework\Encoding\CSV;
 
 use Bungle\Framework\Export\FS;
+use Bungle\Framework\FP;
+use CallbackFilterIterator;
 use Generator;
+use Iterator;
 use Webmozart\Assert\Assert;
 
 use function Symfony\Component\String\u;
@@ -81,5 +84,18 @@ class CSVDecoder
         $f = FS::stringStream($s);
 
         return self::decode($f, $options);
+    }
+
+    /**
+     * Filter out empty rows. Empty row is a row all cell value are empty string.
+     * @param Iterator<CSVRow> $iter
+     * @return Iterator<CSVRow>
+     */
+    public static function ignoreEmptyRows(Iterator $iter): Iterator
+    {
+        return new CallbackFilterIterator(
+            $iter,
+            fn(CSVRow $row) => FP::any(fn(string $s) => !!$s, $row)
+        );
     }
 }
