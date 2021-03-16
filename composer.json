@@ -17,6 +17,9 @@
     "phpoffice/phpspreadsheet": "^1.16",
     "webmozart/assert": "^1.9"
   },
+  "require-dev": {
+    "pestphp/pest": "^1.0"
+  },
   "autoload": {
     "psr-4": { "Bungle\\Framework\\": "src/" }
   },
