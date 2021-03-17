@@ -30,11 +30,11 @@ class ConverterTest extends TestCase
 
         // DateTime
         $d = new DateTime('2011-01-02T05:03:01.012345');
-        self::assertEquals('11-01-02 05:03', $f($d));
+        self::assertEquals('2011-01-02 05:03', $f($d));
         $d = new DateTimeImmutable('2011-01-01T13:03:01.012345');
-        self::assertEquals('11-01-01 13:03', $f($d));
+        self::assertEquals('2011-01-01 13:03', $f($d));
         $d = new DateTimeImmutable('2011-01-01T00:00:00.0');
-        self::assertEquals('11-01-01', $f($d));
+        self::assertEquals('2011-01-01', $f($d));
 
         // other types
         self::assertEquals(' abc ', $f(' abc '));
