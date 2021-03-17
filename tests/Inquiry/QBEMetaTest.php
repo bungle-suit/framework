@@ -31,3 +31,23 @@ it(
         expect($qbe->get('opt2'))->toEqual(3);
     }
 );
+
+it(
+    'initial qbe value',
+    function () {
+        $t = new Type(Type::BUILTIN_TYPE_INT, true);
+        $qbe = new QBEMeta('foo', 'lbl', $t);
+
+        // default to be null
+        expect($qbe->getInitialQBEValue())->toBeNull();
+
+        // set explicitly
+        $qbe->setInitialValue(123);
+        expect($qbe->getInitialQBEValue())->toBe(123);
+
+        // use callback
+        $qbe->set('foo', 456);
+        $qbe->setInitialValue(fn(QBEMeta $x) => $x->get('foo'));
+        expect($qbe->getInitialQBEValue())->toBe(456);
+    }
+);

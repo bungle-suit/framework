@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Inquiry;
@@ -18,6 +19,8 @@ class QBEMeta implements HasAttributesInterface
     private string $name;
     private Type $type;
     private string $label;
+    /** @var mixed|callable(self): mixed */
+    private $initialValue = null;
 
     /**
      * @param array<string, mixed> $options
@@ -50,5 +53,27 @@ class QBEMeta implements HasAttributesInterface
     public function getLabel(): string
     {
         return $this->label;
+    }
+
+    /**
+     * Set qbe initial value, if it is callback, returns initial value.
+     * @param mixed|callable(self): mixed
+     */
+    public function setInitialValue(mixed $initialValue): void
+    {
+        $this->initialValue = $initialValue;
+    }
+
+    /**
+     * Return initial qbe value, see self::setInitialValue().
+     */
+    public function getInitialQBEValue(): mixed
+    {
+        $v = $this->initialValue;
+        if (is_callable($v)) {
+            return $v($this);
+        }
+
+        return $v;
     }
 }
