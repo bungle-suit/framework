@@ -102,7 +102,7 @@ abstract class AbstractSingleTableExporter extends AbstractExcelExporter
     /**
      * @param mixed[] $params
      */
-    private function doGetTitle(array $params): string
+    protected function doGetTitle(array $params): string
     {
         if (!$this->titleBuilt) {
             $this->titleBuilt = true;
