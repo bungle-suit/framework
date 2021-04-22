@@ -147,6 +147,24 @@ class ExcelWriterTest extends MockeryTestCase
         self::assertEquals($merges, array_values($this->workSheet->getMergeCells()));
     }
 
+    public function testColumnWidth(): void
+    {
+        $cols = [
+            new ExcelColumn('A', '[0]'),
+            (new ExcelColumn('B', '[1]', options: [ExcelColumn::OPT_WIDTH => 18]))->setColSpan(2),
+            new ExcelColumn('C', '[2]'),
+            new ExcelColumn('D', '[2]', options: [ExcelColumn::OPT_WIDTH => 20]),
+        ];
+
+        $this->writer->writeTable(
+            $cols,
+            [],
+            'B',
+        );
+        self::assertEquals(18, $this->workSheet->getColumnDimension('C')->getWidth());
+        self::assertEquals(20, $this->workSheet->getColumnDimension('F')->getWidth());
+    }
+
     /**
      * @return array<mixed[]>
      */
