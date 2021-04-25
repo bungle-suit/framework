@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\Model\ExtAttribute;
 
 use Bungle\Framework\FP;
+use Symfony\Component\Form\FormBuilderInterface;
 
 class AttributeUtils
 {
@@ -35,6 +36,21 @@ class AttributeUtils
             0.0,
             fn(AttributeInterface $attr) => $attr->asFloat()
         );
+    }
+
+    public static function addForm(
+        FormBuilderInterface $formBuilder,
+        AttributeDefinitionInterface $def,
+    ): void {
+        $options = [
+            'label' => $def->getLabel(),
+            'required' => false,
+        ];
+        if ($def->getDescription()) {
+            $options['help'] = $def->getDescription();
+        }
+        $options = array_merge($options, $def->getFormOption());
+        $formBuilder->add($def->getName(), $def->getFormType(), $options);
     }
 
     /**
