@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Export\ExcelWriter;
@@ -9,6 +10,11 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 final class ExcelColumn
 {
+    /**
+     * Float value as column width.
+     */
+    public const OPT_WIDTH = 'width';
+
     private string $propertyPath;
     /** @var callable(mixed, int, mixed): mixed */
     private $valueConverter;
@@ -34,7 +40,8 @@ final class ExcelColumn
     public function __construct(
         string $header,
         string $propertyPath,
-        ?callable $valueConverter = null
+        ?callable $valueConverter = null,
+        private array $options = [],
     ) {
         $this->propertyPath = $propertyPath;
         $this->valueConverter = $valueConverter ?? [FP::class, 'identity'];
@@ -141,5 +148,10 @@ final class ExcelColumn
         $this->colSpan = $colSpan;
 
         return $this;
+    }
+
+    public function getOptions(): array
+    {
+        return $this->options;
     }
 }

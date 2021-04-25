@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Export\ExcelWriter;
 
+use Bungle\Framework\Export\ExcelWriter\TablePlugins\ColumnWidthTablePlugin;
 use Bungle\Framework\Export\ExcelWriter\TablePlugins\CompositeTablePlugin;
 use Bungle\Framework\Export\ExcelWriter\TablePlugins\DefaultStyleTablePlugin;
 use Bungle\Framework\Export\ExcelWriter\TablePlugins\FormulaColumnTablePlugin;
@@ -75,7 +76,7 @@ class ExcelWriter extends ExcelOperator
     private static function createPlugins(array $cols, array $options): TablePluginInterface
     {
         /** @var array<TablePluginInterface> $userPlugins */
-        $userPlugins =$options['plugins'];
+        $userPlugins = $options['plugins'];
         foreach ($cols as $col) {
             if ($col->formulaEnabled()) {
                 $userPlugins[] = new FormulaColumnTablePlugin();
@@ -100,6 +101,7 @@ class ExcelWriter extends ExcelOperator
         if (!$options['disableDefaultStyle']) {
             $userPlugins[] = new DefaultStyleTablePlugin();
         }
+        $userPlugins[] = new ColumnWidthTablePlugin();
 
         return new CompositeTablePlugin($userPlugins);
     }
@@ -237,7 +239,6 @@ class ExcelWriter extends ExcelOperator
     }
 
     /**
-     * @noinspection PhpUnusedParameterInspection
      * @param array<string, mixed> $options
      * @return array<string, mixed>
      */

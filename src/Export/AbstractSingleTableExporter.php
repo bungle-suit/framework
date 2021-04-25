@@ -50,9 +50,6 @@ abstract class AbstractSingleTableExporter extends AbstractExcelExporter
         $cols = iterator_to_array($this->createColumns(), false);
         $writer->writeTitle($this->doGetTitle($params), count($cols));
         $writer->writeTable($cols, $this->query($params), 'A', $this->getTableOptions());
-        foreach (range(1, count($cols)) as $colIdx) {
-            $writer->getSheet()->getColumnDimensionByColumn($colIdx)->setAutoSize(true);
-        }
     }
 
     /**
