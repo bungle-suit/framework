@@ -421,4 +421,15 @@ class FPTest extends TestCase
         $fDefaultCase->expects('__invoke')->with(100)->andReturn('foobar');
         self::assertEquals('foobar', $f(100));
     }
+
+    public function testOnce():void
+    {
+        $inner = Mockery::mock(FuncInterface::class);
+        $f = FP::once($inner);
+        $inner->expects('__invoke')->with()->andReturn('foo')->once();
+
+        self::assertEquals('foo', $f());
+        self::assertEquals('foo', $f());
+        self::assertEquals('foo', $f());
+    }
 }

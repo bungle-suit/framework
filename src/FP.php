@@ -517,4 +517,21 @@ class FP
 
         return $r;
     }
+
+    /**
+     * Call $inner only once, cache result value, and return
+     * on later calls.
+     *
+     * Currently, only no-arg $inner supported.
+     */
+    public static function once(callable $inner): callable
+    {
+        return function () use ($inner, &$cached) {
+            if (isset($cached)) {
+                return $cached;
+            }
+
+            return $cached = $inner();
+        };
+    }
 }
