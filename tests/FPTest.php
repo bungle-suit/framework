@@ -437,6 +437,24 @@ class FPTest extends TestCase
     {
         $a = ['one' => 1, 'two' => 2, 'three' => 3];
         $b = FP::mapKeys(fn($x) => 'new-'.$x, $a);
-        expect($b)->toEqual(['new-one' => 1, 'new-two' => 2, 'new-three' => 3]);
+        self::assertEquals(['new-one' => 1, 'new-two' => 2, 'new-three' => 3], $b);
+    }
+
+    public function testOnlyItem(): void
+    {
+        self::assertEquals('b', FP::onlyItem(['b']));
+        self::assertEquals('b', FP::onlyItem(['one' => 'b']));
+    }
+
+    public function testOnlyItemEmpty(): void
+    {
+        $this->expectException(LogicException::class);
+        FP::onlyItem([]);
+    }
+
+    public function testOnlyItemsMoreThanOneItem(): void
+    {
+        $this->expectException(LogicException::class);
+        FP::onlyItem(['a', 'b']);
     }
 }

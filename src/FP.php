@@ -553,4 +553,22 @@ class FP
             return $cached = $inner();
         };
     }
+
+    /**
+     * @template T
+     * Return the only item from array.
+     * @param T[] $arr
+     * @return T
+     * @throws LogicException if array is empty, or has more items
+     */
+    public static function onlyItem(array $arr): mixed
+    {
+        if (self::count($arr) !== 1) {
+            throw new LogicException('Requires array has only 1 item, but got '.count($arr));
+        }
+
+        reset($arr);
+
+        return current($arr);
+    }
 }
