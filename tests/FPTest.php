@@ -422,7 +422,7 @@ class FPTest extends TestCase
         self::assertEquals('foobar', $f(100));
     }
 
-    public function testOnce():void
+    public function testOnce(): void
     {
         $inner = Mockery::mock(FuncInterface::class);
         $f = FP::once($inner);
@@ -431,5 +431,12 @@ class FPTest extends TestCase
         self::assertEquals('foo', $f());
         self::assertEquals('foo', $f());
         self::assertEquals('foo', $f());
+    }
+
+    public function testMapKeys(): void
+    {
+        $a = ['one' => 1, 'two' => 2, 'three' => 3];
+        $b = FP::mapKeys(fn($x) => 'new-'.$x, $a);
+        expect($b)->toEqual(['new-one' => 1, 'new-two' => 2, 'new-three' => 3]);
     }
 }

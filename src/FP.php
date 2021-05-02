@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bungle\Framework;
 
 use InvalidArgumentException;
+use Iterator;
 use LogicException;
 use Traversable;
 use Webmozart\Assert\Assert;
@@ -262,7 +263,7 @@ class FP
     /**
      * @template K
      * @template V
-     * @phpstan-param callable(V): K $fKey, accept one argument: array item, returns key normally
+     * @phpstan-param callable(V): K $fKey , accept one argument: array item, returns key normally
      *     string.
      * @phpstan-param V[] $arr
      * @phpstan-return array<K, V>
@@ -325,7 +326,7 @@ class FP
      * @template K
      * @phpstan-param array<K, T> $arr
      * @phpstan-param K $key
-     * @phpstan-param callable(K): T $fCreate, called if $key not exist in $arr,
+     * @phpstan-param callable(K): T $fCreate , called if $key not exist in $arr,
      * accept one argument $key, and returns value.
      * @phpstan-return T
      */
@@ -427,10 +428,10 @@ class FP
      * @template T
      * @template V
      * @param callable(mixed...): V $fValue prepare value for case function/values.
-     * @param array<(array{V|callable(V, mixed...): bool, callable(mixed...): T})|(callable(mixed...): T)> $cases
-     * Like @see self::if(), but a select/case expression, must provide function
-     * to handle default case, because it is an expression, must has return value.
-     * If case value, provided use strict equal (===).
+     * @param array<(array{V|callable(V, mixed...): bool, callable(mixed...):
+     *     T})|(callable(mixed...): T)> $cases Like @see self::if(), but a select/case expression,
+     *     must provide function to handle default case, because it is an expression, must has
+     *     return value. If case value, provided use strict equal (===).
      */
     public static function select(callable $fValue, ...$cases): callable
     {
@@ -445,6 +446,7 @@ class FP
                 if (is_callable($fSelect) ? $fSelect(...$args) : $v === $fSelect) {
                     $action = $cases[$i + 1];
                     Assert::isCallable($action);
+
                     return $action(...$args);
                 }
             }
@@ -499,6 +501,23 @@ class FP
         foreach ($iterable as $item) {
             yield $f($item);
         }
+    }
+
+    /**
+     * Alter array keys
+     * @template V
+     * @param callable(string): string $f
+     * @param array<V> $iterable
+     * @return array<V> Returns new array with keys changed.
+     */
+    public static function mapKeys(callable $f, array $arr): array
+    {
+        $r = [];
+        foreach ($arr as $key => $val) {
+            $r[$f($key)] = $val;
+        }
+
+        return $r;
     }
 
     /**
