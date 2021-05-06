@@ -8,6 +8,7 @@ class PathUtil
 {
     /**
      * Return true if $path extension is $ext, ext compared using ignored case.
+     * @param string $ext Extension no leading '.', such as 'txt' instead of '.txt'
      */
     public static function hasExt(string $ext, string $path): bool
     {
