@@ -53,7 +53,7 @@ class MultilineTextColumnTablePlugin extends AbstractTablePlugin
                 if (!is_string($text)) {
                     $lines = 1;
                 } else {
-                    $lines = max(1, mb_substr_count($text, "\n"));
+                    $lines = mb_substr_count($text, "\n") + 1;
                 }
 
                 if ($lines > 1) {
