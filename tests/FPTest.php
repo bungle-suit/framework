@@ -387,3 +387,9 @@ it('only item more than one', function () {
     $this->expectException(LogicException::class);
     FP::onlyItem(['a', 'b']);
 });
+
+it('partition', function () {
+    [$even, $odd] = FP::partition(fn($v) => $v % 2 == 0, range(1, 10));
+    expect($even)->toEqual([2, 4, 6, 8, 10]);
+    expect($odd)->toEqual([1, 3, 5, 7, 9]);
+});

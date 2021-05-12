@@ -571,4 +571,21 @@ class FP
 
         return current($arr);
     }
+
+    /**
+     * Split $items into two array based on $f result: [$trueItems, $falseItems].
+     */
+    public static function partition(callable $f, iterable $items): array
+    {
+        [$trues, $falsies] = [[], []];
+        foreach ($items as $item) {
+            if ($f($item)) {
+                $trues[] = $item;
+            } else {
+                $falsies[] = $item;
+            }
+        }
+
+        return [$trues, $falsies];
+    }
 }
