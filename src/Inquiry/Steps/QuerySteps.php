@@ -36,7 +36,6 @@ class QuerySteps
      */
     public static function buildCount(Builder $builder): void
     {
-        $builder->getQueryBuilder()->add('select', ['count(0) as _count']);
         $builder->getQueryBuilder()->resetDQLPart('orderBy');
     }
 

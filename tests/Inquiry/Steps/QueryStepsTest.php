@@ -42,9 +42,8 @@ class QueryStepsTest extends MockeryTestCase
         self::assertEquals([new OrderBy('u.a')], $qb->getDQLPart('orderBy'));
 
         QuerySteps::buildCount($builder);
-        self::assertEquals(['count(0) as _count'], $qb->getDQLPart('select'));
         self::assertEquals([], $qb->getDQLPart('orderBy'));
-        self::assertEquals('SELECT count(0) as _count', $qb->getDQL());
+        self::assertEquals('SELECT u.a, u.b', $qb->getDQL());
     }
 
     public function testBuildPaging(): void
