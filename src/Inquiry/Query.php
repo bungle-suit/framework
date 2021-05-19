@@ -8,6 +8,7 @@ use Bungle\Framework\Inquiry\Steps\QuerySteps;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use LogicException;
 use Traversable;
 
@@ -98,11 +99,9 @@ class Query
     {
         $qb = $this->prepareQuery($params, self::BUILD_FOR_COUNT)
                    ->getQueryBuilder();
+        $pager = new Paginator($qb->getQuery());
 
-        return intval(
-            $qb->getQuery()
-               ->execute(null, AbstractQuery::HYDRATE_SINGLE_SCALAR)
-        );
+        return $pager->count();
     }
 
     private const BUILD_FOR_COUNT = 1;
