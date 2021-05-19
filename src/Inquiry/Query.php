@@ -89,19 +89,12 @@ class Query
     public function pagedQuery(QueryParams $params): PagedData
     {
         $qb = $this->prepareQuery($params, self::BUILD_FOR_PAGING)->getQueryBuilder();
-        $data = iterator_to_array($this->queryData($qb), false);
-        $count = $this->queryCount($params);
+        $pager = new Paginator($qb->getQuery());
+        $pager->setUseOutputWalkers(false);
+        $count = count($pager);
+        $data = iterator_to_array($pager, false);
 
         return new PagedData($data, $count);
-    }
-
-    private function queryCount(QueryParams $params): int
-    {
-        $qb = $this->prepareQuery($params, self::BUILD_FOR_COUNT)
-                   ->getQueryBuilder();
-        $pager = new Paginator($qb->getQuery());
-
-        return $pager->count();
     }
 
     private const BUILD_FOR_COUNT = 1;
