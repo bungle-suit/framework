@@ -93,8 +93,8 @@ class QueryTest extends MockeryTestCase
         $paginator->expects('setUseOutputWalkers')->with(false);
         $paginator->expects('getIterator')->with()->andReturn(
             new ArrayIterator([
-                ['line1'],
-                ['line2'],
+                                  ['line1'],
+                                  ['line2'],
                               ])
         );
 
@@ -103,7 +103,7 @@ class QueryTest extends MockeryTestCase
                  ->andReturn($qb);
         $dqlQuery = Mockery::mock(AbstractQuery::class);
         $qb->expects('getQuery')
-            ->andReturn($dqlQuery);
+           ->andReturn($dqlQuery);
 
         $params = new QueryParams(0, []);
         $col1 = new ColumnMeta('[id]', 'id', new Type(Type::BUILTIN_TYPE_INT));
@@ -134,12 +134,7 @@ class QueryTest extends MockeryTestCase
             }
         };
         $pagingStep->expects('__invoke')
-                   ->with(
-                       Mockery::on(
-                           fn(Builder $builder) => !$builder->isBuildForCount() &&
-                               count($builder->getColumns()) === 1
-                       )
-                   );
+                   ->with(Mockery::on(fn(Builder $builder) => count($builder->getColumns()) === 1));
 
         $pagedData = $q->pagedQuery($params);
         self::assertEquals(11, $pagedData->getCount());

@@ -23,8 +23,6 @@ class Builder implements HasAttributesInterface
     /** @var array<string, QBEMeta> */
     private array $qbeMetas = [];
 
-    /** Attribute set to true if current is build for count */
-    public const ATTR_BUILD_FOR_COUNT = '__for_count__';
     /** Attribute set to true if current is build for QBEs */
     public const ATTR_BUILD_FOR_QBE = '__build_qbe__';
     private const AUTO_COLUMN_PREFIX = '__col_';
@@ -84,14 +82,6 @@ class Builder implements HasAttributesInterface
     public function getQueryParams(): QueryParams
     {
         return $this->queryParams;
-    }
-
-    /**
-     * Return true if current query is count total data rows.
-     */
-    public function isBuildForCount(): bool
-    {
-        return $this->get(self::ATTR_BUILD_FOR_COUNT, false);
     }
 
     /**

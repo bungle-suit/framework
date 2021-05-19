@@ -97,7 +97,6 @@ class Query
         return new PagedData($data, $count);
     }
 
-    private const BUILD_FOR_COUNT = 1;
     private const BUILD_FOR_PAGING = 2;
     private const BUILD_FOR_QBE = 3;
     private const BUILD_FOR_DATA = 4; // triggered by self::query() method
@@ -108,10 +107,6 @@ class Query
         $builder = new Builder($qb, $params);
         $steps = $this->steps;
         switch ($buildFor) {
-            case self::BUILD_FOR_COUNT:
-                $builder->set(Builder::ATTR_BUILD_FOR_COUNT, true);
-                $steps = array_merge($steps, $this->createExtraCountSteps());
-                break;
             case self::BUILD_FOR_PAGING:
                 $steps = array_merge($steps, $this->createExtraPagingSteps());
                 break;
@@ -139,19 +134,6 @@ class Query
         }
 
         return $builder;
-    }
-
-    /**
-     * In pagedQuery(), these steps will appended to steps to build count query.
-     *
-     * Normally no need to override, default implementation can handle most cases.
-     * @phpstan-return (callable(Builder): void)[]
-     */
-    protected function createExtraCountSteps(): array
-    {
-        return [
-            [QuerySteps::class, 'buildCount'],
-        ];
     }
 
     /**
