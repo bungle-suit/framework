@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Inquiry;
 
+use Aura\SqlQuery\Common\SelectInterface;
+use Aura\SqlQuery\QueryFactory;
 use Bungle\Framework\Inquiry\Builder;
 use Bungle\Framework\Inquiry\ColumnMeta;
 use Bungle\Framework\Inquiry\QBEMeta;
@@ -112,5 +114,13 @@ class BuilderTest extends MockeryTestCase
 
         $this->builder->set(Builder::ATTR_BUILD_FOR_QBE, false);
         self::assertFalse($this->builder->isBuildForQBE());
+    }
+
+    public function nativeQuery(): void
+    {
+        $f = new QueryFactory('mysql');
+        $b = new Builder($f, new QueryParams(0, []));
+        expect($b->getQueryFactory())->toBe($f);
+        expect($b->getQueryBuilder())->toBeInstanceOf(SelectInterface::class);
     }
 }

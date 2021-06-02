@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\Inquiry;
 
 use Aura\SqlQuery\Common\SelectInterface;
+use Aura\SqlQuery\QueryFactory;
 use Bungle\Framework\Ent\Code\UniqueName;
 use Bungle\Framework\Model\HasAttributes;
 use Bungle\Framework\Model\HasAttributesInterface;
@@ -27,13 +28,22 @@ class Builder implements HasAttributesInterface
     public const ATTR_BUILD_FOR_QBE = '__build_qbe__';
     private const AUTO_COLUMN_PREFIX = '__col_';
     private UniqueName $autoColName;
+    private QueryBuilder|SelectInterface $qb;
+    private QueryFactory $queryFactory;
 
     /**
      * Builder constructor.
-     * @param QueryBuilder|SelectInterface $qb
+     * @param QueryBuilder|QueryFactory $qb
      */
-    public function __construct(private $qb, QueryParams $queryParams)
+    public function __construct($qb, QueryParams $queryParams)
     {
+        if ($qb instanceof QueryFactory) {
+            $this->qb = $qb->newSelect();
+            $this->queryFactory = $qb;
+        } else {
+            $this->qb = $qb;
+        }
+
         $this->queryParams = $queryParams;
         $this->initAttributes($queryParams->getOptions());
         $this->autoColName = new UniqueName(self::AUTO_COLUMN_PREFIX);
@@ -81,6 +91,19 @@ class Builder implements HasAttributesInterface
     public function getQueryBuilder()
     {
         return $this->qb;
+    }
+
+    /**
+     * Useful to build such as sub-query.
+     * @throws LogicException if not native mode
+     */
+    public function getQueryFactory(): QueryFactory
+    {
+        if (!isset($this->queryFactory)) {
+            throw new LogicException('not native mode');
+        }
+
+        return $this->queryFactory;
     }
 
     public function getQueryParams(): QueryParams

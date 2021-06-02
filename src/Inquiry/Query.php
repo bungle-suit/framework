@@ -115,7 +115,7 @@ class Query
     private function prepareQuery(QueryParams $params, int $buildFor): Builder
     {
         if ($this->nativeMode) {
-            $qb = (new QueryFactory('mysql'))->newSelect();
+            $qb = new QueryFactory('mysql');
         } else {
             $qb = $this->em->createQueryBuilder();
         }
