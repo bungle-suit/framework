@@ -71,7 +71,10 @@ class Query
         return $this->queryData($qb);
     }
 
-    protected function queryData(QueryBuilder|DBALQueryBuilder $qb): Traversable
+    /**
+     * @param QueryBuilder|DBALQueryBuilder $qb
+     */
+    protected function queryData($qb): Traversable
     {
         if ($qb instanceof DBALQueryBuilder) {
             return $qb->execute();
