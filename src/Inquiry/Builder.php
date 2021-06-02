@@ -6,6 +6,7 @@ namespace Bungle\Framework\Inquiry;
 use Bungle\Framework\Ent\Code\UniqueName;
 use Bungle\Framework\Model\HasAttributes;
 use Bungle\Framework\Model\HasAttributesInterface;
+use Doctrine\DBAL\Query\QueryBuilder as DBALQueryBuilder;
 use Doctrine\ORM\QueryBuilder;
 use LogicException;
 
@@ -16,7 +17,6 @@ class Builder implements HasAttributesInterface
 {
     use HasAttributes;
 
-    private QueryBuilder $qb;
     private QueryParams $queryParams;
     /** @var ColumnMeta[] */
     private array $columns = [];
@@ -28,9 +28,8 @@ class Builder implements HasAttributesInterface
     private const AUTO_COLUMN_PREFIX = '__col_';
     private UniqueName $autoColName;
 
-    public function __construct(QueryBuilder $qb, QueryParams $queryParams)
+    public function __construct(private QueryBuilder|DBALQueryBuilder $qb, QueryParams $queryParams)
     {
-        $this->qb = $qb;
         $this->queryParams = $queryParams;
         $this->initAttributes($queryParams->getOptions());
         $this->autoColName = new UniqueName(self::AUTO_COLUMN_PREFIX);
@@ -43,9 +42,7 @@ class Builder implements HasAttributesInterface
      */
     public function addColumn(ColumnMeta $column, string $name = ''): string
     {
-        if ($name === '') {
-            $name = $this->autoColName->next();
-        }
+        $name = $name ?: $this->autoColName->next();
         if (key_exists($name, $this->columns)) {
             throw new LogicException("Column \"$name\" already added");
         }
@@ -74,7 +71,7 @@ class Builder implements HasAttributesInterface
         return $this->columns;
     }
 
-    public function getQueryBuilder(): QueryBuilder
+    public function getQueryBuilder(): QueryBuilder|DBALQueryBuilder
     {
         return $this->qb;
     }

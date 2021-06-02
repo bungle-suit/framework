@@ -12,6 +12,9 @@ use Bungle\Framework\Inquiry\Query;
 use Bungle\Framework\Inquiry\QueryParams;
 use Bungle\Framework\Inquiry\QueryStepInterface;
 use Countable;
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\ResultStatement;
+use Doctrine\DBAL\Query\QueryBuilder as DBALQueryBuilder;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -140,7 +143,7 @@ it('build QBE Meta', function () {
         $this->em,
         [
             function (Builder $builder) use ($q1, $col1): void {
-                self::assertTrue($builder->isBuildForQBE());
+                expect($builder->isBuildForQBE())->toBeTrue();
                 $builder->addColumn($col1, 'foo');
                 $builder->addQBE($q1);
             },
@@ -160,3 +163,16 @@ it('not allow paged query in native mode', function () {
     $q->setNativeMode(true);
     $q->pagedQuery(new QueryParams(0, []));
 })->expectExceptionMessage('Not support paged query when in native mode');
+
+it('native query', function () {
+    $qb = Mockery::mock(DBALQueryBuilder::class);
+    $conn = Mockery::mock(Connection::class);
+    $conn->expects('createQueryBuilder')->andReturn($qb);
+    $this->em->expects('getConnection')->andReturn($conn);
+    $resultIter = Mockery::mock(ResultStatement::class);
+    $qb->expects('execute')->andReturn($resultIter);
+    $q = new Query($this->em, []);
+    $q->setNativeMode(true);
+    $params = new QueryParams(0, []);
+    expect(iterator_to_array($q->query($params), false))->toBe([]);
+});

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\Inquiry;
 
 use Bungle\Framework\Inquiry\Steps\QuerySteps;
+use Doctrine\DBAL\Query\QueryBuilder as DBALQueryBuilder;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -70,11 +71,12 @@ class Query
         return $this->queryData($qb);
     }
 
-    /**
-     * @return Traversable<array<mixed>>
-     */
-    protected function queryData(QueryBuilder $qb): Traversable
+    protected function queryData(QueryBuilder|DBALQueryBuilder $qb): Traversable
     {
+        if ($qb instanceof DBALQueryBuilder) {
+            return $qb->execute();
+        }
+
         foreach (
             $qb->getQuery()
                ->iterate(null, AbstractQuery::HYDRATE_ARRAY) as $rows
@@ -90,7 +92,7 @@ class Query
      */
     public function pagedQuery(QueryParams $params): PagedData
     {
-        Assert::false($this->nativeMode, 'Not support paged query when in native modelf::');
+        Assert::false($this->nativeMode, 'Not support paged query when in native mode');
 
         $qb = $this->prepareQuery($params, self::BUILD_FOR_PAGING)->getQueryBuilder();
         $pager = new Paginator($qb->getQuery());
@@ -107,7 +109,13 @@ class Query
 
     private function prepareQuery(QueryParams $params, int $buildFor): Builder
     {
-        $qb = $this->em->createQueryBuilder();
+        if ($this->nativeMode) {
+            $conn = $this->em->getConnection();
+            $qb = $conn->createQueryBuilder();
+        } else {
+            $qb = $this->em->createQueryBuilder();
+        }
+
         $builder = new Builder($qb, $params);
         $steps = $this->steps;
         switch ($buildFor) {
