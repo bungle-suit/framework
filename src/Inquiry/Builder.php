@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Inquiry;
 
+use Aura\SqlQuery\Common\SelectInterface;
 use Bungle\Framework\Ent\Code\UniqueName;
 use Bungle\Framework\Model\HasAttributes;
 use Bungle\Framework\Model\HasAttributesInterface;
-use Doctrine\DBAL\Query\QueryBuilder as DBALQueryBuilder;
 use Doctrine\ORM\QueryBuilder;
 use LogicException;
 
@@ -28,7 +28,11 @@ class Builder implements HasAttributesInterface
     private const AUTO_COLUMN_PREFIX = '__col_';
     private UniqueName $autoColName;
 
-    public function __construct(private QueryBuilder|DBALQueryBuilder $qb, QueryParams $queryParams)
+    /**
+     * Builder constructor.
+     * @param QueryBuilder|SelectInterface $qb
+     */
+    public function __construct(private $qb, QueryParams $queryParams)
     {
         $this->queryParams = $queryParams;
         $this->initAttributes($queryParams->getOptions());
@@ -71,7 +75,10 @@ class Builder implements HasAttributesInterface
         return $this->columns;
     }
 
-    public function getQueryBuilder(): QueryBuilder|DBALQueryBuilder
+    /**
+     * @return SelectInterface|QueryBuilder
+     */
+    public function getQueryBuilder()
     {
         return $this->qb;
     }

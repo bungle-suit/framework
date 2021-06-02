@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Inquiry;
 
+use Aura\SqlQuery\Common\SelectInterface;
+use Aura\SqlQuery\QueryFactory;
 use Bungle\Framework\Inquiry\Steps\QuerySteps;
-use Doctrine\DBAL\Query\QueryBuilder as DBALQueryBuilder;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -72,12 +73,13 @@ class Query
     }
 
     /**
-     * @param QueryBuilder|DBALQueryBuilder $qb
+     * @param QueryBuilder|SelectInterface $qb
      */
     protected function queryData($qb): Traversable
     {
-        if ($qb instanceof DBALQueryBuilder) {
-            return $qb->execute();
+        if ($qb instanceof SelectInterface) {
+            return $this->em->getConnection()
+                            ->executeQuery($qb->getStatement(), $qb->getBindValues());
         }
 
         foreach (
@@ -113,8 +115,7 @@ class Query
     private function prepareQuery(QueryParams $params, int $buildFor): Builder
     {
         if ($this->nativeMode) {
-            $conn = $this->em->getConnection();
-            $qb = $conn->createQueryBuilder();
+            $qb = (new QueryFactory('mysql'))->newSelect();
         } else {
             $qb = $this->em->createQueryBuilder();
         }

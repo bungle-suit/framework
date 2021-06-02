@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\Tests\Inquiry;
 
 use ArrayIterator;
+use Aura\SqlQuery\Common\SelectInterface;
 use Bungle\Framework\Inquiry\Builder;
 use Bungle\Framework\Inquiry\ColumnMeta;
 use Bungle\Framework\Inquiry\QBEMeta;
@@ -14,10 +15,10 @@ use Bungle\Framework\Inquiry\QueryStepInterface;
 use Countable;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\ResultStatement;
-use Doctrine\DBAL\Query\QueryBuilder as DBALQueryBuilder;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use Hamcrest\Matchers;
 use Mockery;
 use Symfony\Component\PropertyInfo\Type;
 use Traversable;
@@ -165,13 +166,24 @@ it('not allow paged query in native mode', function () {
 })->expectExceptionMessage('Not support paged query when in native mode');
 
 it('native query', function () {
-    $qb = Mockery::mock(DBALQueryBuilder::class);
     $conn = Mockery::mock(Connection::class);
-    $conn->expects('createQueryBuilder')->andReturn($qb);
     $this->em->expects('getConnection')->andReturn($conn);
     $resultIter = Mockery::mock(ResultStatement::class);
-    $qb->expects('execute')->andReturn($resultIter);
-    $q = new Query($this->em, []);
+    $step1 = new class() implements QueryStepInterface {
+        public function __invoke(Builder $builder): void
+        {
+            /** @var SelectInterface $qb */
+            $qb = $builder->getQueryBuilder();
+            $qb->from('order as o')
+               ->cols(['o.id', 'o.name'])
+               ->where('o.id = ?', 12);
+        }
+    };
+    $conn
+        ->expects('executeQuery')
+        ->with(Matchers::containsString('FROM'), ['_1_' => 12])
+        ->andReturn($resultIter);
+    $q = new Query($this->em, [$step1]);
     $q->setNativeMode(true);
     $params = new QueryParams(0, []);
     expect(iterator_to_array($q->query($params), false))->toBe([]);
