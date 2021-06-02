@@ -11,6 +11,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use LogicException;
 use Traversable;
+use Webmozart\Assert\Assert;
 
 class Query
 {
@@ -18,6 +19,7 @@ class Query
     private array $columns;
     /** @var array<string, QBEMeta> */
     private array $qbeMetas;
+    private bool $nativeMode = false;
 
     /**
      * @phpstan-var (callable(Builder): void)[]
@@ -88,6 +90,8 @@ class Query
      */
     public function pagedQuery(QueryParams $params): PagedData
     {
+        Assert::false($this->nativeMode, 'Not support paged query when in native modelf::');
+
         $qb = $this->prepareQuery($params, self::BUILD_FOR_PAGING)->getQueryBuilder();
         $pager = new Paginator($qb->getQuery());
         $pager->setUseOutputWalkers(false);
@@ -178,5 +182,21 @@ class Query
     public function setTitle(string $title): void
     {
         $this->title = $title;
+    }
+
+    /**
+     * In native mode, use doctrine DBAL instead of ORM
+     */
+    public function isNativeMode(): bool
+    {
+        return $this->nativeMode;
+    }
+
+    /**
+     * @param bool $nativeMode
+     */
+    public function setNativeMode(bool $nativeMode): void
+    {
+        $this->nativeMode = $nativeMode;
     }
 }

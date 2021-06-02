@@ -16,16 +16,14 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Mockery;
-use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Symfony\Component\PropertyInfo\Type;
 use Traversable;
 
-beforeEach(function ()
-{
+beforeEach(function () {
     $this->em = Mockery::mock(EntityManagerInterface::class);
 });
 
-it('query', function() {
+it('query', function () {
     $qb = Mockery::mock(QueryBuilder::class);
     $this->em->expects('createQueryBuilder')
              ->andReturn($qb);
@@ -75,7 +73,7 @@ it('query', function() {
     expect(iterator_to_array($iter, false))->toEqual([['line1'], ['line2'], ['line3']]);
 });
 
-it('paged query', function() {
+it('paged query', function () {
     $paginator = Mockery::mock('overload:\Doctrine\ORM\Tools\Pagination\Paginator', Traversable::class, Countable::class);
     $paginator->expects('count')->andReturn(11);
     $paginator->expects('setUseOutputWalkers')->with(false);
@@ -130,7 +128,7 @@ it('paged query', function() {
     expect($q->getColumns())->toEqual(['foo' => $col1]);
 });
 
-it('build QBE Meta', function() {
+it('build QBE Meta', function () {
     $qb = Mockery::mock(QueryBuilder::class);
     $this->em->expects('createQueryBuilder')
              ->andReturn($qb);
@@ -153,3 +151,12 @@ it('build QBE Meta', function() {
     expect($q->getQBEMetas())->toEqual(['fooMeta' => $q1]);
     expect($q->getQBEMetas())->toBe($QBEs);
 });
+
+it('not allow paged query in native mode', function () {
+    $q = new Query(
+        $this->em,
+        []
+    );
+    $q->setNativeMode(true);
+    $q->pagedQuery(new QueryParams(0, []));
+})->expectExceptionMessage('Not support paged query when in native mode');
