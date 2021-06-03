@@ -14,7 +14,6 @@ use Bungle\Framework\Inquiry\QueryParams;
 use Bungle\Framework\Inquiry\QueryStepInterface;
 use Countable;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\ResultStatement;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -168,7 +167,7 @@ it('not allow paged query in native mode', function () {
 it('native query', function () {
     $conn = Mockery::mock(Connection::class);
     $this->em->expects('getConnection')->andReturn($conn);
-    $resultIter = Mockery::mock(ResultStatement::class);
+    $resultIter = new ArrayIterator();
     $step1 = new class() implements QueryStepInterface {
         public function __invoke(Builder $builder): void
         {

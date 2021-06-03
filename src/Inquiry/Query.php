@@ -78,8 +78,13 @@ class Query
     protected function queryData($qb): Traversable
     {
         if ($qb instanceof SelectInterface) {
-            return $this->em->getConnection()
-                            ->executeQuery($qb->getStatement(), $qb->getBindValues());
+            $iter = $this->em->getConnection()
+                             ->executeQuery($qb->getStatement(), $qb->getBindValues());
+            foreach ($iter as $row) {
+                yield $row;
+            }
+
+            return;
         }
 
         foreach (
