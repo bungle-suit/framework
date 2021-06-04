@@ -2,6 +2,8 @@
 
 namespace Bungle\Framework\Export;
 
+use DateTime;
+
 class YearMonth
 {
     public function __construct(private int $year, private int $month = 0)
@@ -44,6 +46,14 @@ class YearMonth
         $next = $this->month ? new self($this->year, $this->month + 1) : new self($this->year + 1);
 
         return $next->getFirstDay();
+    }
+
+    public function toDateRange(): DateRange
+    {
+        return new DateRange(
+            new DateTime($this->getFirstDay()),
+            new DateTime($this->getNextDayOfLastDay()),
+        );
     }
 
     /**

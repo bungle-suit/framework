@@ -2,7 +2,9 @@
 
 namespace Bungle\Framework\Tests\Export;
 
+use Bungle\Framework\Export\DateRange;
 use Bungle\Framework\Export\YearMonth;
+use DateTime;
 
 it('year month and toString', function ($exp, $year, $month, $expYear = null, $expMonth = null) {
     $expYear = $expYear ?? $year;
@@ -44,3 +46,12 @@ it('from array', function ($exp, $arr) {
         'year month > 12' => ['2022-02', [2021, 14]],
     ]
 );
+
+it('to date range', function () {
+    $v = new YearMonth(2021, 1);
+    expect($v->toDateRange())
+        ->toEqual(new DateRange(
+                      new DateTime('2021-01-01'),
+                      new DateTime('2021-02-01'),
+                  ));
+});
