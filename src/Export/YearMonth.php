@@ -50,9 +50,13 @@ class YearMonth
 
     public function toDateRange(): DateRange
     {
+        $end = $this->getNextDayOfLastDay();
+        $end = new DateTime($end);
+        $end->modify('-1 day');
+
         return new DateRange(
             new DateTime($this->getFirstDay()),
-            new DateTime($this->getNextDayOfLastDay()),
+            $end,
         );
     }
 

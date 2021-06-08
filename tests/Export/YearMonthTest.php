@@ -52,6 +52,6 @@ it('to date range', function () {
     expect($v->toDateRange())
         ->toEqual(new DateRange(
                       new DateTime('2021-01-01'),
-                      new DateTime('2021-02-01'),
+                      new DateTime('2021-01-31'),
                   ));
 });
