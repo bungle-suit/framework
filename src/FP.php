@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Bungle\Framework;
 
 use InvalidArgumentException;
-use Iterator;
 use LogicException;
 use Traversable;
 use Webmozart\Assert\Assert;
@@ -587,5 +586,15 @@ class FP
         }
 
         return [$trues, $falsies];
+    }
+
+    /**
+     * Use spl_object_id() to compare two objects, useful to
+     * be callback of array_udiffi), array_uintersect() to do
+     * strict comparation..
+     */
+    public static function splObjectCompare(object $a, object $b): int
+    {
+        return spl_object_id($a) <=> spl_object_id($b);
     }
 }

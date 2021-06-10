@@ -443,4 +443,12 @@ class FPTest extends TestCase
         self::assertEquals([2, 4, 6, 8, 10], $even);
         self::assertEquals([1, 3, 5, 7, 9], $odd);
     }
+
+    public function testSplObjectCompare(): void
+    {
+        self::assertNotEquals(0, FP::splObjectCompare((object)[], (object)[]));
+
+        $a = (object)3;
+        self::assertEquals(0, FP::splObjectCompare($a, $a));
+    }
 }
