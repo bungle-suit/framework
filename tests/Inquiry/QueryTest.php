@@ -175,12 +175,12 @@ it('native query', function () {
             $qb = $builder->getQueryBuilder();
             $qb->from('order as o')
                ->cols(['o.id', 'o.name'])
-               ->where('o.id = ?', [12]);
+               ->where('o.id = ?', 12);
         }
     };
     $conn
         ->expects('executeQuery')
-        ->with(Matchers::containsString('FROM'), [12])
+        ->with(Matchers::containsString('FROM'), ['_1_' => 12])
         ->andReturn($resultIter);
     $q = new Query($this->em, [$step1]);
     $q->setNativeMode(true);
