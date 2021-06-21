@@ -12,16 +12,31 @@ use Bungle\Framework\FP;
 use Bungle\Framework\Twig\BungleTwigExtension;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Mockery\LegacyMockInterface;
+use Mockery\MockInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Serializer\SerializerInterface;
 use Twig\Node\Node;
 use Twig\TwigFilter;
 
 class BungleTwigExtensionTest extends MockeryTestCase
 {
-    /** @var Mockery\MockInterface|HighIDNameTranslator */
-    private $highIDNameTranslator;
+    private HighIDNameTranslator|LegacyMockInterface|MockInterface $highIDNameTranslator;
     private ArrayAdapter $cache;
     private ObjectName $objectName;
+    private LegacyMockInterface|SerializerInterface|MockInterface $serializer;
+    private BungleTwigExtension $ext;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->cache = new ArrayAdapter();
+        $this->objectName = new ObjectName($this->cache);
+        $this->highIDNameTranslator = Mockery::mock(HighIDNameTranslator::class);
+        $this->serializer = Mockery::mock(SerializerInterface::class);
+        $this->ext = new BungleTwigExtension($this->highIDNameTranslator, $this->objectName, $this->serializer);
+    }
 
     public function testFormat(): void
     {
@@ -34,14 +49,13 @@ class BungleTwigExtensionTest extends MockeryTestCase
 
     public function testOdmEncodeJson(): void
     {
+        $this->serializer->expects('serialize')->with(null, 'json')->andReturn('null');
         $filter = $this->getFilter('odm_encode_json');
         self::assertEquals(['js'], $filter->getSafe($this->createMock(Node::class)));
 
         $f = $filter->getCallable();
         assert($f !== null);
         self::assertEquals('null', $f(null));
-        self::assertEquals('[1,null]', $f([1, null]));
-        self::assertEquals('[1,"汉字"]', BungleTwigExtension::odmEncodeJson([1, '汉字']));
     }
 
     public function testIDName(): void
@@ -66,12 +80,7 @@ class BungleTwigExtensionTest extends MockeryTestCase
 
     private function getFilter(string $name): TwigFilter
     {
-        $this->cache = new ArrayAdapter();
-        $this->objectName = new ObjectName($this->cache);
-        $this->highIDNameTranslator = Mockery::mock(HighIDNameTranslator::class);
-        $ext = new BungleTwigExtension($this->highIDNameTranslator, $this->objectName);
-
-        foreach ($ext->getFilters() as $filter) {
+        foreach ($this->ext->getFilters() as $filter) {
             if ($filter->getName() == $name) {
                 return $filter;
             }
@@ -88,12 +97,8 @@ class BungleTwigExtensionTest extends MockeryTestCase
 
     public function testUniqueId(): void
     {
-        $this->cache = new ArrayAdapter();
-        $this->objectName = new ObjectName($this->cache);
-        $this->highIDNameTranslator = Mockery::mock(HighIDNameTranslator::class);
-        $ext = new BungleTwigExtension($this->highIDNameTranslator, $this->objectName);
-        self::assertEquals('__uid_1', $ext->uniqueId());
-        self::assertEquals('__uid_2', $ext->uniqueId());
-        self::assertEquals('__uid_3', $ext->uniqueId());
+        self::assertEquals('__uid_1', $this->ext->uniqueId());
+        self::assertEquals('__uid_2', $this->ext->uniqueId());
+        self::assertEquals('__uid_3', $this->ext->uniqueId());
     }
 }

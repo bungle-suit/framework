@@ -7,25 +7,20 @@ use Bungle\Framework\Converter;
 use Bungle\Framework\Ent\Code\UniqueName;
 use Bungle\Framework\Ent\IDName\HighIDNameTranslator;
 use Bungle\Framework\Ent\ObjectName;
-use Symfony\Component\Serializer\Encoder\JsonDecode;
-use Symfony\Component\Serializer\Encoder\JsonEncode;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\SerializerInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 class BungleTwigExtension extends AbstractExtension
 {
-    private HighIDNameTranslator $highIDNameTranslator;
-    private ObjectName $objectName;
     private UniqueName $uidNames;
 
-    public function __construct(HighIDNameTranslator $highIDNameTranslator, ObjectName $objectName)
-    {
-        $this->highIDNameTranslator = $highIDNameTranslator;
-        $this->objectName = $objectName;
+    public function __construct(
+        private HighIDNameTranslator $highIDNameTranslator,
+        private ObjectName $objectName,
+        private SerializerInterface $serializer,
+    ) {
         $this->uidNames = new UniqueName('__uid_');
     }
 
@@ -38,7 +33,7 @@ class BungleTwigExtension extends AbstractExtension
             new TwigFilter('bungle_format', Converter::class.'::format'),
             new TwigFilter(
                 'odm_encode_json',
-                self::class.'::odmEncodeJson',
+                [$this, 'odmEncodeJson'],
                 ['is_safe' => ['js']]
             ),
             new TwigFilter(
@@ -75,16 +70,9 @@ class BungleTwigExtension extends AbstractExtension
      * but it may work with many other situations.
      * @param mixed $v
      */
-    public static function odmEncodeJson($v): string
+    public function odmEncodeJson($v): string
     {
-        $encoders = [new JsonEncoder(
-            new JsonEncode([JsonEncode::OPTIONS => JSON_UNESCAPED_UNICODE]),
-            new JsonDecode()
-        )];
-        $normalizers = [new ObjectNormalizer()];
-
-        $serializer = new Serializer($normalizers, $encoders);
-        return $serializer->serialize($v, 'json');
+        return $this->serializer->serialize($v, 'json');
     }
 
     /**
