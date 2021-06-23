@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Security;
 
-use InvalidArgumentException;
 use Bungle\Framework\Security\ArrayRoleDefinitionProvider;
 use Bungle\Framework\Security\RoleDefinition;
 use Bungle\Framework\Security\RoleRegistry;
+use InvalidArgumentException;
 use LogicException;
 use PHPUnit\Framework\TestCase;
 
@@ -48,9 +48,16 @@ final class RoleRegistryTest extends TestCase
 
     public function testGetByName(): void
     {
-        $reg = new RoleRegistry();
-        $reg->adds([$r1 = new RoleDefinition('ROLE_1_1', '', '', '')]);
-        $reg->adds([$r2 = new RoleDefinition('ROLE_1_2', '', '', '')]);
+        $reg = new RoleRegistry(
+            [
+                new ArrayRoleDefinitionProvider(
+                    [
+                        $r1 = new RoleDefinition('ROLE_1_1', '', '', ''),
+                        $r2 = new RoleDefinition('ROLE_1_2', '', '', ''),
+                    ]
+                ),
+            ]
+        );
 
         self::assertEquals($r1, $reg->getByName('ROLE_1_1'));
         self::assertEquals($r2, $reg->getByName('ROLE_1_2'));

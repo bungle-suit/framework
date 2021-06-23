@@ -91,7 +91,7 @@ class RoleRegistry
      */
     public function getByName(string $roleName): RoleDefinition
     {
-        $r = $this->defs[$roleName] ?? null;
+        $r = $this->getDefinitions()[$roleName] ?? null;
         Assert::notNull($r, "no role named $roleName");
         return $r;
     }
