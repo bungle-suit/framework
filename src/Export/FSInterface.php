@@ -29,4 +29,9 @@ interface FSInterface
      * if specified.
      */
     public function readFile(string $path, string $charset = ''): string;
+
+    /**
+     * Return system temp directory, alias of sys_get_temp_dir()
+     */
+    public function tempDir(): string;
 }

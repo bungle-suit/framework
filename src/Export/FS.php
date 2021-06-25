@@ -86,9 +86,15 @@ class FS implements FSInterface
             $r = stream_get_contents($f);
             Assert::notFalse($r);
             Assert::notFalse(fclose($f));
+
             return $r;
         };
 
         return [$f, $capture];
+    }
+
+    public function tempDir(): string
+    {
+        return sys_get_temp_dir();
     }
 }
