@@ -6,6 +6,7 @@ namespace Bungle\Framework\Tests\Import\ExcelReader;
 
 use Bungle\Framework\Import\ExcelReader\ExcelLocation;
 use Bungle\Framework\Import\ExcelReader\ExcelReader;
+use Bungle\Framework\Import\ExcelReader\SectionBoundary;
 use Bungle\Framework\Import\ExcelReader\SectionBoundaryInterface;
 use Bungle\Framework\Import\ExcelReader\SectionContentReaderInterface;
 use Bungle\Framework\Import\ExcelReader\SectionReader;
@@ -248,5 +249,25 @@ class ExcelReaderTest extends MockeryTestCase
     private static function expectRow(int ...$expRows): callable
     {
         return fn(ExcelReader $reader) => in_array($reader->getRow(), $expRows);
+    }
+
+    public function testResolveSectionBoundary(): void
+    {
+        $boundary = new SectionBoundary(
+            fn (ExcelReader $reader) => $reader->getRow() === 10,
+            fn (ExcelReader $reader) => $reader->getRow() === 20,
+        );
+        $this->reader->getSheet()->setCellValue('A100', 100);
+        self::assertEquals([10, 20], $this->reader->resolveSectionBoundary($boundary));
+    }
+
+    public function testResolveSectionBoundaryNotHit(): void
+    {
+        $boundary = new SectionBoundary(
+            fn (ExcelReader $reader) => false,
+            fn (ExcelReader $reader) => false,
+        );
+        $this->reader->getSheet()->setCellValue('A100', 100);
+        self::assertNull($this->reader->resolveSectionBoundary($boundary));
     }
 }

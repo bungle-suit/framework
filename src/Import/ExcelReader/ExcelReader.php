@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Import\ExcelReader;
@@ -37,6 +38,7 @@ class ExcelReader extends ExcelOperator
             if ($sheet !== null) {
                 $this->sheet = $sheet;
                 $this->row = 1;
+
                 return true;
             }
         }
@@ -56,7 +58,7 @@ class ExcelReader extends ExcelOperator
         $this->sections = $sections;
     }
 
-    public function read(): void
+    private function doRead(array $sectionReaders): void
     {
         $sheet = $this->getSheet();
         $curSection = null;
@@ -72,7 +74,7 @@ class ExcelReader extends ExcelOperator
             }
 
             if ($curSection === null) {
-                foreach ($this->sections as $section) {
+                foreach ($sectionReaders as $section) {
                     if ($section->getBoundary()->isSectionStart($this)) {
                         $curSection = $section;
                         $curSection->getContentReader()->onSectionStart($this);
@@ -101,9 +103,14 @@ class ExcelReader extends ExcelOperator
             $curSection = null;
         }
 
-        foreach ($this->sections as $section) {
+        foreach ($sectionReaders as $section) {
             $section->getBoundary()->onReadComplete($this);
         }
+    }
+
+    public function read(): void
+    {
+        $this->doRead($this->sections);
     }
 
     /**
@@ -112,5 +119,19 @@ class ExcelReader extends ExcelOperator
     public function getLocation(?string $col = null): ExcelLocation
     {
         return new ExcelLocation($this->getSheet()->getTitle(), $this->row, $col);
+    }
+
+    /**
+     * @return null|array{int, int} returns section start/end row no.
+     */
+    public function resolveSectionBoundary(SectionBoundaryInterface $boundary): ?array
+    {
+        $sections = [new SectionReader('', $boundary, $boundaryReader = new SectionBoundaryContentReader())];
+        $this->doRead($sections);
+        if (!$boundaryReader->isHit()) {
+            return null;
+        }
+
+        return [$boundaryReader->getStartRow(), $boundaryReader->getEndRow()];
     }
 }
