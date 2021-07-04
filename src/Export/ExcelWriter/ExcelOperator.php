@@ -6,7 +6,9 @@ namespace Bungle\Framework\Export\ExcelWriter;
 
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use RuntimeException;
 
 /**
  * Base class of ExcelReader, ExcelWriter.
@@ -99,5 +101,51 @@ class ExcelOperator
         $cell = $this->sheet->getCellByColumnAndRow($col, $this->row, true);
         assert($cell !== null);
         $cell->setValue($v);
+    }
+
+    /**
+     * @return true if sheet exist
+     */
+    public function switchOrCreateWorksheet(string $sheetName): bool
+    {
+        $r = $this->book->getSheetByName($sheetName);
+        if ($isNew = ($r === null)) {
+            $r = $this->book->createSheet();
+            $r->setTitle($sheetName);
+            $r->getPageSetup()->setPaperSize(PageSetup::PAPERSIZE_A4);
+        }
+        $this->sheet = $r;
+        $this->row = 1;
+
+        return !$isNew;
+    }
+
+    /**
+     * Switch current work sheet, reset current row counter.
+     *
+     * @param string|string[] $sheetName try all names before return or raise exception.
+     * @param bool $allowNotExist
+     * @return bool returns true if sheet exist, and switch to it successfully.
+     * If $allowNotExist is false, always returns tree.
+     * @throws RuntimeException if $allowNotExist is false, and worksheet not exist.
+     */
+    public function switchWorksheet($sheetName, bool $allowNotExist = false): bool
+    {
+        $sheetNames = is_array($sheetName) ? $sheetName : [$sheetName];
+        foreach ($sheetNames as $name) {
+            $sheet = $this->book->getSheetByName($name);
+            if ($sheet !== null) {
+                $this->sheet = $sheet;
+                $this->row = 1;
+
+                return true;
+            }
+        }
+
+        if ($allowNotExist) {
+            return false;
+        }
+        $names = implode(', ', $sheetNames);
+        throw new RuntimeException("找不到工作表: $names");
     }
 }

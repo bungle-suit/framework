@@ -6,6 +6,7 @@ namespace Bungle\Framework\Tests\Export\ExcelWriter;
 use Bungle\Framework\Export\ExcelWriter\ExcelOperator;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 
 class ExcelOperatorTest extends MockeryTestCase
 {
@@ -53,5 +54,22 @@ class ExcelOperatorTest extends MockeryTestCase
         $this->op->getSheet()->setCellValue('B3', '2');
         $this->op->getSheet()->setCellValue('C3', '=A3+B3');
         self::assertEquals(3, $this->op->getCellValue('C3'));
+    }
+
+    public function testSwitchOrCreateWorksheet(): void
+    {
+        self::assertFalse($this->op->switchOrCreateWorksheet('foo'));
+        $sheet = $this->book->getSheetByName('foo');
+        self::assertNotNull($sheet);
+        self::assertEquals(PageSetup::PAPERSIZE_A4, $sheet->getPageSetup()->getPaperSize());
+        self::assertSame($sheet, $this->op->getSheet());
+
+        self::assertTrue($this->op->switchOrCreateWorksheet('foo'));
+        self::assertSame($sheet, $this->op->getSheet());
+
+        $this->op->switchOrCreateWorksheet('bar');
+        self::assertNotSame($sheet, $this->op->getSheet());
+        self::assertTrue($this->op->switchOrCreateWorksheet('foo'));
+        self::assertSame($sheet, $this->op->getSheet());
     }
 }
