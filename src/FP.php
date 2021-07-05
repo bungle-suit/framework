@@ -597,4 +597,20 @@ class FP
     {
         return spl_object_id($a) <=> spl_object_id($b);
     }
+
+    /**
+     * Call $before and return its result if $isHit returns false,
+     * call $after and return its result if $isHit returns true.
+     * Once $isHit returns true, $after always called and never test $isHit function.
+     */
+    public static function afterHit(callable $isHit, callable $before, callable $after): callable
+    {
+        $hit = false;
+        return function (mixed ...$args) use ($before, $after, &$hit, $isHit) {
+            if ($hit || ($hit = $isHit(...$args))) {
+                return $after(...$args);
+            }
+            return $before(...$args);
+        };
+    }
 }

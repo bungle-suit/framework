@@ -451,4 +451,24 @@ class FPTest extends TestCase
         $a = (object)3;
         self::assertEquals(0, FP::splObjectCompare($a, $a));
     }
+
+    public function testAfterHit(): void
+    {
+        $f = FP::afterHit(
+            fn($v) => $v === 3,
+            fn($v) => $v + 1,
+            fn($v) => $v - 1,
+        );
+
+        // not hit
+        self::assertEquals(2, $f(1));
+        self::assertEquals(3, $f(2));
+        self::assertEquals(5, $f(4));
+
+        // hit
+        self::assertEquals(2, $f(3));
+
+        // after hit
+        self::assertEquals(0, $f(1));
+    }
 }
