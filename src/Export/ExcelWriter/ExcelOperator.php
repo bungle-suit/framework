@@ -22,10 +22,10 @@ class ExcelOperator
     /**
      * Use the active worksheet as current worksheet.
      */
-    public function __construct(Spreadsheet $book)
+    public function __construct(Spreadsheet $book, Worksheet $sheet = null)
     {
         $this->book = $book;
-        $this->sheet = $book->getActiveSheet();
+        $this->sheet = $sheet ?? $book->getActiveSheet();
     }
 
     /**
@@ -104,20 +104,23 @@ class ExcelOperator
     }
 
     /**
-     * @return true if sheet exist
+     * @return bool true if sheet exist
      */
     public function switchOrCreateWorksheet(string $sheetName): bool
     {
         $r = $this->book->getSheetByName($sheetName);
-        if ($isNew = ($r === null)) {
+        $this->row = 1;
+        if ($r === null) {
             $r = $this->book->createSheet();
             $r->setTitle($sheetName);
             $r->getPageSetup()->setPaperSize(PageSetup::PAPERSIZE_A4);
+            $this->sheet = $r;
+
+            return false;
         }
         $this->sheet = $r;
-        $this->row = 1;
 
-        return !$isNew;
+        return true;
     }
 
     /**
