@@ -18,9 +18,6 @@
     "webmozart/assert": "^1.9",
     "aura/sqlquery": "^2.7"
   },
-  "require-dev": {
-    "pestphp/pest": "^1.0"
-  },
   "autoload": {
     "psr-4": { "Bungle\\Framework\\": "src/" }
   },

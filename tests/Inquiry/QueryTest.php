@@ -81,8 +81,8 @@ class QueryTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         );
 
         $iter = $q->query($params);
-        expect($q->getColumns())->toEqual(['foo' => $col1]);
-        expect(iterator_to_array($iter, false))->toEqual([['line1'], ['line2'], ['line3']]);
+        self::assertEquals(['foo' => $col1], $q->getColumns());
+        self::assertEquals([['line1'], ['line2'], ['line3']], iterator_to_array($iter, false));
     }
 
     public function testPagedQuery(): void
@@ -136,9 +136,9 @@ class QueryTest extends Mockery\Adapter\Phpunit\MockeryTestCase
                    ->with(Mockery::on(fn(Builder $builder) => count($builder->getColumns()) === 1));
 
         $pagedData = $q->pagedQuery($params);
-        expect($pagedData->getCount())->toEqual(11);
-        expect($pagedData->getData())->toEqual([['line1'], ['line2']]);
-        expect($q->getColumns())->toEqual(['foo' => $col1]);
+        self::assertEquals(11, $pagedData->getCount());
+        self::assertEquals([['line1'], ['line2']], $pagedData->getData());
+        self::assertEquals(['foo' => $col1], $q->getColumns());
     }
 
     public function testBuildQBEMeta(): void
@@ -154,7 +154,7 @@ class QueryTest extends Mockery\Adapter\Phpunit\MockeryTestCase
             $this->em,
             [
                 function (Builder $builder) use ($q1, $col1): void {
-                    expect($builder->isBuildForQBE())->toBeTrue();
+                    self::assertTrue($builder->isBuildForQBE());
                     $builder->addColumn($col1, 'foo');
                     $builder->addQBE($q1);
                 },
@@ -162,8 +162,8 @@ class QueryTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         );
 
         $QBEs = $q->buildQBEMetas($params);
-        expect($q->getQBEMetas())->toEqual(['fooMeta' => $q1]);
-        expect($q->getQBEMetas())->toBe($QBEs);
+        self::assertEquals(['fooMeta' => $q1], $q->getQBEMetas());
+        self::assertSame($QBEs, $q->getQBEMetas());
     }
 
     public function testNotAllowPagedQueryInNativeMode(): void
@@ -201,6 +201,6 @@ class QueryTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         $q = new Query($this->em, [$step1]);
         $q->setNativeMode(true);
         $params = new QueryParams(0, []);
-        expect(iterator_to_array($q->query($params), false))->toBe([]);
+        self::assertSame([], iterator_to_array($q->query($params), false));
     }
 }

@@ -14,7 +14,7 @@ class PathUtilTest extends MockeryTestCase
      */
     public function testHasExt($exp, $ext, $path): void
     {
-        expect(PathUtil::hasExt($ext, $path))->toBe($exp);
+        self::assertSame($exp, PathUtil::hasExt($ext, $path));
     }
 
     public function hasExtProvider()

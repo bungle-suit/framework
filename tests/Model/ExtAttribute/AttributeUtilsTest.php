@@ -15,25 +15,25 @@ class AttributeUtilsTest extends Mockery\Adapter\Phpunit\MockeryTestCase
     public function testGetBoolAttribute(): void
     {
         // attribute not exist
-        expect(AttributeUtils::getBoolAttribute([], 'foo'))->toBeFalse();
+        self::assertFalse(AttributeUtils::getBoolAttribute([], 'foo'));
 
         // attribute exist but false
         $attr = new TestAttribute('foo', '');
-        expect(AttributeUtils::getBoolAttribute([$attr], 'foo'))->toBeFalse();
+        self::assertFalse(AttributeUtils::getBoolAttribute([$attr], 'foo'));
 
         // attribute exist but true
         $attr->setBool(true);
-        expect(AttributeUtils::getBoolAttribute([$attr], 'foo'))->toBeTrue();
+        self::assertTrue(AttributeUtils::getBoolAttribute([$attr], 'foo'));
     }
 
     public function testGetFloatAttribute(): void
     {
         // attribute not exist
-        expect(AttributeUtils::getFloatAttribute([], 'foo'))->toBe(0.0);
+        self::assertSame(0.0, AttributeUtils::getFloatAttribute([], 'foo'));
 
         // attribute exist but false
         $attr = new TestAttribute('foo', '123.45');
-        expect(AttributeUtils::getFloatAttribute([$attr], 'foo'))->toBe(123.45);
+        self::assertSame(123.45, AttributeUtils::getFloatAttribute([$attr], 'foo'));
     }
 
     public function testAddForm(): void

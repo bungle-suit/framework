@@ -19,9 +19,9 @@ class YearMonthTest extends MockeryTestCase
         $expYear = $expYear ?? $year;
         $expMonth = $expMonth ?? $month;
         $v = new YearMonth($year, $month);
-        expect($v->getYear())->toBe($expYear);
-        expect($v->getMonth())->toBe($expMonth);
-        expect($v->__toString())->toEqual($exp);
+        self::assertSame($expYear, $v->getYear());
+        self::assertSame($expMonth, $v->getMonth());
+        self::assertEquals($exp, $v->__toString());
     }
 
     public function yearMonthAndToStringProvider()
@@ -39,8 +39,8 @@ class YearMonthTest extends MockeryTestCase
     public function testFirstLastDay($first, $nextDayOfLastDay, $y, $m = 0): void
     {
         $v = new YearMonth($y, $m);
-        expect($v->getFirstDay())->toEqual($first);
-        expect($v->getNextDayOfLastDay())->toEqual($nextDayOfLastDay);
+        self::assertEquals($first, $v->getFirstDay());
+        self::assertEquals($nextDayOfLastDay, $v->getNextDayOfLastDay());
     }
 
     public function firstLastDayProvider()
@@ -55,7 +55,7 @@ class YearMonthTest extends MockeryTestCase
     /** @dataProvider fromArrayProvider */
     public function testFromArray($exp, $arr): void
     {
-        expect(strval(YearMonth::fromArray($arr)))->toBe($exp);
+        self::assertSame($exp, strval(YearMonth::fromArray($arr)));
     }
 
     public function fromArrayProvider()
@@ -72,10 +72,9 @@ class YearMonthTest extends MockeryTestCase
     public function testToDateRange(): void
     {
         $v = new YearMonth(2021, 1);
-        expect($v->toDateRange())
-            ->toEqual(new DateRange(
-                          new DateTime('2021-01-01'),
-                          new DateTime('2021-01-31'),
-                      ));
+        self::assertEquals(new DateRange(
+                               new DateTime('2021-01-01'),
+                               new DateTime('2021-01-31'),
+                           ), $v->toDateRange());
     }
 }
