@@ -6,11 +6,16 @@ namespace Bungle\Framework\Tests\Inquiry;
 
 use Bungle\Framework\Inquiry\QBEMeta;
 use LogicException;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Symfony\Component\PropertyInfo\Type;
 
-it(
-    'qbe type should allow null',
-    function () {
+class QBEMetaTest extends MockeryTestCase
+{
+    public function testQBETypeShouldAllowNull(): void
+    {
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('QBE value must allow null. (bar)');
+
         $t = new Type(Type::BUILTIN_TYPE_INT, true);
         $qbe = new QBEMeta('foo', 'lbl', $t);
         expect($qbe->getName())->toEqual('foo');
@@ -19,22 +24,18 @@ it(
 
         new QBEMeta('bar', 'lbl', new Type(Type::BUILTIN_TYPE_INT));
     }
-)->throws(LogicException::class, 'QBE value must allow null. (bar)');
 
-it(
-    'qbe options',
-    function () {
+    public function testQBEOptions(): void
+    {
         $t = new Type(Type::BUILTIN_TYPE_INT, true);
         $qbe = new QBEMeta('foo', 'lbl', $t, ['opt1' => 2, 'opt2' => 3]);
 
         expect($qbe->get('opt1'))->toEqual(2);
         expect($qbe->get('opt2'))->toEqual(3);
     }
-);
 
-it(
-    'initial qbe value',
-    function () {
+    public function testInitialQbeValue(): void
+    {
         $t = new Type(Type::BUILTIN_TYPE_INT, true);
         $qbe = new QBEMeta('foo', 'lbl', $t);
 
@@ -50,4 +51,4 @@ it(
         $qbe->setInitialValue(fn(QBEMeta $x) => $x->get('foo'));
         expect($qbe->getInitialQBEValue())->toBe(456);
     }
-);
+}
