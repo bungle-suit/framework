@@ -23,12 +23,5 @@
   },
   "autoload-dev": {
     "psr-4": { "Bungle\\Framework\\Tests\\": "tests/" }
-  },
-  "extra": {
-    "phpstan": {
-      "includes": [
-        "extension.neon"
-      ]
-    }
   }
 }
