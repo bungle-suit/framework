@@ -176,7 +176,7 @@ class QueryTest extends Mockery\Adapter\Phpunit\MockeryTestCase
             []
         );
         $q->setNativeMode(true);
-        $q->pagedQuery(new QueryParams(0, []));
+        $q->pagedQuery(new QueryParams(1, []));
     }
 
     public function testNativeQuery(): void

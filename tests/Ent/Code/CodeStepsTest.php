@@ -16,8 +16,7 @@ use stdClass;
 
 class CodeStepsTest extends TestCase
 {
-    /** @var BasalInfoService|Mockery\MockInterface */
-    private $basal;
+    private BasalInfoService|Mockery\LegacyMockInterface|Mockery\MockInterface $basal;
     private CodeSteps $steps;
 
     protected function setUp(): void
@@ -55,7 +54,7 @@ class CodeStepsTest extends TestCase
         self::assertEquals('foobar123', $ctx->result);
 
         $j = CodeSteps::join('-');
-        $j((object)[], $ctx);
+        self::assertNull($j((object)[], $ctx));
         self::assertEquals('foo-bar-123', $ctx->result);
     }
 
@@ -67,7 +66,6 @@ class CodeStepsTest extends TestCase
         self::assertEquals('20200103', $f());
     }
 
-    /** @noinspection PhpUnusedParameterInspection */
     public function testCompose(): void
     {
         $steps = [

@@ -25,7 +25,6 @@ class CodeSteps
 
     /**
      * Returns step callable appends literal string section.
-     * @noinspection PhpUnusedParameterInspection
      */
     public static function literal(string $s): callable
     {
@@ -39,10 +38,12 @@ class CodeSteps
      */
     public static function join(string $sep): callable
     {
-        return fn(object $subject, CodeContext $ctx) => $ctx->result = implode(
-            $sep,
-            $ctx->getSections()
-        );
+        return function (object $subject, CodeContext $ctx) use ($sep): void {
+            $ctx->result = implode(
+                $sep,
+                $ctx->getSections()
+            );
+        };
     }
 
     /**
@@ -59,7 +60,6 @@ class CodeSteps
      * Compose a set of steps into one step.
      *
      * @template T
-     * @param array<CoderStepInterface<T>|callable(T, CodeContext): ?string> $steps
      * @return callable(T, CodeContext): void
      */
     public static function compose(array $steps): callable
@@ -72,12 +72,11 @@ class CodeSteps
     /**
      * @template T
      * @param T $entity
-     * @param array<CoderStepInterface<T>|callable(T, CodeContext): ?string> $steps
      */
     public static function runSteps(array $steps, $entity, CodeContext $context): void
     {
         foreach ($steps as $step) {
-            self::runStep($step,$entity, $context);
+            self::runStep($step, $entity, $context);
         }
     }
 
