@@ -353,10 +353,16 @@ class FP
     /**
      * @param callable(mixed...): bool $a
      * @param array<callable(mixed...): bool> $b
-     * @return callable(mixed...): bool bool
+     * @return callable(mixed...): bool
      */
     public static function and(callable $a, ...$b): callable
     {
+        if (count($b) === 1) {
+            $b = $b[0];
+
+            return fn(...$args) => $a(...$args) && $b(...$args);
+        }
+
         return function (...$args) use ($b, $a) {
             if (!$a(...$args)) {
                 return false;
@@ -379,6 +385,12 @@ class FP
      */
     public static function or(callable $a, ...$b): callable
     {
+        if (count($b) === 1) {
+            $b = $b[0];
+
+            return fn(...$args) => $a(...$args) || $b(...$args);
+        }
+
         return function (...$args) use ($b, $a) {
             if ($a(...$args)) {
                 return true;
@@ -606,10 +618,12 @@ class FP
     public static function afterHit(callable $isHit, callable $before, callable $after): callable
     {
         $hit = false;
+
         return function (mixed ...$args) use ($before, $after, &$hit, $isHit) {
             if ($hit || ($hit = $isHit(...$args))) {
                 return $after(...$args);
             }
+
             return $before(...$args);
         };
     }
