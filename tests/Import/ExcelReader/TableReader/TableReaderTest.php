@@ -10,6 +10,8 @@ use Bungle\Framework\Import\ExcelReader\TableReader\Context;
 use Bungle\Framework\Import\ExcelReader\TableReader\TableReader;
 use Bungle\Framework\Import\ExcelReader\TableReader\TableReadException;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
+use PhpOffice\PhpSpreadsheet\RichText\TextElement;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use RuntimeException;
 
@@ -53,14 +55,22 @@ class TableReaderTest extends MockeryTestCase
         );
     }
 
+    private static function newRichText(string $text)
+    {
+        $r = new RichText();
+        $r->addText(new TextElement($text));
+
+        return $r;
+    }
+
     public function test(): void
     {
         $this->reader->setRow(2);
         $sheet = $this->reader->getSheet();
         $sheet->fromArray(
             [
-                ['lbl3', 'lbl1', '', 'lbl2'],
-                ['foo', 'bar', '', 'foobar'],
+                ['lbl3', 'lbl1', '', self::newRichText('lbl2')],
+                ['foo', 'bar', '', self::newRichText('foobar')],
                 ['1', '2', '', '10'],
             ],
             null,
@@ -76,15 +86,15 @@ class TableReaderTest extends MockeryTestCase
         $this->reader->nextRow();
         $r->readRow($this->reader);
 
-        self::assertEquals(
+        self::assertSame(
             [
-                ['bar', 'foobar', 'foo'],
-                ['2', '10', '1'],
+                [2 => 'foo', 0 => 'bar', 1 => 'foobar'],
+                [2 => 1, 0 => 2, 1 => 10],
             ],
             $this->arr
         );
 
-        self::assertEquals(['lbl1', 'lbl2', 'lbl3'], $r->getColumnTexts());
+        self::assertSame([2 => 'lbl3', 0 => 'lbl1', 1 => 'lbl2'], $r->getColumnTexts());
     }
 
     public function testNewIsColumnEmpty(): void
@@ -130,8 +140,7 @@ class TableReaderTest extends MockeryTestCase
             null,
             'C2'
         );
-        $this->col2->setConverter(function ($v)
-        {
+        $this->col2->setConverter(function ($v) {
             throw new RuntimeException(strval($v));
         });
 
@@ -151,7 +160,8 @@ class TableReaderTest extends MockeryTestCase
 
             工作表"sheet 1"单元格F3: foobar
             工作表"sheet 1"单元格F4: 10
-            msg);
+            msg
+        );
         $r->onSectionEnd($this->reader);
     }
 

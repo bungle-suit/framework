@@ -83,7 +83,7 @@ class TableReader implements SectionContentReaderInterface
             $idx = array_search($col, $this->cols, true);
             assert(is_int($idx));
             $this->colIdxes[$idx] = $i;
-            $headerTexts[$idx] = $cell->getValue();
+            $headerTexts[$idx] = strval($cell->getValue());
         }
         $this->columnTexts = $headerTexts;
 
