@@ -627,4 +627,36 @@ class FP
             return $before(...$args);
         };
     }
+
+    /**
+     * @template T
+     * @param callable(T $a, $b): int $fCompare
+     * @param iterable<T> $items
+     * @return T
+     */
+    public static function max(callable $fCompare, iterable $items)
+    {
+        $max = reset($items);
+        if ($max === false) {
+            throw new LogicException('at least one item');
+        }
+        while (($next = next($items)) !== false) {
+            if ($fCompare($next, $max) > 0) {
+                $max = $next;
+            }
+        }
+
+        return $max;
+    }
+
+    /**
+     * @template T
+     * @param callable(T $a, $b): int $fCompare
+     * @param iterable<T> $items
+     * @return T
+     */
+    public static function min(callable $fCompare, iterable $items)
+    {
+        return self::max(fn($a, $b) => $fCompare($b, $a), $items);
+    }
 }
