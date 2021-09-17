@@ -85,4 +85,21 @@ trait AttributeTrait
     {
         $this->value = $v === 0.0 ? '' : strval($v);
     }
+
+    /** @return string[] */
+    public function asStringArray(): array
+    {
+        $r = explode(',', trim($this->value));
+        if ($r[0] === '' && count($r) === 1) {
+            return [];
+        }
+
+        return $r;
+    }
+
+    /** @param string[] $v */
+    public function setStringArray(array $v): void
+    {
+        $this->value = implode(',', $v);
+    }
 }

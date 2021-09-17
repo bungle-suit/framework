@@ -64,4 +64,25 @@ class AttributeTraitTest extends MockeryTestCase
         $this->attr->setFloat(0);
         self::assertSame('', $this->attr->getValue());
     }
+
+    /** @dataProvider stringArrayProvider */
+    public function testStringArray($val, $raw, $back = null): void
+    {
+        $this->attr->setValue($raw);
+        self::assertEquals($val, $this->attr->asStringArray());
+
+        $this->attr->setStringArray($val);
+        self::assertEquals($back ?? $raw, $this->attr->getValue());
+    }
+
+    public function stringArrayProvider()
+    {
+        return [
+            'default' => [[], ''],
+            'trimmed empty' => [[], " \t ", ''],
+            'one' => [['one'], 'one'],
+            'trimmed one' => [['one'], ' one', 'one'],
+            'three' => [['one', 'two', 'three'], 'one,two,three'],
+        ];
+    }
 }
