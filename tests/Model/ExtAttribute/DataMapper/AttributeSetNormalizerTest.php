@@ -39,6 +39,8 @@ class AttributeSetNormalizerTest extends MockeryTestCase
             [
                 'a' => new TestAttribute('a', '1'),
                 'c' => new TestAttribute('c', 'blah'),
+                // filter out attr not defined.
+                'unknown' => new TestAttribute('unknown', 'foo'),
             ]
         );
         self::assertEquals(['a' => true, 'b' => false, 'c' => 'blah'], $normalized);

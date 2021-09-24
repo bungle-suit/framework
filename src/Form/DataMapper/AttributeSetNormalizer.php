@@ -7,7 +7,6 @@ namespace Bungle\Framework\Form\DataMapper;
 use Bungle\Framework\FP;
 use Bungle\Framework\Model\ExtAttribute\AttributeDefinitionInterface;
 use Bungle\Framework\Model\ExtAttribute\AttributeInterface;
-use LogicException;
 use Symfony\Component\Form\DataTransformerInterface;
 
 /**
@@ -27,7 +26,8 @@ class AttributeSetNormalizer implements DataTransformerInterface
 
     /**
      * @param array<int, AttributeDefinitionInterface> $definitions
-     * @param callable(string $attrName): AttributeInterface $createAttribute create a new attribute object.
+     * @param callable(string $attrName): AttributeInterface $createAttribute create a new
+     *     attribute object.
      */
     public function __construct(array $definitions, callable $createAttribute)
     {
@@ -51,7 +51,9 @@ class AttributeSetNormalizer implements DataTransformerInterface
 
         foreach ($value as $attr) {
             $def = $this->getDefinition($attr->getAttribute());
-            $r[$def->getName()] = $def->restoreValue($attr);
+            if ($def !== null) {
+                $r[$def->getName()] = $def->restoreValue($attr);
+            }
         }
 
         return $r;
@@ -74,15 +76,12 @@ class AttributeSetNormalizer implements DataTransformerInterface
                 $r[] = $attr;
             }
         }
+
         return $r;
     }
 
-    private function getDefinition(string $name): AttributeDefinitionInterface
+    private function getDefinition(string $name): ?AttributeDefinitionInterface
     {
-        $r = $this->definitions[$name] ?? null;
-        if ($r === null) {
-            throw new LogicException("Unknown attribute $name");
-        }
-        return $r;
+        return $this->definitions[$name] ?? null;
     }
 }
