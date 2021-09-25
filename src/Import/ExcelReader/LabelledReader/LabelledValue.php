@@ -145,8 +145,10 @@ class LabelledValue
     /**
      * @param callable(Cell): void $f
      */
-    public function setOnLabelCell(callable $f): void
+    public function setOnLabelCell(callable $f): self
     {
         $this->onLabelCell = $f;
+
+        return $this;
     }
 }
