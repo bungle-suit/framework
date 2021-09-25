@@ -64,6 +64,7 @@ class LabelledReader implements SectionContentReaderInterface
         $colIdx = $this->startColIdx;
         for ($i = 0; $i < $this->maxValuesPerRow; $i++) {
             $lbl = (string)($reader->getCellValueByColumn($colIdx));
+            $lblColIdx = $colIdx;
             $colIdx += self::getCellWidth($reader, $colIdx);
             $v = $reader->getCellValueByColumn($colIdx);
             /**
@@ -78,6 +79,8 @@ class LabelledReader implements SectionContentReaderInterface
                             $this->propertyAccessor->setValue($this->obj, $value->getPath(), $v);
                             break;
                         case LabelledValue::MODE_WRITE:
+                            ($value->getOnLabelCell())($reader->getSheet()
+                                                              ->getCellByColumnAndRow($lblColIdx, $reader->getRow()));
                             $v = $this->propertyAccessor->getValue($this->obj, $value->getPath());
                             $v = ($value->getWriteConverter())($v, $context);
                             $reader->setCellValue($colIdx, $v);

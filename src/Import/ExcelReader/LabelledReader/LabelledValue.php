@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\Import\ExcelReader\LabelledReader;
 
 use Bungle\Framework\FP;
+use PhpOffice\PhpSpreadsheet\Cell\Cell;
 
 /**
  * @template T
@@ -27,11 +28,14 @@ class LabelledValue
 
     private string $cellFormat = '';
 
+    private $onLabelCell;
+
     public function __construct(string $path, string ...$labels)
     {
         $this->path = $path;
         $this->labels = $labels;
         $this->converter = [FP::class, 'identity'];
+        $this->onLabelCell = FP::null();
     }
 
     public function labelMatches(string $label): bool
@@ -128,5 +132,21 @@ class LabelledValue
         $this->cellFormat = $cellFormat;
 
         return $this;
+    }
+
+    /**
+     * @return callable(Cell): void
+     */
+    public function getOnLabelCell(): callable
+    {
+        return $this->onLabelCell;
+    }
+
+    /**
+     * @param callable(Cell): void $f
+     */
+    public function setOnLabelCell(callable $f): void
+    {
+        $this->onLabelCell = $f;
     }
 }
