@@ -7,7 +7,6 @@ namespace Bungle\Framework\Inquiry;
 use Aura\SqlQuery\Common\SelectInterface;
 use Aura\SqlQuery\QueryFactory;
 use Bungle\Framework\Inquiry\Steps\QuerySteps;
-use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -87,11 +86,8 @@ class Query
             return;
         }
 
-        foreach (
-            $qb->getQuery()
-               ->iterate(null, AbstractQuery::HYDRATE_ARRAY) as $rows
-        ) {
-            yield from $rows;
+        foreach ($qb->getQuery()->toIterable() as $row) {
+            yield $row;
         }
     }
 

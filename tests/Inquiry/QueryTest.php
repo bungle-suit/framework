@@ -42,14 +42,14 @@ class QueryTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         $dqlQuery = Mockery::mock(AbstractQuery::class);
         $qb->expects('getQuery')
            ->andReturn($dqlQuery);
-        $dqlQuery->expects('iterate')
-                 ->with(null, AbstractQuery::HYDRATE_ARRAY)
+        $dqlQuery->expects('toIterable')
+                 ->with()
                  ->andReturn(
                      new ArrayIterator(
                          [
-                             new ArrayIterator([['line1'], ['line2']]),
-                             new ArrayIterator([['line3']]),
-                             new ArrayIterator([]),
+                             ['line1'],
+                             ['line2'],
+                             ['line3'],
                          ]
                      ),
                  );
