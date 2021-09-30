@@ -488,6 +488,7 @@ class FPTest extends TestCase
             'no items' => [null, []],
             'one' => [1, [1]],
             'max' => [1, [100, 10, 1]],
+            'max iterator' => [1, new ArrayIterator([100, 10, 1])],
         ];
     }
 

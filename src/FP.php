@@ -639,13 +639,17 @@ class FP
      */
     public static function max(callable $fCompare, iterable $items)
     {
-        $max = reset($items);
-        if ($max === false) {
-            return null;
-        }
-        while (($next = next($items)) !== false) {
-            if ($fCompare($next, $max) > 0) {
-                $max = $next;
+        $max = null;
+        $first = true;
+        foreach ($items as $item) {
+            if ($first) {
+                $first = false;
+                $max = $item;
+                continue;
+            }
+
+            if ($fCompare($item, $max) > 0) {
+                $max = $item;
             }
         }
 
