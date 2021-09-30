@@ -485,7 +485,7 @@ class FPTest extends TestCase
     public function maxProvider()
     {
         return [
-            'empty not allowed' => ['at least one item', []],
+            'no items' => [null, []],
             'one' => [1, [1]],
             'max' => [1, [100, 10, 1]],
         ];
@@ -494,17 +494,13 @@ class FPTest extends TestCase
     /** @dataProvider minProvider */
     public function testMin($exp, $items): void
     {
-        if (is_string($exp)) {
-            $this->expectExceptionMessage($exp);
-            $this->expectException(LogicException::class);
-        }
         self::assertEquals($exp, FP::min(fn($a, $b) => $b <=> $a, $items));
     }
 
     public function minProvider()
     {
         return [
-            'empty not allowed' => ['at least one item', []],
+            'no items' => [null, []],
             'one' => [1, [1]],
             'min' => [100, [100, 10, 1]],
         ];

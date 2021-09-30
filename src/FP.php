@@ -32,7 +32,8 @@ class FP
     }
 
     /**
-     * @return callable(): null do nothing but returns null.
+     * Returns function do nothing but returns null.
+     * @return callable(): null
      */
     public static function null(): callable
     {
@@ -40,7 +41,8 @@ class FP
     }
 
     /**
-     * @return callable(): true that always returns true.
+     * Return function always returns true.
+     * @return callable(): true
      */
     public static function t(): callable
     {
@@ -48,7 +50,8 @@ class FP
     }
 
     /**
-     * @return callable(): false that always returns false.
+     * Return function always returns false.
+     * @return callable(): false
      */
     public static function f(): callable
     {
@@ -632,13 +635,13 @@ class FP
      * @template T
      * @param callable(T $a, $b): int $fCompare
      * @param iterable<T> $items
-     * @return T
+     * @return T|null null if no items
      */
     public static function max(callable $fCompare, iterable $items)
     {
         $max = reset($items);
         if ($max === false) {
-            throw new LogicException('at least one item');
+            return null;
         }
         while (($next = next($items)) !== false) {
             if ($fCompare($next, $max) > 0) {
@@ -653,10 +656,18 @@ class FP
      * @template T
      * @param callable(T $a, $b): int $fCompare
      * @param iterable<T> $items
-     * @return T
+     * @return null|T null if no items
      */
     public static function min(callable $fCompare, iterable $items)
     {
         return self::max(fn($a, $b) => $fCompare($b, $a), $items);
+    }
+
+    /**
+     * Standard '<=>' operator
+     */
+    public static function stdCompare($a, $b): int
+    {
+        return $a <=> $b;
     }
 }
