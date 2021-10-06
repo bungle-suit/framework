@@ -66,7 +66,8 @@ class LabelledReader implements SectionContentReaderInterface
         for ($i = 0; $i < $this->maxValuesPerRow; $i++) {
             $lbl = (string)($reader->getCellValueByColumn($colIdx));
             $lblColIdx = $colIdx;
-            $colIdx += ExcelOperator::getCellWidth($reader, $colIdx);
+            $cell = $reader->getSheet()->getCellByColumnAndRow($colIdx, $reader->getRow(), false);
+            $colIdx += ExcelOperator::getCellWidth($cell);
             $v = $reader->getCellValueByColumn($colIdx);
             /**
              * @var LabelledValue $value
@@ -98,7 +99,8 @@ class LabelledReader implements SectionContentReaderInterface
                     }
                 }
             }
-            $colIdx += ExcelOperator::getCellWidth($reader, $colIdx);
+            $cell = $reader->getSheet()->getCellByColumnAndRow($colIdx, $reader->getRow(), false);
+            $colIdx += ExcelOperator::getCellWidth($cell);
         }
     }
 

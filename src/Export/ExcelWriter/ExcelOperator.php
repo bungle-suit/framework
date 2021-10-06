@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Export\ExcelWriter;
 
-use Bungle\Framework\Import\ExcelReader\ExcelReader;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -30,10 +29,11 @@ class ExcelOperator
         $this->sheet = $sheet ?? $book->getActiveSheet();
     }
 
-    public static function getCellWidth(ExcelReader $reader, int $col): int
+    /**
+     * Return 1 if $cell is null
+     */
+    public static function getCellWidth(?Cell $cell): int
     {
-        $sheet = $reader->getSheet();
-        $cell = $sheet->getCellByColumnAndRow($col, $reader->getRow(), false);
         if ($cell === null) {
             return 1;
         }
