@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Import\ExcelReader\LabelledReader;
 
+use Bungle\Framework\Export\ExcelWriter\ExcelOperator;
 use Bungle\Framework\Import\ExcelReader\ExcelReader;
 use Bungle\Framework\Import\ExcelReader\SectionContentReaderInterface;
 use Bungle\Framework\Model\BunglePropertyAccessor;
@@ -65,7 +66,7 @@ class LabelledReader implements SectionContentReaderInterface
         for ($i = 0; $i < $this->maxValuesPerRow; $i++) {
             $lbl = (string)($reader->getCellValueByColumn($colIdx));
             $lblColIdx = $colIdx;
-            $colIdx += self::getCellWidth($reader, $colIdx);
+            $colIdx += ExcelOperator::getCellWidth($reader, $colIdx);
             $v = $reader->getCellValueByColumn($colIdx);
             /**
              * @var LabelledValue $value
@@ -80,7 +81,7 @@ class LabelledReader implements SectionContentReaderInterface
                             break;
                         case LabelledValue::MODE_WRITE:
                             ($value->getOnLabelCell())($reader->getSheet()
-                                                              ->getCellByColumnAndRow($lblColIdx, $reader->getRow()));
+                                ->getCellByColumnAndRow($lblColIdx, $reader->getRow()));
                             $v = $this->propertyAccessor->getValue($this->obj, $value->getPath());
                             $v = ($value->getWriteConverter())($v, $context);
                             $reader->setCellValue($colIdx, $v);
@@ -97,23 +98,8 @@ class LabelledReader implements SectionContentReaderInterface
                     }
                 }
             }
-            $colIdx += self::getCellWidth($reader, $colIdx);
+            $colIdx += ExcelOperator::getCellWidth($reader, $colIdx);
         }
-    }
-
-    private static function getCellWidth(ExcelReader $reader, int $col): int
-    {
-        $sheet = $reader->getSheet();
-        $cell = $sheet->getCellByColumnAndRow($col, $reader->getRow(), false);
-        if ($cell === null) {
-            return 1;
-        }
-
-        if (($range = $cell->getMergeRange()) === false) {
-            return 1;
-        }
-
-        return Coordinate::rangeDimension($range)[0];
     }
 
     public function onSectionEnd(ExcelReader $reader): void
