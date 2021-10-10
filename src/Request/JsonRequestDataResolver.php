@@ -27,6 +27,10 @@ class JsonRequestDataResolver implements ArgumentValueResolverInterface
             return false;
         }
 
+        if ($argument->getAttributes(JsonRequestType::class)) {
+            return true;
+        }
+
         if ($argument->getType() === null) {
             return false;
         }

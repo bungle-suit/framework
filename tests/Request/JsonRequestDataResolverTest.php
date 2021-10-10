@@ -28,25 +28,32 @@ class JsonRequestDataResolverTest extends MockeryTestCase
         $this->resolver = new JsonRequestDataResolver($serializer);
     }
 
-    public function testSupports(): void
+    /** @dataProvider supportsProvider */
+    public function testSupports($exp, $method, $type, $attrs = []): void
     {
-        $arg = new ArgumentMetadata('data', IDNameJsonRequestData::class, false, false, null);
+        $arg = new ArgumentMetadata('data', $type, false, false, null, attributes: $attrs);
         $req = new Request();
-        $req->setMethod(Request::METHOD_POST);
-        self::assertTrue($this->resolver->supports($req, $arg));
+        $req->setMethod($method);
+        self::assertEquals($exp, $this->resolver->supports($req, $arg));
+    }
 
-        $req->setMethod(Request::METHOD_GET);
-        self::assertFalse($this->resolver->supports($req, $arg));
-        $req->setMethod(Request::METHOD_POST);
-
-        $arg = new ArgumentMetadata('data', self::class, false, false, null);
-        self::assertFalse($this->resolver->supports($req, $arg));
-
-        $arg = new ArgumentMetadata('data', null, false, false, null);
-        self::assertFalse($this->resolver->supports($req, $arg));
-
-        $arg = new ArgumentMetadata('data', 'int', false, false, null);
-        self::assertFalse($this->resolver->supports($req, $arg));
+    public function supportsProvider()
+    {
+        return [
+            'method not POST' => [false, Request::METHOD_GET, IDNameJsonRequestData::class],
+            'type not implement JsonRequestDataInterface' => [false, Request::METHOD_POST, 'int'],
+            'type implement JsonRequestDataInterface' => [
+                true,
+                Request::METHOD_POST,
+                IDNameJsonRequestData::class,
+            ],
+            'defines JsonRequestType attribute' => [
+                true,
+                Request::METHOD_POST,
+                'array',
+                [new JsonRequestType('foo[]')],
+            ],
+        ];
     }
 
     /** @dataProvider resolveProvider */
