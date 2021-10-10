@@ -8,7 +8,6 @@ use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\Serializer\SerializerInterface;
 use Traversable;
-use Webmozart\Assert\Assert;
 
 /**
  * Inject JsonRequestDataInterface argument from post data into controller argument.
@@ -37,7 +36,6 @@ class JsonRequestDataResolver implements ArgumentValueResolverInterface
         }
 
         $interfaces = class_implements($argument->getType());
-        Assert::isArray($interfaces);
         return in_array(JsonRequestDataInterface::class, $interfaces);
     }
 
@@ -47,7 +45,11 @@ class JsonRequestDataResolver implements ArgumentValueResolverInterface
     public function resolve(Request $request, ArgumentMetadata $argument): Traversable
     {
         $t = $argument->getType();
-        assert($t !== null);
+        /** @var JsonRequestType[] $attrs */
+        $attrs = $argument->getAttributes(JsonRequestType::class);
+        if ($attrs) {
+            $t = $attrs[0]->type;
+        }
         yield $this->serializer->deserialize($request->getContent(), $t, 'json');
     }
 }

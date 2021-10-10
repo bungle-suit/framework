@@ -4,10 +4,12 @@ declare(strict_types=1);
 namespace Bungle\Framework\Tests\Request;
 
 use Bungle\Framework\Request\JsonRequestDataResolver;
+use Bungle\Framework\Request\JsonRequestType;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
@@ -19,7 +21,10 @@ class JsonRequestDataResolverTest extends MockeryTestCase
     {
         parent::setUp();
 
-        $serializer = new Serializer([new ObjectNormalizer()], [new JsonEncoder()]);
+        $serializer = new Serializer(
+            [new ObjectNormalizer(), new ArrayDenormalizer()],
+            [new JsonEncoder()]
+        );
         $this->resolver = new JsonRequestDataResolver($serializer);
     }
 
@@ -44,16 +49,30 @@ class JsonRequestDataResolverTest extends MockeryTestCase
         self::assertFalse($this->resolver->supports($req, $arg));
     }
 
-    public function testResolve(): void
+    /** @dataProvider resolveProvider */
+    public function testResolve($exp, $type, $json, $attributes): void
     {
-        $req = new Request([], [], [], [], [], [], '{"name":"foo","ids":["a", "b"]}');
-        $arg = new ArgumentMetadata('data', IDNameJsonRequestData::class, false, false, null);
+        $req = new Request([], [], [], [], [], [], $json);
+        $arg = new ArgumentMetadata('data', $type, false, false, null, attributes: $attributes);
         $arr = iterator_to_array($this->resolver->resolve($req, $arg));
-        self::assertCount(1, $arr);
-        /** @var IDNameJsonRequestData $data */
-        $data = $arr[0];
-        self::assertInstanceOf(IDNameJsonRequestData::class, $data);
-        self::assertEquals('foo', $data->getName());
-        self::assertEquals(['a', 'b'], $data->getIds());
+        self::assertEquals([$exp], $arr);
+    }
+
+    public function resolveProvider()
+    {
+        $data = new IDNameJsonRequestData();
+        $data->setIds(['a', 'b']);
+        $data->setName('foo');
+        $json = '{"name":"foo","ids":["a", "b"]}';
+
+        return [
+            'instance' => [$data, IDNameJsonRequestData::class, $json, []],
+            'array' => [
+                [$data],
+                'array',
+                "[$json]",
+                [new JsonRequestType(IDNameJsonRequestData::class.'[]')],
+            ],
+        ];
     }
 }
