@@ -27,7 +27,7 @@ class Query
      */
     private array $steps;
 
-    private EntityManagerInterface $em;
+    protected EntityManagerInterface $em;
     private string $title;
 
     /**
