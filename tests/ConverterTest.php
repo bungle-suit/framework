@@ -11,6 +11,24 @@ use PHPUnit\Framework\TestCase;
 
 class ConverterTest extends TestCase
 {
+    /** @dataProvider newBoolToStringProvider */
+    public function testNewBoolToString($exp, $val, $trueText = null, $falseText = null): void
+    {
+        $f = Converter::newBoolToString($trueText ?? '是', $falseText ?? '否');
+        self::assertEquals($exp, $f($val));
+    }
+
+    public function newBoolToStringProvider()
+    {
+        return [
+            'null' => ['', null],
+            'falsy' => ['否', 0],
+            'truthy' => ['是', 'no'],
+            'true' => ['yes', true, 'yes', 'no'],
+            'false' => ['', false, 'yes', ''],
+        ];
+    }
+
     public function testFormat(): void
     {
         $f = [Converter::class, 'format'];

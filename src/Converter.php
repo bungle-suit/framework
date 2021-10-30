@@ -12,6 +12,13 @@ use function Symfony\Component\String\u;
 
 class Converter
 {
+    public static function newBoolToString(
+        string $trueText = '是',
+        string $falseText = '否'
+    ): callable {
+        return fn($v) => $v === null ? '' : ($v ? $trueText : $falseText);
+    }
+
     /**
      * Convert value to string, support a few common types:
      *
