@@ -36,4 +36,19 @@ final class DebugHelper
 
         return boolval($_SERVER['APP_DEBUG']);
     }
+
+    /**
+     * Returns true if current env is unit test.
+     * To make this work, define constant in phpunit.xml:
+     *
+     *  ...
+     *  <php>
+     *      <const name="RUN_IN_UNIT_TEST" value="true"/>
+     *  </php>
+     * </phpunit>
+     */
+    public static function isUnitTest(): bool
+    {
+        return defined('RUN_IN_UNIT_TEST');
+    }
 }

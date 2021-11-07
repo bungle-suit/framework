@@ -23,4 +23,9 @@ final class DebugHelperTest extends TestCase
         $_SERVER['APP_DEBUG'] = '1';
         self::assertTrue(DebugHelper::resolveIsDebug());
     }
+
+    public function testIsUnitTest(): void
+    {
+        self::assertTrue(DebugHelper::isUnitTest());
+    }
 }

@@ -4,4 +4,7 @@
       <directory>./tests/</directory>
     </testsuite>
   </testsuites>
+  <php>
+    <const name="RUN_IN_UNIT_TEST" value="true"/>
+  </php>
 </phpunit>
