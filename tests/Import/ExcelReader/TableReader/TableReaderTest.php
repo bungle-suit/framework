@@ -95,6 +95,11 @@ class TableReaderTest extends MockeryTestCase
         );
 
         self::assertSame([2 => 'lbl3', 0 => 'lbl1', 1 => 'lbl2'], $r->getColumnTexts());
+        self::assertEquals([
+            [$this->cols[2], 'C'],
+            [$this->cols[0], 'D'],
+            [$this->cols[1], 'F'],
+        ], $r->getColumnLocations());
     }
 
     public function testNewIsColumnEmpty(): void

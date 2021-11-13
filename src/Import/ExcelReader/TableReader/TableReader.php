@@ -60,6 +60,19 @@ class TableReader implements SectionContentReaderInterface
         return $this->cols;
     }
 
+    /**
+     * @return array{ColumnInterface, string} (column, excelCol) excelCol such as 'A'
+     */
+    public function getColumnLocations(): array
+    {
+        $r = [];
+        foreach ($this->colIdxes as $i => $colIdx) {
+            $r[] = [$this->cols[$i], Coordinate::stringFromColumnIndex($colIdx)];
+        }
+
+        return $r;
+    }
+
     public function onSectionStart(ExcelReader $reader): void
     {
         $this->rowErrors = [];
@@ -200,8 +213,7 @@ class TableReader implements SectionContentReaderInterface
     {
         $colIdx = -1;
 
-        return function (ExcelReader $reader) use ($col, &$colIdx): bool
-        {
+        return function (ExcelReader $reader) use ($col, &$colIdx): bool {
             if ($colIdx === -1) {
                 if (!isset($this->colIdxes)) {
                     return false;
