@@ -23,7 +23,7 @@ class LabelledReader implements SectionContentReaderInterface
     private $obj;
     private int $maxValuesPerRow;
     /** @phpstan-var LabelledValue<T>[] */
-    private array $values;
+    private array $values = [];
     /** @phpstan-var Context<T> */
     private Context $context;
     private int $startColIdx;

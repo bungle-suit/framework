@@ -16,15 +16,40 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class LabelledReaderTest extends MockeryTestCase
 {
+    private ExcelReader $reader;
+    private Spreadsheet $book;
+    private object $obj;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->book = new Spreadsheet();
+        $this->reader = new ExcelReader($this->book);
+        $this->obj = (object)['foo1' => '', 'bar' => '', 'foobar' => '', 'name' => 123];
+    }
+
+    public function testNoValueDefined(): void
+    {
+        $objBak = clone $this->obj;
+
+        $r = new LabelledReader($this->obj, 2, 'C');
+        $r->onSectionStart($this->reader);
+        $this->reader->setRow(2);
+        $r->readRow($this->reader);
+        $this->reader->nextRow();
+        $r->onSectionEnd($this->reader);
+
+        self::assertEquals($objBak, $this->obj);
+    }
+
     public function test(): void
     {
-        $book = new Spreadsheet();
-        $reader = new ExcelReader($book);
-        $sheet = $reader->getSheet();
-        $obj = (object)['foo1' => '', 'bar' => '', 'foobar' => '', 'name' => 123];
+        $reader = $this->reader;
+        $sheet = $this->reader->getSheet();
         $context = Mockery::type(Context::class);
         /** @phpstan-var LabelledReader<object> $r */
-        $r = new LabelledReader($obj, 2, 'C');
+        $r = new LabelledReader($this->obj, 2, 'C');
         $r->defineValue($lv1 = Mockery::mock(LabelledValue::class))
           ->defineValue($lv2 = Mockery::mock(LabelledValue::class))
           ->defineValue($lv3 = Mockery::mock(LabelledValue::class))
@@ -94,9 +119,9 @@ class LabelledReaderTest extends MockeryTestCase
         $r->readRow($reader);
         $reader->nextRow();
 
-        self::assertEquals('alter fooValue', $obj->foo1);
-        self::assertEquals('barValue', $obj->bar);
-        self::assertEquals('foobarValue', $obj->foobar);
+        self::assertEquals('alter fooValue', $this->obj->foo1);
+        self::assertEquals('barValue', $this->obj->bar);
+        self::assertEquals('foobarValue', $this->obj->foobar);
 
         // onSectionEnd
         $lv1->expects('onSectionEnd')->with($context);
