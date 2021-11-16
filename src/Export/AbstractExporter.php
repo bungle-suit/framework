@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Export;
@@ -33,21 +34,26 @@ abstract class AbstractExporter
     {
         try {
             $params = $this->parseParams($context);
-            $fn = $this->fs->tempFile();
-            $this->doBuild($fn, $params);
-            return new ExportResult($fn, $this->buildFilename($params));
+
+            return $this->exportWithParams($params);
         } catch (RuntimeException $e) {
             if (isset($this->logger)) {
                 $this->logger->error($e->getMessage(), ['exception' => $e]);
             }
-            if (isset($fn)) {
-                $this->fs->removeFile($fn);
-            }
             if ($throws) {
                 throw $e;
             }
+
             return $this->genErrorFile($e);
         }
+    }
+
+    public function exportWithParams(array $params): ExportResult
+    {
+        $fn = $this->fs->tempFile();
+        $this->doBuild($fn, $params);
+
+        return new ExportResult($fn, $this->buildFilename($params));
     }
 
     /**
@@ -57,17 +63,18 @@ abstract class AbstractExporter
     abstract protected function buildParamParser(): Traversable;
 
     /**
-     * @param mixed[] $params
+     * @param array $params
      */
     abstract protected function doBuild(string $fn, array $params): void;
 
     /**
-     * @return mixed[]
+     * @return array
      */
-    private function parseParams(ExportContext $context): array
+    public function parseParams(ExportContext $context): array
     {
         $parsers = iterator_to_array($this->buildParamParser(), false);
         $p = new ParamParser($parsers);
+
         return $p->parse($context);
     }
 

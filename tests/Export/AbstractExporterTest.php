@@ -56,7 +56,6 @@ class AbstractExporterTest extends MockeryTestCase
     public function testExportExportError(): void
     {
         $this->fs->expects('tempFile')->with()->andReturn('exportFile');
-        $this->fs->expects('removeFile')->with('exportFile');
         $this->fs->expects('tempFile')->with('export error')
                  ->andReturn('errorFile');
         $this->exporter->expects('buildParamParser')->andReturn(new ArrayIterator([]));
