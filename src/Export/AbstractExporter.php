@@ -9,8 +9,10 @@ use Bungle\Framework\Export\ParamParser\ParamParser;
 use Bungle\Framework\Export\ParamParser\ParamValueParserInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
+use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use Traversable;
 
+#[Autoconfigure(tags: [ExporterFactory::SERVICE_TAG])]
 abstract class AbstractExporter
 {
     /** @required */
@@ -57,7 +59,7 @@ abstract class AbstractExporter
     }
 
     /**
-     * @phpstan-return  Traversable<ParamValueParserInterface|callable(ExportContext): ?string>
+     * @return  Traversable<ParamValueParserInterface|callable(ExportContext): ?string>
      * @return Traversable<ParamValueParserInterface|callable>
      */
     abstract protected function buildParamParser(): Traversable;
