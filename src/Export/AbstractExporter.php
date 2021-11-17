@@ -7,6 +7,7 @@ namespace Bungle\Framework\Export;
 use Bungle\Framework\Export\ParamParser\ExportContext;
 use Bungle\Framework\Export\ParamParser\ParamParser;
 use Bungle\Framework\Export\ParamParser\ParamValueParserInterface;
+use Bungle\Framework\FP;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
@@ -19,6 +20,11 @@ abstract class AbstractExporter
     public FSInterface $fs;
     /** @required */
     public LoggerInterface $logger;
+
+    private ExportProgress $progress;
+
+    /** @var callable(ExportProgress): void */
+    private $onProgress;
 
     /**
      * Generate the exported file's name.
@@ -52,6 +58,9 @@ abstract class AbstractExporter
 
     public function exportWithParams(array $params): ExportResult
     {
+        $this->initProgress();
+        $this->onProgress = $this->onProgress ?? FP::null();
+
         $fn = $this->fs->tempFile();
         $this->doBuild($fn, $params);
 
@@ -86,5 +95,44 @@ abstract class AbstractExporter
             $this->fs->tempFile($e->getMessage()),
             'error.txt'
         );
+    }
+
+    protected function initProgress(): void
+    {
+        if (!isset($this->progress)) {
+            $this->progress = new ExportProgress();
+            $this->progress->total = -1;
+        }
+    }
+
+    public function setOnProgress(callable $onProgress)
+    {
+        $this->onProgress = $onProgress;
+    }
+
+    protected function setProgressTotal(int $total): void
+    {
+        $this->progress->total = $total;
+        ($this->onProgress)($this->progress);
+    }
+
+    protected function incProgress(int $delta = 1): void
+    {
+        $this->progress->current++;
+        ($this->onProgress)($this->progress);
+    }
+
+    protected function sendMessage(string $message): void
+    {
+        $this->progress->message = $message;
+        ($this->onProgress)($this->progress);
+        $this->progress->message = '';
+    }
+
+    protected function sendStatus(string $status): void
+    {
+        $this->progress->status = $status;
+        ($this->onProgress)($this->progress);
+        $this->progress->status = '';
     }
 }

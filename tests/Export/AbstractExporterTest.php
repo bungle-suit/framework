@@ -7,14 +7,19 @@ namespace Bungle\Framework\Tests\Export;
 
 use ArrayIterator;
 use Bungle\Framework\Export\AbstractExporter;
+use Bungle\Framework\Export\ExportProgress;
 use Bungle\Framework\Export\ExportResult;
 use Bungle\Framework\Export\FSInterface;
 use Bungle\Framework\Export\ParamParser\ExportContext;
 use Bungle\Framework\Export\ParamParser\ParamValueParserInterface;
+use Bungle\Framework\Func;
+use Hamcrest\Matchers;
+use LogicException;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
+use Traversable;
 
 class AbstractExporterTest extends MockeryTestCase
 {
@@ -90,5 +95,97 @@ class AbstractExporterTest extends MockeryTestCase
             new ExportResult('exportFile', 'foo.xlsx'),
             $this->exporter->export($this->context)
         );
+    }
+
+    private static function createExporterForProgress()
+    {
+        $exporter = new class() extends AbstractExporter {
+            public function __construct()
+            {
+                $this->initProgress();
+            }
+
+            public function buildFilename(array $params): string
+            {
+                throw new LogicException('buildFilename not implemented');
+            }
+
+            protected function buildParamParser(): Traversable
+            {
+                throw new LogicException('buildParamParser not implemented');
+            }
+
+            protected function doBuild(string $fn, array $params): void
+            {
+                throw new LogicException('doBuild not implemented');
+            }
+
+            public function setProgressTotal(int $total): void
+            {
+                parent::setProgressTotal($total);
+            }
+
+            public function incProgress(int $delta = 1): void
+            {
+                parent::incProgress($delta);
+            }
+
+            public function sendMessage(string $message): void
+            {
+                parent::sendMessage($message);
+            }
+
+            public function sendStatus(string $status): void
+            {
+                parent::sendStatus($status);
+            }
+        };
+
+        $onProgress = Mockery::mock(Func::class);
+        $exporter->setOnProgress($onProgress);
+
+        return [$exporter, $onProgress];
+    }
+
+    public function testProgress(): void
+    {
+        $pr = new ExportProgress();
+        /**
+         * @var AbstractExporter $exporter
+         * @var Func|Mockery\MockInterface $onProgress
+         */
+        [$exporter, $onProgress] = self::createExporterForProgress();
+
+        // progress not set
+        $pr->total = -1;
+        $pr->current = 1;
+        $onProgress->expects('__invoke')->with(Matchers::equalTo($pr));
+        $exporter->incProgress();
+
+        // set total
+        $pr->total = 100;
+        $onProgress->expects('__invoke')->with(Matchers::equalTo($pr));
+        $exporter->setProgressTotal(100);
+        $pr->current = 2;
+        $onProgress->expects('__invoke')->with(Matchers::equalTo($pr));
+        $exporter->incProgress();
+
+        // send message
+        $pr->message = 'foo';
+        $onProgress->expects('__invoke')->with(Matchers::equalTo($pr));
+        $exporter->sendMessage('foo');
+        $pr->current = 3;
+        $pr->message = '';
+        $onProgress->expects('__invoke')->with(Matchers::equalTo($pr));
+        $exporter->incProgress();
+
+        // send status
+        $pr->status = 'foo';
+        $onProgress->expects('__invoke')->with(Matchers::equalTo($pr));
+        $exporter->sendStatus('foo');
+        $pr->current = 4;
+        $pr->status = '';
+        $onProgress->expects('__invoke')->with(Matchers::equalTo($pr));
+        $exporter->incProgress();
     }
 }
