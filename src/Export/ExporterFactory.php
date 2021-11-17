@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ExporterFactory
 {
-    public const SERVICE_TAG = 'bungle.importer';
+    public const SERVICE_TAG = 'bungle.exporter';
 
     private ContainerInterface $container;
 
@@ -18,8 +18,8 @@ class ExporterFactory
         $this->container = $container;
     }
 
-    public function getImporter(string $importerClass): AbstractExporter
+    public function getExporter(string $exporterClass): AbstractExporter
     {
-        return $this->container->get($importerClass);
+        return $this->container->get($exporterClass);
     }
 }
