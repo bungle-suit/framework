@@ -10,10 +10,8 @@ use Bungle\Framework\Export\ParamParser\ParamValueParserInterface;
 use Bungle\Framework\FP;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
-use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use Traversable;
 
-#[Autoconfigure(tags: [ExporterFactory::SERVICE_TAG])]
 abstract class AbstractExporter
 {
     /** @required */
