@@ -24,4 +24,9 @@ class StringUtil
     {
         return fn(string $s) => self::containsAny($s, $keywords);
     }
+
+    public static function removeContinuousSpace(string $s): string
+    {
+        return mb_ereg_replace('\s+', ' ', $s);
+    }
 }

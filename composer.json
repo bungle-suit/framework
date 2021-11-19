@@ -16,6 +16,7 @@
     "symfony/string": "^5.3",
     "phpoffice/phpspreadsheet": "^1.16",
     "webmozart/assert": "^1.9",
+    "ext-mbstring": "*",
     "aura/sqlquery": "^2.7"
   },
   "autoload": {
