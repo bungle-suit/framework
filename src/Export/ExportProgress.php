@@ -12,4 +12,8 @@ class ExportProgress
     public string $status = '';
     /** Message appended in message view */
     public string $message = '';
+    /** Error appended in message view */
+    public string $error = '';
+    /** Warn appended in message view */
+    public string $warn = '';
 }
