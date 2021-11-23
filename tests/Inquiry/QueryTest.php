@@ -141,6 +141,58 @@ class QueryTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         self::assertEquals(['foo' => $col1], $q->getColumns());
     }
 
+    public function testCount(): void
+    {
+        $paginator = Mockery::mock(
+            'overload:\Doctrine\ORM\Tools\Pagination\Paginator',
+            Traversable::class,
+            Countable::class
+        );
+        $paginator->expects('count')->andReturn(11);
+        $paginator->expects('setUseOutputWalkers')->with(false);
+
+        $qb = Mockery::mock(QueryBuilder::class);
+        $this->em->expects('createQueryBuilder')
+                 ->andReturn($qb);
+        $dqlQuery = Mockery::mock(AbstractQuery::class);
+        $qb->expects('getQuery')
+           ->andReturn($dqlQuery);
+
+        $params = new QueryParams(0, []);
+        $col1 = new ColumnMeta('[id]', 'id', new Type(Type::BUILTIN_TYPE_INT));
+        $pagingStep = Mockery::namedMock('pagingStep', QueryStepInterface::class);
+        $q = new class(
+            $this->em,
+            [
+                function (Builder $builder) use ($col1): void {
+                    $builder->addColumn($col1, 'foo');
+                },
+            ],
+            $pagingStep,
+        ) extends Query {
+            private QueryStepInterface $pagingStep;
+
+            public function __construct(
+                EntityManagerInterface $em,
+                array $steps,
+                QueryStepInterface $pagingStep
+            ) {
+                parent::__construct($em, $steps);
+                $this->pagingStep = $pagingStep;
+            }
+
+            protected function createExtraPagingSteps(): array
+            {
+                return [$this->pagingStep];
+            }
+        };
+        $pagingStep->expects('__invoke')
+                   ->with(Mockery::on(fn(Builder $builder) => count($builder->getColumns()) === 1));
+
+        self::assertEquals(11, $q->count($params));
+        self::assertEquals(['foo' => $col1], $q->getColumns());
+    }
+
     public function testBuildQBEMeta(): void
     {
         $qb = Mockery::mock(QueryBuilder::class);

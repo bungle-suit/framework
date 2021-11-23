@@ -98,15 +98,18 @@ class Query
      */
     public function pagedQuery(QueryParams $params): PagedData
     {
-        Assert::false($this->nativeMode, 'Not support paged query when in native mode');
-
-        $qb = $this->prepareQuery($params, self::BUILD_FOR_PAGING)->getQueryBuilder();
-        $pager = new Paginator($qb->getQuery());
-        $pager->setUseOutputWalkers(false);
+        $pager = $this->getPager($params);
         $count = count($pager);
         $data = iterator_to_array($pager, false);
 
         return new PagedData($data, $count);
+    }
+
+    public function count(QueryParams $params): int
+    {
+        $pager = $this->getPager($params);
+
+        return count($pager);
     }
 
     private const BUILD_FOR_PAGING = 2;
@@ -211,5 +214,16 @@ class Query
     public function setNativeMode(bool $nativeMode): void
     {
         $this->nativeMode = $nativeMode;
+    }
+
+    private function getPager(QueryParams $params): Paginator
+    {
+        Assert::false($this->nativeMode, 'Not support paged query when in native mode');
+
+        $qb = $this->prepareQuery($params, self::BUILD_FOR_PAGING)->getQueryBuilder();
+        $pager = new Paginator($qb->getQuery());
+        $pager->setUseOutputWalkers(false);
+
+        return $pager;
     }
 }
