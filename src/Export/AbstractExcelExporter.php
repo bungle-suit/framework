@@ -18,6 +18,7 @@ abstract class AbstractExcelExporter extends AbstractExporter
         $sheet = $this->createSpreadsheet($params);
         $writer = new ExcelWriter($sheet);
         $this->generate($writer, $params);
+        $this->sendMessage('写入文件...');
         (new Xlsx($sheet))->save($fn);
     }
 
