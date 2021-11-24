@@ -116,6 +116,14 @@ class Query
     private const BUILD_FOR_QBE = 3;
     private const BUILD_FOR_DATA = 4; // triggered by self::query() method
 
+    /**
+     * initialize internal state, esp, getColumns()
+     */
+    public function prepare(QueryParams $params): void
+    {
+        $this->prepareQuery($params, self::BUILD_FOR_DATA);
+    }
+
     private function prepareQuery(QueryParams $params, int $buildFor): Builder
     {
         if ($this->nativeMode) {
