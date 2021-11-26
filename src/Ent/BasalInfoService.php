@@ -13,7 +13,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class BasalInfoService
 {
     private Security $security;
-    private EntityManagerInterface $em;
+    protected EntityManagerInterface $em;
     private ObjectName $objectName;
 
     public function __construct(Security $security, EntityManagerInterface $em, ObjectName $objectName)
