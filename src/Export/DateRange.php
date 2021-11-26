@@ -1,8 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Export;
 
+use Bungle\Framework\Converter;
 use DateTime;
 
 class DateRange
@@ -36,6 +38,16 @@ class DateRange
         }
 
         [$start, $end] = [$this->start, $this->end ?? $today];
+
         return $end->diff($start)->days > $maxDays;
+    }
+
+    public function __toString(): string
+    {
+        if ($this->start === null && $this->end === null) {
+            return '';
+        }
+
+        return Converter::formatYMD($this->start).' ~ '.Converter::formatYMD($this->end);
     }
 }

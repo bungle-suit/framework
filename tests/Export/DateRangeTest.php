@@ -51,4 +51,24 @@ class DateRangeTest extends MockeryTestCase
     {
         return $s ? new DateTime($s) : null;
     }
+
+    /** @dataProvider toStringProvider */
+    public function testToString($exp, $start, $end): void
+    {
+        $dq = new DateRange($start, $end);
+        self::assertEquals($exp, strval($dq));
+    }
+
+    public function toStringProvider()
+    {
+        $start = new DateTime('2021-11-01');
+        $end = new DateTime('2021-11-26');
+
+        return [
+            'empty' => ['', null, null],
+            'have both' => ['2021-11-01 ~ 2021-11-26', $start, $end],
+            'no start' => [' ~ 2021-11-26', null, $end],
+            'no end' => ['2021-11-01 ~ ', $start, null],
+        ];
+    }
 }
