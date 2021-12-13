@@ -674,4 +674,20 @@ class FP
     {
         return $a <=> $b;
     }
+
+    /**
+     * Unique objects by compare object instance
+     * @template T
+     * @param T[] $objects
+     * @return T[]
+     */
+    public static function uniqueObjects(array $objects): array
+    {
+        $r = [];
+        foreach ($objects as $item) {
+            $r[spl_object_id($item)] = $item;
+        }
+
+        return array_values($r);
+    }
 }

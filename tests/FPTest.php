@@ -10,6 +10,7 @@ use Bungle\Framework\FuncInterface;
 use LogicException;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 class FPTest extends TestCase
 {
@@ -66,12 +67,12 @@ class FPTest extends TestCase
     {
         $arr = range(1, 10);
         self::assertEquals([
-                               [1, 6],
-                               [2, 7],
-                               [3, 8],
-                               [4, 9],
-                               [5, 10],
-                           ], FP::equalGroup(fn(int $a, int $b) => $a + 5 === $b, $arr));
+            [1, 6],
+            [2, 7],
+            [3, 8],
+            [4, 9],
+            [5, 10],
+        ], FP::equalGroup(fn(int $a, int $b) => $a + 5 === $b, $arr));
     }
 
     public function testAny(): void
@@ -129,8 +130,11 @@ class FPTest extends TestCase
         self::assertEquals('foo', $a);
 
         $a = 'foo';
-        self::assertEquals('bar', FP::initVariable($a, FP::constant('bar'), fn($v) => $v ===
-            'foo'));
+        self::assertEquals(
+            'bar',
+            FP::initVariable($a, FP::constant('bar'), fn($v) => $v ===
+                'foo')
+        );
     }
 
     public function testInitProperty(): void
@@ -141,13 +145,19 @@ class FPTest extends TestCase
         self::assertEquals('foo', FP::initProperty($o, 'a', FP::constant('foo')));
         self::assertEquals('foo', $o->a);
 
-        self::assertEquals('bar', FP::initProperty($o, 'a', FP::constant('bar'), fn($v) => $v ===
-            'foo'));
+        self::assertEquals(
+            'bar',
+            FP::initProperty($o, 'a', FP::constant('bar'), fn($v) => $v ===
+                'foo')
+        );
         self::assertEquals('bar', $o->a);
 
         // Ignore fIsUninitialized if the property is unset.
-        self::assertEquals('blah', FP::initProperty($o, 'b', FP::constant('blah'), fn($v) => $v ===
-            'foo'));
+        self::assertEquals(
+            'blah',
+            FP::initProperty($o, 'b', FP::constant('blah'), fn($v) => $v ===
+                'foo')
+        );
     }
 
     public function testInitArrayItem(): void
@@ -156,10 +166,16 @@ class FPTest extends TestCase
         self::assertEquals('foo', FP::initArrayItem($arr, 3, FP::constant('foo')));
         self::assertEquals('foo', $arr[3]);
 
-        self::assertEquals('bar', FP::initArrayItem($arr, 'a', FP::constant('bar'), fn($v) => $v ===
-            'foo'));
-        self::assertEquals(345, FP::initArrayItem($arr, 'a', FP::constant(345), fn($v) => $v ===
-            'bar'));
+        self::assertEquals(
+            'bar',
+            FP::initArrayItem($arr, 'a', FP::constant('bar'), fn($v) => $v ===
+                'foo')
+        );
+        self::assertEquals(
+            345,
+            FP::initArrayItem($arr, 'a', FP::constant(345), fn($v) => $v ===
+                'bar')
+        );
         self::assertEquals('345', $arr['a']);
     }
 
@@ -169,9 +185,9 @@ class FPTest extends TestCase
 
         $arr = [['foo', 1], ['bar', 2]];
         self::assertEquals([
-                               'foo' => ['foo', 1],
-                               'bar' => ['bar', 2],
-                           ], FP::toKeyed(fn($v) => $v[0], $arr));
+            'foo' => ['foo', 1],
+            'bar' => ['bar', 2],
+        ], FP::toKeyed(fn($v) => $v[0], $arr));
     }
 
     public function testGetOrCreate(): void
@@ -327,17 +343,22 @@ class FPTest extends TestCase
     {
         $isOdd = fn(int $v) => $v % 2 !== 0;
 
-        self::assertEquals([1, 3, 5, 7], iterator_to_array(FP::filter($isOdd, [
-            0,
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-        ])));
+        self::assertEquals(
+            [1, 3, 5, 7],
+            iterator_to_array(
+                FP::filter($isOdd, [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                ])
+            )
+        );
     }
 
     public function testMap(): void
@@ -504,6 +525,22 @@ class FPTest extends TestCase
             'no items' => [null, []],
             'one' => [1, [1]],
             'min' => [100, [100, 10, 1]],
+        ];
+    }
+
+    /** @dataProvider uniqueObjectsProvider */
+    public function testUniqueObjects($exp, $input): void
+    {
+        self::assertEquals($exp, FP::uniqueObjects($input));
+    }
+
+    public function uniqueObjectsProvider()
+    {
+        [$o1, $o2, $o3] = array_map(fn() => new stdClass(), range(1, 5));
+
+        return [
+            'empty' => [[], []],
+            'remove dup' => [[$o1, $o2, $o3], [$o1, $o1, $o2, $o3, $o2]],
         ];
     }
 }
