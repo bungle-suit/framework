@@ -100,7 +100,10 @@ class ExcelOperator
      */
     public function getCellValueByColumn(int $col)
     {
-        $cell = $this->sheet->getCellByColumnAndRow($col, $this->row, false);
+        if (!$this->sheet->cellExistsByColumnAndRow($col, $this->row)) {
+            return null;
+        }
+        $cell = $this->sheet->getCellByColumnAndRow($col, $this->row);
 
         return self::cellValue($cell);
     }
@@ -118,8 +121,7 @@ class ExcelOperator
      */
     public function setCellValue(int $col, $v): void
     {
-        $cell = $this->sheet->getCellByColumnAndRow($col, $this->row, true);
-        assert($cell !== null);
+        $cell = $this->sheet->getCellByColumnAndRow($col, $this->row);
         $cell->setValue($v);
     }
 

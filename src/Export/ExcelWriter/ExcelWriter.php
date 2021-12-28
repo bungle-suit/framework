@@ -10,7 +10,6 @@ use Bungle\Framework\Export\ExcelWriter\TablePlugins\DefaultStyleTablePlugin;
 use Bungle\Framework\Export\ExcelWriter\TablePlugins\FormulaColumnTablePlugin;
 use Bungle\Framework\Export\ExcelWriter\TablePlugins\NumberFormatTablePlugin;
 use Bungle\Framework\Export\ExcelWriter\TablePlugins\SumTablePlugin;
-use Bungle\Framework\FP;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -186,7 +185,7 @@ class ExcelWriter extends ExcelOperator
         foreach ($cells as $row) {
             $colIdx = $startColIdx;
             foreach ($row as $cv) {
-                $c = FP::notNull($this->sheet->getCellByColumnAndRow($colIdx, $this->getRow()));
+                $c = $this->sheet->getCellByColumnAndRow($colIdx, $this->getRow());
                 if (!($cv instanceof ExcelCell)) {
                     $c->setValue($cv);
                     $colIdx++;

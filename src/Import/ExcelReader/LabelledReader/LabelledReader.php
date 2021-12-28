@@ -66,7 +66,8 @@ class LabelledReader implements SectionContentReaderInterface
         for ($i = 0; $i < $this->maxValuesPerRow; $i++) {
             $lbl = (string)($reader->getCellValueByColumn($colIdx));
             $lblColIdx = $colIdx;
-            $cell = $reader->getSheet()->getCellByColumnAndRow($colIdx, $reader->getRow(), false);
+            $cell = $reader->getSheet()->cellExistsByColumnAndRow($colIdx, $reader->getRow()) ?
+                $reader->getSheet()->getCellByColumnAndRow($colIdx, $reader->getRow()) : null;
             $colIdx += ExcelOperator::getCellWidth($cell);
             $v = $reader->getCellValueByColumn($colIdx);
             /**
@@ -81,14 +82,18 @@ class LabelledReader implements SectionContentReaderInterface
                             $this->propertyAccessor->setValue($this->obj, $value->getPath(), $v);
                             break;
                         case LabelledValue::MODE_WRITE:
-                            ($value->getOnLabelCell())($reader->getSheet()
-                                ->getCellByColumnAndRow($lblColIdx, $reader->getRow()));
+                            ($value->getOnLabelCell())(
+                                $reader->getSheet()
+                                       ->getCellByColumnAndRow($lblColIdx, $reader->getRow())
+                            );
                             $v = $this->propertyAccessor->getValue($this->obj, $value->getPath());
                             $v = ($value->getWriteConverter())($v, $context);
                             $reader->setCellValue($colIdx, $v);
                             if ($fmt = $value->getCellFormat()) {
-                                $cell = $reader->getSheet()->getCellByColumnAndRow($colIdx, $reader->getRow());
-                                assert($cell !== null);
+                                $cell = $reader->getSheet()->getCellByColumnAndRow(
+                                    $colIdx,
+                                    $reader->getRow()
+                                );
                                 $cell->getStyle()->getNumberFormat()->setFormatCode($fmt);
                             }
                             break;
@@ -99,8 +104,10 @@ class LabelledReader implements SectionContentReaderInterface
                     }
                 }
             }
-            $cell = $reader->getSheet()->getCellByColumnAndRow($colIdx, $reader->getRow(), false);
-            $colIdx += ExcelOperator::getCellWidth($cell);
+            if ($reader->getSheet()->cellExistsByColumnAndRow($colIdx, $reader->getRow())) {
+                $cell = $reader->getSheet()->getCellByColumnAndRow($colIdx, $reader->getRow());
+                $colIdx += ExcelOperator::getCellWidth($cell);
+            }
         }
     }
 
