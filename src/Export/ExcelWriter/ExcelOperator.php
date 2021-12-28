@@ -87,7 +87,10 @@ class ExcelOperator
      */
     public function getCellValue(string $loc)
     {
-        $cell = $this->sheet->getCell($loc, false);
+        if (!$this->sheet->cellExists($loc)) {
+            return null;
+        }
+        $cell = $this->sheet->getCell($loc);
 
         return self::cellValue($cell);
     }

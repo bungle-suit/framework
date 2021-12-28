@@ -130,12 +130,16 @@ class LabelledReaderTest extends MockeryTestCase
         $lv4->expects('onSectionEnd')->with($context);
         $r->onSectionEnd($reader);
 
-        $c = $sheet->getCell('D5', false);
-        self::assertNotNull($c);
+        self::assertTrue($sheet->cellExists('D5'));
+        $c = $sheet->getCell('D5');
         self::assertEquals(456, $c->getValue());
-        self::assertEquals(NumberFormat::FORMAT_TEXT, $c->getStyle()->getNumberFormat()
-                                                        ->getFormatCode());
-        $c = $sheet->getCell('C5', false);
+        self::assertEquals(
+            NumberFormat::FORMAT_TEXT,
+            $c->getStyle()->getNumberFormat()
+              ->getFormatCode()
+        );
+        self::assertTrue($sheet->cellExists('C5'));
+        $c = $sheet->getCell('C5');
         self::assertEquals('new label', $c->getValue());
     }
 }

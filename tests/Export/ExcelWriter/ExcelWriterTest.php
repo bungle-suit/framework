@@ -42,8 +42,8 @@ class ExcelWriterTest extends MockeryTestCase
 
         $this->writer->writeTitle('bar', 3);
         self::assertEquals(['A2:C2'], array_values($this->workSheet->getMergeCells()));
-        $cell = $this->workSheet->getCell('A2', false);
-        self::assertNotNull($cell);
+        self::assertTrue($this->workSheet->cellExists('A2'));
+        $cell = $this->workSheet->getCell('A2');
         self::assertEquals(
             Alignment::HORIZONTAL_CENTER,
             $cell->getStyle()->getAlignment()->getHorizontal()
@@ -53,7 +53,8 @@ class ExcelWriterTest extends MockeryTestCase
         self::assertEquals(20, $this->workSheet->getRowDimension(2)->getRowHeight());
 
         $this->writer->writeTitle('foobar', 1, 'A', ExcelWriter::TITLE_STYLE_H6);
-        $cell = $this->workSheet->getCell('A3', false);
+        self::assertTrue($this->workSheet->cellExists('A3'));
+        $cell = $this->workSheet->getCell('A3');
         self::assertNotNull($cell);
         self::assertEquals(
             Alignment::HORIZONTAL_CENTER,
@@ -250,8 +251,8 @@ class ExcelWriterTest extends MockeryTestCase
             ],
             array_values($this->workSheet->getMergeCells())
         );
+        self::assertTrue($this->workSheet->cellExists('F3'));
         $cell = $this->workSheet->getCell('F3');
-        self::assertNotNull($cell);
         self::assertEquals(
             Border::BORDER_THIN,
             $cell->getStyle()->getBorders()->getRight()->getBorderStyle()
@@ -387,8 +388,8 @@ class ExcelWriterTest extends MockeryTestCase
 
     private function assertCellContent(string $pos, string $exp): void
     {
-        $cell = $this->workSheet->getCell($pos, false);
-        self::assertNotNull($cell);
+        self::assertTrue($this->workSheet->cellExists($pos));
+        $cell = $this->workSheet->getCell($pos);
         self::assertEquals($exp, $cell->getValue());
     }
 

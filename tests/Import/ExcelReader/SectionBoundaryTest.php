@@ -118,8 +118,8 @@ class SectionBoundaryTest extends MockeryTestCase
         // row before the last data row, but empty, no new cell created
         $this->reader->setRow(9);
         self::assertTrue($f($this->reader));
-        self::assertNull($sheet->getCell('A9', false));
-        self::assertNull($sheet->getCell('B9', false));
+        self::assertFalse($sheet->cellExists('A9'));
+        self::assertFalse($sheet->cellExists('B9'));
 
         // row looks like empty, not empty after $colDetects cols.
         $sheet->setCellValue('C9', 'blah');

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Export\ExcelWriter;
@@ -43,7 +44,7 @@ class ExcelOperatorTest extends MockeryTestCase
     {
         // cell not exist, and not auto created
         self::assertNull($this->op->getCellValue('A1'));
-        self::assertNull($this->op->getSheet()->getCell('A1', false));
+        self::assertFalse($this->op->getSheet()->cellExists('A1'));
 
         // cell exist, return its value
         $this->op->getSheet()->setCellValue('B2', 'foo');
