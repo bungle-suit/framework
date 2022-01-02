@@ -543,4 +543,11 @@ class FPTest extends TestCase
             'remove dup' => [[$o1, $o2, $o3], [$o1, $o1, $o2, $o3, $o2]],
         ];
     }
+
+    public function testNullSafe(): void
+    {
+        $f = FP::nullSafe(fn($v) => $v + 100, 'null');
+        self::assertEquals('null', $f(null));
+        self::assertEquals(101, $f(1));
+    }
 }

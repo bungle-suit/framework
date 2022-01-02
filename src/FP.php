@@ -690,4 +690,12 @@ class FP
 
         return array_values($r);
     }
+
+    /**
+     * If parameter is null, returns $nullValue, skip call $f.
+     */
+    public static function nullSafe(callable $f, mixed $nullValue = null): callable
+    {
+        return fn($v) => $v === null ? $nullValue : $f($v);
+    }
 }
