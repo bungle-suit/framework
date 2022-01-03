@@ -550,4 +550,20 @@ class FPTest extends TestCase
         self::assertEquals('null', $f(null));
         self::assertEquals(101, $f(1));
     }
+
+    public function testEmptySafe(): void
+    {
+        $f = FP::emptySafe(fn($v) => "val: $v", 'null');
+        self::assertEquals('null', $f(null));
+        self::assertEquals('null', $f(''));
+        self::assertEquals('val: 1', $f('1'));
+        self::assertEquals('val: 0', $f(0));
+    }
+
+    public function testSecondArg(): void
+    {
+        $f = FP::secondArg(fn($v) => $v);
+        self::assertEquals(100, $f(10, 100));
+        self::assertEquals(100, $f(10, 100, 1000));
+    }
 }

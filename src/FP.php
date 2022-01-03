@@ -698,4 +698,20 @@ class FP
     {
         return fn($v) => $v === null ? $nullValue : $f($v);
     }
+
+    /**
+     * If parameter is null or empty string, returns $nullValue, skip call $f.
+     */
+    public static function emptySafe(callable $f, mixed $nullValue = null): callable
+    {
+        return static fn($v) => $v === '' || $v === null ? $nullValue : $f($v);
+    }
+
+    /**
+     * Pass 2nd argument to $f
+     */
+    public static function secondArg(callable $f): callable
+    {
+        return static fn($first, $second) => $f($second);
+    }
 }
