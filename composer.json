@@ -14,7 +14,7 @@
     "symfony/validator": "^5.3",
     "ext-json": "*",
     "symfony/string": "^5.3",
-    "phpoffice/phpspreadsheet": "^1.21.0",
+    "phpoffice/phpspreadsheet": "^1.17.0",
     "webmozart/assert": "^1.9",
     "ext-mbstring": "*",
     "aura/sqlquery": "^2.7"
