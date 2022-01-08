@@ -29,7 +29,7 @@ interface AttributeDefinitionInterface
     /**
      * @return mixed create attribute default value
      */
-    public function createDefault();
+    public function createDefault(): mixed;
 
     /**
      * @return mixed restore value from $attribute.
@@ -41,8 +41,6 @@ interface AttributeDefinitionInterface
      *
      * If current value is default, saved value should be empty string, which won't
      * save to external storage, such as DB or file.
-     *
-     * @param mixed $value
      */
-    public function saveValue(AttributeInterface $attribute, $value): void;
+    public function saveValue(AttributeInterface $attribute, mixed $value): void;
 }
