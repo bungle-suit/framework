@@ -7,7 +7,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class BoolAttribute extends AbstractAttribute
 {
-    public function createDefault()
+    public function createDefault(): bool
     {
         return false;
     }

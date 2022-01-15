@@ -18,7 +18,7 @@ class FloatAttribute extends AbstractAttribute
         return [];
     }
 
-    public function createDefault()
+    public function createDefault(): float
     {
         return 0.0;
     }

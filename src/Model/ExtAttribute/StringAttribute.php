@@ -8,7 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class StringAttribute extends AbstractAttribute
 {
-    public function createDefault()
+    public function createDefault(): string
     {
         return '';
     }

@@ -18,7 +18,7 @@ class IntAttribute extends AbstractAttribute
         return [];
     }
 
-    public function createDefault()
+    public function createDefault(): int
     {
         return 0;
     }
