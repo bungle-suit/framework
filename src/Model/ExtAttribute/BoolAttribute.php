@@ -12,7 +12,7 @@ class BoolAttribute extends AbstractAttribute
         return false;
     }
 
-    public function restoreValue(AttributeInterface $attribute)
+    public function restoreValue(AttributeInterface $attribute): bool
     {
         return $attribute->asBool();
     }

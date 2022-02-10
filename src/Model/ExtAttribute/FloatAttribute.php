@@ -23,7 +23,7 @@ class FloatAttribute extends AbstractAttribute
         return 0.0;
     }
 
-    public function restoreValue(AttributeInterface $attribute)
+    public function restoreValue(AttributeInterface $attribute): float
     {
         return $attribute->asFloat();
     }

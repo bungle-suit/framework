@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Export\ParamParser;
@@ -11,5 +12,5 @@ interface ParamValueParserInterface
     /**
      * @return ?string Return string on error, parsed value saved to $context
      */
-    public function __invoke(ExportContext $context);
+    public function __invoke(ExportContext $context): ?string;
 }

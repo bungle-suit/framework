@@ -13,7 +13,7 @@ class StringAttribute extends AbstractAttribute
         return '';
     }
 
-    public function restoreValue(AttributeInterface $attribute)
+    public function restoreValue(AttributeInterface $attribute): string
     {
         return $attribute->getValue();
     }

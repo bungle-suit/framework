@@ -23,7 +23,7 @@ class IntAttribute extends AbstractAttribute
         return 0;
     }
 
-    public function restoreValue(AttributeInterface $attribute)
+    public function restoreValue(AttributeInterface $attribute): int
     {
         return $attribute->asInt();
     }
