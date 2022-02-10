@@ -32,9 +32,9 @@ interface AttributeDefinitionInterface
     public function createDefault(): mixed;
 
     /**
-     * @return mixed restore value from $attribute.
+     * restore value from $attribute.
      */
-    public function restoreValue(AttributeInterface $attribute);
+    public function restoreValue(AttributeInterface $attribute): mixed;
 
     /**
      * Save current value to $attribute.
