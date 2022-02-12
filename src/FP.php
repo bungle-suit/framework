@@ -727,4 +727,32 @@ class FP
     {
         return $v !== null ? $f($v) : null;
     }
+
+    /**
+     * Fix first argument of two argument function.
+     * @template T
+     * @template V
+     * @template R
+     * @param callable(T, V): R $f
+     * @param T mixed $firstArg
+     * @return callable(V): R
+     */
+    public static function fix1(callable $f, mixed $firstArg): callable
+    {
+        return fn($b) => $f($firstArg, $b);
+    }
+
+    /**
+     * Fix 2nd argument of two argument function.
+     * @template T
+     * @template V
+     * @template R
+     * @param callable(T, V): R $f
+     * @param V mixed $firstArg
+     * @return callable(T): R
+     */
+    public static function fix2(callable $f, mixed $secondArg): callable
+    {
+        return fn($a) => $f($a, $secondArg);
+    }
 }
