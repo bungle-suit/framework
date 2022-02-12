@@ -566,4 +566,11 @@ class FPTest extends TestCase
         self::assertEquals(100, $f(10, 100));
         self::assertEquals(100, $f(10, 100, 1000));
     }
+
+    public function testTransNotNull(): void
+    {
+        $f = fn($v) => $v + 100;
+        self::assertEquals(101, FP::transNotNull($f, 1));
+        self::assertNull(FP::transNotNull($f, null));
+    }
 }

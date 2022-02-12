@@ -714,4 +714,17 @@ class FP
     {
         return static fn($first, $second) => $f($second);
     }
+
+    /**
+     * Transform value if not null, by calling $f,
+     * @template T
+     * @template V
+     * @param ?T $v
+     * @param callable(T): V $f
+     * @return ?V
+     */
+    public static function transNotNull(callable $f, mixed $v): mixed
+    {
+        return $v !== null ? $f($v) : null;
+    }
 }
