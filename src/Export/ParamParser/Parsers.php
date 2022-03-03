@@ -62,8 +62,8 @@ class Parsers
      * If $paramName not exist in request, null value saved into context.
      *
      * @param mixed $default use default if param not exist.
-     * @param callable(string): mixed $converter, by default use identity, raise RuntimeException on
-     * error.
+     * @param callable(string): mixed $converter , by default use identity, raise RuntimeException
+     *     on error.
      */
     public static function fromRequest(
         string $paramName,
@@ -171,6 +171,19 @@ class Parsers
                 $words = explode($sep, $s);
             }
             $context->set($attrName, $words);
+
+            return null;
+        };
+    }
+
+    /**
+     * Convert Request attribute value (such as route parameter) to array.
+     */
+    public static function explodeAttribute(string $attrName, string $sep = ','): callable
+    {
+        return function (ExportContext $context) use ($sep, $attrName): ?string {
+            $val = $context->getRequest()->attributes->get($attrName, '');
+            $context->set($attrName, $val ? explode($sep, $val) : []);
 
             return null;
         };

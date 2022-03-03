@@ -20,6 +20,7 @@ class ParsersTest extends MockeryTestCase
     private Parsers $parsers;
     /** @var BasalInfoService|Mockery\MockInterface */
     private $basal;
+    private Request $request;
 
     protected function setUp(): void
     {
@@ -27,7 +28,8 @@ class ParsersTest extends MockeryTestCase
 
         $this->basal = Mockery::mock(BasalInfoService::class);
         $this->parsers = new Parsers($this->basal);
-        $this->ctx = new ExportContext(new Request());
+        $this->request = new Request();
+        $this->ctx = new ExportContext($this->request);
     }
 
     public function testCurrentUser(): void
@@ -156,6 +158,27 @@ class ParsersTest extends MockeryTestCase
         $this->ctx->set('foo', 'blah');
         self::assertNull($f($this->ctx));
         self::assertEquals('blah', $this->ctx->get('foo'));
+    }
+
+    /** @dataProvider explodeAttributeProvider */
+    public function testExplodeAttribute($exp, $attr): void
+    {
+        $f = Parsers::explodeAttribute('foo');
+        if ($attr !== null) {
+            $this->request->attributes->set('foo', $attr);
+        }
+        self::assertNull($f($this->ctx));
+        self::assertEquals($exp, $this->ctx->get('foo'));
+    }
+
+    public function explodeAttributeProvider()
+    {
+        return [
+            'attr not exist' => [[], null],
+            'empty' => [[], ''],
+            'one' => [['foo'], 'foo'],
+            'more' => [['foo', 'bar'], 'foo,bar'],
+        ];
     }
 
     /**
