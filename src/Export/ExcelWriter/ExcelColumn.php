@@ -44,7 +44,7 @@ final class ExcelColumn
         private array $options = [],
     ) {
         $this->propertyPath = $propertyPath;
-        $this->valueConverter = $valueConverter ?? [FP::class, 'identity'];
+        $this->valueConverter = $valueConverter ?? FP::identity(...);
         $this->header = $header;
     }
 
