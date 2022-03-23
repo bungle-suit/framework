@@ -518,6 +518,26 @@ class FP
     }
 
     /**
+     * @template U
+     * @template V
+     * @param callable(U): V $fMap
+     * @param callable(U): bool $fFilter
+     * @param iterable<U> $iterable
+     * @return Traversable<V>
+     */
+    public static function filterMap(
+        callable $fMap,
+        callable $fFilter,
+        iterable $iterable
+    ): Traversable {
+        foreach ($iterable as $item) {
+            if ($fFilter($item)) {
+                yield $fMap($item);
+            }
+        }
+    }
+
+    /**
      * Alter array keys
      * @template V
      * @param callable(string): string $f

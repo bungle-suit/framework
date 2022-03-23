@@ -587,4 +587,18 @@ class FPTest extends TestCase
         $f = FP::fix2($sub, 3);
         self::assertEquals(2, $f(5));
     }
+
+    public function testFilterMap(): void
+    {
+        self::assertEquals(
+            [11, 13, 15, 17, 19],
+            iterator_to_array(
+                FP::filterMap(
+                    fn($v) => 10 + $v,
+                    fn($v) => $v % 2,
+                    range(0, 10)
+                )
+            ),
+        );
+    }
 }
