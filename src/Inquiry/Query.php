@@ -136,6 +136,7 @@ class Query
         $steps = $this->steps;
         switch ($buildFor) {
             case self::BUILD_FOR_PAGING:
+                $builder->set(Builder::ATTR_BUILD_FOR_COUNT, true);
                 $steps = array_merge($steps, $this->createExtraPagingSteps());
                 break;
             case self::BUILD_FOR_QBE:

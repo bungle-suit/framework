@@ -26,16 +26,13 @@ class Builder implements HasAttributesInterface
 
     /** Attribute set to true if current is build for QBEs */
     public const ATTR_BUILD_FOR_QBE = '__build_qbe__';
+    public const ATTR_BUILD_FOR_COUNT = '__build_for_count__';
     private const AUTO_COLUMN_PREFIX = '__col_';
     private UniqueName $autoColName;
     private QueryBuilder|SelectInterface $qb;
     private QueryFactory $queryFactory;
 
-    /**
-     * Builder constructor.
-     * @param QueryBuilder|QueryFactory $qb
-     */
-    public function __construct($qb, QueryParams $queryParams)
+    public function __construct(QueryFactory|QueryBuilder $qb, QueryParams $queryParams)
     {
         if ($qb instanceof QueryFactory) {
             $this->qb = $qb->newSelect();
@@ -117,6 +114,11 @@ class Builder implements HasAttributesInterface
     public function isBuildForQBE(): bool
     {
         return $this->get(self::ATTR_BUILD_FOR_QBE, false);
+    }
+
+    public function isBuildForCount(): bool
+    {
+        return $this->get(self::ATTR_BUILD_FOR_COUNT, false);
     }
 
     /**
