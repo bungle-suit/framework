@@ -41,11 +41,17 @@ class FS implements FSInterface
         return ErrorHandler::call(fn() => filesize($path));
     }
 
-    public function readFile(string $path, string $charset = ''): string
+    /** @inheritDoc */
+    public function readFile(string $path, string|array $charset = ''): string
     {
         $r = file_get_contents($path);
         if ($r === false) {
             throw new RuntimeException("Read file %path failed");
+        }
+
+        if (is_array($charset)) {
+            $charset = mb_detect_encoding($r, $charset, true);
+            Assert::notFalse($charset, 'Failed detect charset');
         }
 
         if ($charset !== '') {

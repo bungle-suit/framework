@@ -25,10 +25,10 @@ interface FSInterface
     /**
      * Read file content.
      *
-     * @param string $charset convert file content from $charset to UTF-8 before return,
-     * if specified.
+     * @param string|string[] $charset convert file content from $charset to UTF-8 before return,
+     * if specified. If array it is charset list, readFile will test file content use mb_detect_encoding().
      */
-    public function readFile(string $path, string $charset = ''): string;
+    public function readFile(string $path, string|array $charset = ''): string;
 
     /**
      * Return system temp directory, alias of sys_get_temp_dir()
