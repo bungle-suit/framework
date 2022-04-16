@@ -601,4 +601,20 @@ class FPTest extends TestCase
             ),
         );
     }
+
+    /** @dataProvider filterReduceProvider */
+    public function testFilterReduce($exp, $items, $initial): void
+    {
+        $v = FP::filterReduce(fn($v) => $v % 2, fn($a, $b) => $a + $b, $items, $initial);
+        self::assertEquals($exp, $v);
+    }
+
+    public function filterReduceProvider()
+    {
+        return [
+            'empty' => [0, [], 0],
+            'one items' => [1, [1], 0],
+            'even' => [5, [1, 2, 3], 1],
+        ];
+    }
 }

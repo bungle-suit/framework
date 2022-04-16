@@ -538,6 +538,32 @@ class FP
     }
 
     /**
+     * @template T
+     * @template V
+     * @param callable(T): bool $fFilter
+     * @param callable(V, T): V $fReduce
+     * @param iterable<T> $iterable
+     * @param V $initial
+     * @return V
+     * If no items after filter, return initial value.
+     */
+    public static function filterReduce(
+        callable $fFilter,
+        callable $fReduce,
+        iterable $iterable,
+        mixed $initial
+    ): mixed {
+        $acc = $initial;
+        foreach ($iterable as $item) {
+            if ($fFilter($item)) {
+                $acc = $fReduce($acc, $item);
+            }
+        }
+
+        return $acc;
+    }
+
+    /**
      * Alter array keys
      * @template V
      * @param callable(string): string $f
