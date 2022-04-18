@@ -538,6 +538,33 @@ class FP
     }
 
     /**
+     * @template U
+     * @template V
+     * @param callable(U, V): U $f
+     * @param iterable<V> $iterable
+     * @param U $initial
+     * @return V
+     */
+    public static function reduce(callable $f, iterable $iterable, mixed $initial): mixed
+    {
+        $acc = $initial;
+        foreach ($iterable as $item) {
+            $acc = $f($acc, $item);
+        }
+
+        return $acc;
+    }
+
+    public static function sum(callable $fMap, iterable $iterable): float
+    {
+        return self::reduce(
+            fn(float $acc, mixed $item): float => $acc + $fMap($item),
+            $iterable,
+            0.0
+        );
+    }
+
+    /**
      * @template T
      * @template V
      * @param callable(T): bool $fFilter

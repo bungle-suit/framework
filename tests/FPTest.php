@@ -617,4 +617,19 @@ class FPTest extends TestCase
             'even' => [5, [1, 2, 3], 1],
         ];
     }
+
+    /** @dataProvider sumProvider */
+    public function testSum($exp, $vals): void
+    {
+        self::assertEquals($exp, FP::sum(fn($v) => $v * 2, $vals));
+    }
+
+    public function sumProvider()
+    {
+        return [
+            'empty' => [0, []],
+            'one' => [2, [1]],
+            'two' => [8, [1, 3]],
+        ];
+    }
 }
