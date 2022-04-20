@@ -632,4 +632,10 @@ class FPTest extends TestCase
             'two' => [8, [1, 3]],
         ];
     }
+
+    public function testNthArg(): void
+    {
+        $f = FP::nthArg(1, fn($a) => $a + 100);
+        self::assertEquals(102, $f(1, 2, 3));
+    }
 }

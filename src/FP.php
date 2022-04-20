@@ -828,4 +828,16 @@ class FP
     {
         return fn($a) => $f($a, $secondArg);
     }
+
+    /**
+     * Return a function get nth argument passed to inner function $f.
+     * @template T
+     * @template V
+     * @param callable(T): V $f
+     * @return callable(mixed): V
+     */
+    public static function nthArg(int $n, callable $f): callable
+    {
+        return static fn(...$args) => $f($args[$n]);
+    }
 }
