@@ -638,4 +638,36 @@ class FPTest extends TestCase
         $f = FP::nthArg(1, fn($a) => $a + 100);
         self::assertEquals(102, $f(1, 2, 3));
     }
+
+    /** @dataProvider indexOfProvider */
+    public function testIndexOf($exp, $arr): void
+    {
+        self::assertEquals($exp, FP::indexOf(fn($v) => $v > 3, $arr));
+    }
+
+    public function indexOfProvider()
+    {
+        return [
+            'empty' => [false, []],
+            'not found' => [false, [1, 2, 3]],
+            'found' => [4, [0, 1, 2, 3, 4, 5]],
+            'string indexed array' => ['c', ['a' => 2, 'b' => 3, 'c' => 4]],
+        ];
+    }
+
+    /** @dataProvider indexOfFromLastProvider */
+    public function testIndexOfFromLast($exp, $arr): void
+    {
+        self::assertEquals($exp, FP::indexOfFromLast(fn($v) => $v > 3, $arr));
+    }
+
+    public function indexOfFromLastProvider()
+    {
+        return [
+            'empty' => [false, []],
+            'not found' => [false, [1, 2, 3]],
+            'found' => [5, [10, 1, 2, 3, 4, 5]],
+            'string indexed array' => ['c', ['a' => 10, 'b' => 5, 'c' => 4]],
+        ];
+    }
 }

@@ -840,4 +840,32 @@ class FP
     {
         return static fn(...$args) => $f($args[$n]);
     }
+
+    /**
+     * Return index of first element in array that satisfies $f, returns false if not found.
+     */
+    public static function indexOf(callable $f, array $arr): int|string|false
+    {
+        foreach ($arr as $i => $v) {
+            if ($f($v)) {
+                return $i;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Return index of last element in array that satisfies $f, returns false if not found.
+     */
+    public static function indexOfFromLast(callable $f, array $arr): int|string|false
+    {
+        foreach (array_reverse($arr, true) as $i => $v) {
+            if ($f($v)) {
+                return $i;
+            }
+        }
+
+        return false;
+    }
 }
