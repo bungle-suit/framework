@@ -169,8 +169,10 @@ class LabelledValue
     /**
      * @param callable(Cell): void $v
      */
-    public function setCellWriter(callable $v): void
+    public function setCellWriter(callable $v): self
     {
         $this->cellWriter = $v;
+
+        return $this;
     }
 }
