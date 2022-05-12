@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Tests\Import\ExcelReader\LabelledReader;
 
+use Bungle\Framework\Func;
 use Bungle\Framework\Import\ExcelReader\ExcelReader;
 use Bungle\Framework\Import\ExcelReader\LabelledReader\Context;
 use Bungle\Framework\Import\ExcelReader\LabelledReader\LabelledReader;
@@ -51,9 +52,9 @@ class LabelledReaderTest extends MockeryTestCase
         /** @phpstan-var LabelledReader<object> $r */
         $r = new LabelledReader($this->obj, 2, 'C');
         $r->defineValue($lv1 = Mockery::mock(LabelledValue::class))
-          ->defineValue($lv2 = Mockery::mock(LabelledValue::class))
-          ->defineValue($lv3 = Mockery::mock(LabelledValue::class))
-          ->defineValue($lv4 = Mockery::mock(LabelledValue::class));
+            ->defineValue($lv2 = Mockery::mock(LabelledValue::class))
+            ->defineValue($lv3 = Mockery::mock(LabelledValue::class))
+            ->defineValue($lv4 = Mockery::mock(LabelledValue::class));
         $lv1->allows('labelMatches')->with('foo')->andReturnTrue();
         $lv2->allows('labelMatches')->with('bar')->andReturnTrue();
         $lv3->allows('labelMatches')->with('foobar')->andReturnTrue();
@@ -80,6 +81,9 @@ class LabelledReaderTest extends MockeryTestCase
             $cell->setValue('new label');
         });
         $lv4->expects('getWriteConverter')->with()->andReturn(fn($v, Context $context) => 456);
+        $f = Mockery::mock(Func::class);
+        $f->expects('__invoke')->with(Mockery::type(Cell::class));
+        $lv4->expects('getCellWriter')->andReturn($f);
 
         // case 1: no label matches
         $sheet->setCellValue('C2', 'unknown');
@@ -136,7 +140,7 @@ class LabelledReaderTest extends MockeryTestCase
         self::assertEquals(
             NumberFormat::FORMAT_TEXT,
             $c->getStyle()->getNumberFormat()
-              ->getFormatCode()
+                ->getFormatCode()
         );
         self::assertTrue($sheet->cellExists('C5'));
         $c = $sheet->getCell('C5');

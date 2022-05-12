@@ -96,6 +96,9 @@ class LabelledReader implements SectionContentReaderInterface
                                 );
                                 $cell->getStyle()->getNumberFormat()->setFormatCode($fmt);
                             }
+                            if ($f = $value->getCellWriter()) {
+                                $f($cell);
+                            }
                             break;
                         default:
                             throw new LogicException(

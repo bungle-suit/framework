@@ -151,4 +151,26 @@ class LabelledValue
 
         return $this;
     }
+
+    /**
+     * @var callable(Cell): void
+     */
+    protected $cellWriter;
+
+    /**
+     * Register a callable to modify cell, worked in write mode.
+     * @return ?(callable(Cell): void)
+     */
+    public function getCellWriter(): ?callable
+    {
+        return $this->cellWriter ?? null;
+    }
+
+    /**
+     * @param callable(Cell): void $v
+     */
+    public function setCellWriter(callable $v): void
+    {
+        $this->cellWriter = $v;
+    }
 }
