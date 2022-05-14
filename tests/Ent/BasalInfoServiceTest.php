@@ -10,18 +10,16 @@ use LogicException;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use RuntimeException;
+use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class BasalInfoServiceTest extends MockeryTestCase
 {
-    /** @var EntityManagerInterface|Mockery\MockInterface */
-    private $em;
-    /** @var Mockery\MockInterface|Security */
-    private $security;
+    private Mockery\LegacyMockInterface|EntityManagerInterface|Mockery\MockInterface $em;
+    private Mockery\LegacyMockInterface|Mockery\MockInterface|Security $security;
     private BasalInfoService $basal;
-    /** @var ObjectName|Mockery\MockInterface  */
-    private $objectName;
+    private Mockery\LegacyMockInterface|ObjectName|Mockery\MockInterface $objectName;
 
     protected function setUp(): void
     {
@@ -85,5 +83,11 @@ class BasalInfoServiceTest extends MockeryTestCase
     {
         $d = $this->basal->today();
         self::assertEquals('00:00:00.000000', $d->format('H:i:s.u'));
+    }
+
+    public function testIsImpersonator(): void
+    {
+        $this->security->expects('isGranted')->with(AuthenticatedVoter::IS_IMPERSONATOR)->andReturn(true);
+        self::assertTrue($this->basal->isImpersonator());
     }
 }

@@ -7,6 +7,7 @@ use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use LogicException;
 use RuntimeException;
+use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -78,5 +79,13 @@ class BasalInfoService
         }
 
         return $r;
+    }
+
+    /**
+     * return true if current user is impersonator, i.e. presented to be another user.
+     */
+    public function isImpersonator(): bool
+    {
+        return $this->security->isGranted(AuthenticatedVoter::IS_IMPERSONATOR);
     }
 }
