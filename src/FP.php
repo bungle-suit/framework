@@ -868,4 +868,12 @@ class FP
 
         return false;
     }
+
+    /**
+     * Return a function that returns nth argument.
+     */
+    public static function arg(int $n): callable
+    {
+        return static fn(...$args) => $args[$n];
+    }
 }

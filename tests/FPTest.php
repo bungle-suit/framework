@@ -670,4 +670,10 @@ class FPTest extends TestCase
             'string indexed array' => ['c', ['a' => 10, 'b' => 5, 'c' => 4]],
         ];
     }
+
+    public function testArg(): void
+    {
+        $f = FP::arg(1);
+        self::assertEquals(2, $f(1, 2, 3));
+    }
 }
