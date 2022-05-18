@@ -876,4 +876,24 @@ class FP
     {
         return static fn(...$args) => $args[$n];
     }
+
+    /**
+     * Return a function that call first function and pass its result to second function,
+     * and remain functions.
+     */
+    public static function chain(callable $f, callable ...$g): callable
+    {
+        return match (count($g)) {
+            0 => $f,
+            1 => static fn(...$a) => $g[0]($f(...$a)),
+            default => static function (...$a) use ($g, $f) {
+                $r = $f(...$a);
+                foreach ($g as $f) {
+                    $r = $f($r);
+                }
+
+                return $r;
+            }
+        };
+    }
 }

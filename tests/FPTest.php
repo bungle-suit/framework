@@ -676,4 +676,29 @@ class FPTest extends TestCase
         $f = FP::arg(1);
         self::assertEquals(2, $f(1, 2, 3));
     }
+
+    public function testChain(): void
+    {
+        // chain one function
+        $f = FP::chain(fn($v) => $v + 100);
+        self::assertEquals(101, $f(1));
+
+        // chain two functions
+        $f = FP::chain(fn($a, $b) => $a + $b, fn($v) => $v * 2);
+        self::assertEquals(6, $f(1, 2));
+
+        // chain three functions
+        $f = FP::chain(
+            fn($a, $b, $c) => $a + $b + $c,
+            fn($v) => $v * 2,
+            fn($v) => $v + 3
+        );
+        self::assertEquals(15, $f(1, 2, 3));
+//        $f = FP::chain(
+//            fn($v) => $v + 1,
+//            fn($v) => $v * 2,
+//            fn($v) => $v + 3
+//        );
+//        self::assertEquals(10, $f(1));
+    }
 }
