@@ -167,7 +167,13 @@ class QueryTest extends Mockery\Adapter\Phpunit\MockeryTestCase
             ]
         );
         $conn->expects('executeQuery')
-             ->with(Matchers::containsString('FROM'), ['_1_' => 12])
+             ->with(
+                 Mockery::on(
+                     fn($s) => preg_replace('/\s+/', ' ', $s) ===
+                         'SELECT id, name FROM `tbl` WHERE id > :_1_ LIMIT 25 OFFSET 225'
+                 ),
+                 ['_1_' => 12]
+             )
              ->andReturn($resultIter);
 
         $q = new class($this->em, [$step]) extends Query {
