@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Inquiry\Steps;
 
+use Aura\SqlQuery\Common\SelectInterface;
 use Bungle\Framework\Inquiry\Builder;
 
 class QuerySteps
@@ -19,7 +20,13 @@ class QuerySteps
     public static function buildPaging(Builder $builder): void
     {
         $pageNo = $builder->getQueryParams()->getPageNo();
-        $builder->getQueryBuilder()->setFirstResult($pageNo * self::PAGE_RECS);
-        $builder->getQueryBuilder()->setMaxResults(self::PAGE_RECS);
+        $qb = $builder->getQueryBuilder();
+        if ($qb instanceof SelectInterface) {
+            $qb->setPaging(self::PAGE_RECS);
+            $qb->page($builder->getQueryParams()->getPageNo());
+        } else {
+            $qb->setFirstResult($pageNo * self::PAGE_RECS);
+            $qb->setMaxResults(self::PAGE_RECS);
+        }
     }
 }

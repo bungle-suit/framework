@@ -95,23 +95,41 @@ class Query
      */
     public function pagedQuery(QueryParams $params): PagedData
     {
-        $pager = $this->getPager($params);
-        $count = count($pager);
-        $data = iterator_to_array($pager, false);
+        if ($this->isNativeMode()) {
+            $count = $this->count($params);
+            $data = iterator_to_array($this->nativePageQuery($params));
+        } else {
+            $pager = $this->getPager($params);
+            $count = count($pager);
+            $data = iterator_to_array($pager, false);
+        }
 
         return new PagedData($data, $count);
     }
 
     public function count(QueryParams $params): int
     {
+        if ($this->isNativeMode()) {
+            return $this->countNative($params);
+        }
+
         $pager = $this->getPager($params);
 
         return count($pager);
     }
 
+    private function countNative(QueryParams $params): int
+    {
+        $qb = $this->prepareQuery($params, self::BUILD_FOR_COUNT)->getQueryBuilder();
+
+        return $this->em->getConnection()
+                        ->fetchOne($qb->getStatement(), $qb->getBindValues());
+    }
+
     private const BUILD_FOR_PAGING = 2;
     private const BUILD_FOR_QBE = 3;
     private const BUILD_FOR_DATA = 4; // triggered by self::query() method
+    private const BUILD_FOR_COUNT = 5; // used in native mode to build count query
 
     /**
      * initialize internal state, esp, getColumns()
@@ -139,6 +157,9 @@ class Query
                 $builder->set(Builder::ATTR_BUILD_FOR_QBE, true);
                 break;
             case self::BUILD_FOR_DATA:
+                break;
+            case self::BUILD_FOR_COUNT:
+                $builder->set(Builder::ATTR_BUILD_FOR_COUNT, true);
                 break;
             default:
                 throw new LogicException("Unknown build type: $buildFor");
@@ -230,5 +251,12 @@ class Query
         $pager->setUseOutputWalkers(false);
 
         return $pager;
+    }
+
+    private function nativePageQuery(QueryParams $params)
+    {
+        $qb = $this->prepareQuery($params, self::BUILD_FOR_PAGING)->getQueryBuilder();
+
+        return $this->queryData($qb);
     }
 }

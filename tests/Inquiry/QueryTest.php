@@ -92,9 +92,9 @@ class QueryTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         $paginator->expects('setUseOutputWalkers')->with(false);
         $paginator->expects('getIterator')->with()->andReturn(
             new ArrayIterator([
-                                  ['line1'],
-                                  ['line2'],
-                              ])
+                ['line1'],
+                ['line2'],
+            ])
         );
 
         $qb = Mockery::mock(QueryBuilder::class);
@@ -139,6 +139,50 @@ class QueryTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         self::assertEquals(11, $pagedData->getCount());
         self::assertEquals([['line1'], ['line2']], $pagedData->getData());
         self::assertEquals(['foo' => $col1], $q->getColumns());
+    }
+
+    public function testNativePagedQuery(): void
+    {
+        $countHit = 0;
+        $step = function (Builder $builder) use (&$countHit): void {
+            /** @var SelectInterface $qb */
+            $qb = $builder->getQueryBuilder();
+            if ($builder->isBuildForCount()) {
+                $countHit++;
+                $qb->cols(['count(0)'])->from('tbl')->where('id > ?', 12);
+            } else {
+                $qb->cols(['id', 'name'])->from('tbl')->where('id > ?', 12);
+            }
+        };
+        $conn = Mockery::mock(Connection::class);
+        $this->em->expects('getConnection')->andReturn($conn)->twice();
+        $conn->expects('fetchOne')->with(
+            Mockery::on(
+                fn($s) => preg_replace('/\s+/', ' ', $s) === 'SELECT count(0) FROM `tbl` WHERE id > :_1_'
+            ), ['_1_' => 12]
+        )->andReturn(100);
+        $resultIter = new ArrayIterator(
+            $rows = [
+                ['id' => 13, 'name' => 'foo'],
+                ['id' => 14, 'name' => 'bar'],
+            ]
+        );
+        $conn->expects('executeQuery')
+             ->with(Matchers::containsString('FROM'), ['_1_' => 12])
+             ->andReturn($resultIter);
+
+        $q = new class($this->em, [$step]) extends Query {
+            public function __construct(EntityManagerInterface $em, array $steps)
+            {
+                parent::__construct($em, $steps);
+                $this->setNativeMode(true);
+            }
+        };
+        $params = new QueryParams(10, []);
+        $act = $q->pagedQuery($params);
+        self::assertEquals(100, $act->getCount());
+        self::assertEquals($rows, $act->getData());
+        self::assertEquals(1, $countHit);
     }
 
     public function testCount(): void

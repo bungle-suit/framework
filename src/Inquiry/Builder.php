@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Bungle\Framework\Inquiry;
 
 use Aura\SqlQuery\Common\SelectInterface;
+use Aura\SqlQuery\Mysql\Select;
 use Aura\SqlQuery\QueryFactory;
 use Bungle\Framework\Ent\Code\UniqueName;
 use Bungle\Framework\Model\HasAttributes;
@@ -82,10 +83,7 @@ class Builder implements HasAttributesInterface
         return $this->columns;
     }
 
-    /**
-     * @return SelectInterface|QueryBuilder
-     */
-    public function getQueryBuilder()
+    public function getQueryBuilder(): QueryBuilder|Select
     {
         return $this->qb;
     }
