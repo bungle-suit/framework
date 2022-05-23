@@ -62,7 +62,7 @@ class Query
      * Query data.
      *
      * NOTE: use query step to control weather page no take cared.
-     * @return Traversable<int, mixed[]>
+     * @return Traversable<int, array>
      */
     public function query(QueryParams $params): Traversable
     {
@@ -71,10 +71,7 @@ class Query
         return $this->queryData($qb);
     }
 
-    /**
-     * @param QueryBuilder|SelectInterface $qb
-     */
-    protected function queryData($qb): Traversable
+    protected function queryData(QueryBuilder|SelectInterface $qb): Traversable
     {
         if ($qb instanceof SelectInterface) {
             $iter = $this->em->getConnection()
@@ -174,7 +171,7 @@ class Query
     protected function createExtraPagingSteps(): array
     {
         return [
-            [QuerySteps::class, 'buildPaging'],
+            QuerySteps::buildPaging(...),
         ];
     }
 
