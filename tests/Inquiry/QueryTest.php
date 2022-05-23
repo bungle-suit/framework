@@ -18,7 +18,6 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Hamcrest\Matchers;
-use LogicException;
 use Mockery;
 use Symfony\Component\PropertyInfo\Type;
 use Traversable;
@@ -260,19 +259,6 @@ class QueryTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         $QBEs = $q->buildQBEMetas($params);
         self::assertEquals(['fooMeta' => $q1], $q->getQBEMetas());
         self::assertSame($QBEs, $q->getQBEMetas());
-    }
-
-    public function testNotAllowPagedQueryInNativeMode(): void
-    {
-        $this->expectExceptionMessage('Not support paged query when in native mode');
-        $this->expectException(LogicException::class);
-
-        $q = new Query(
-            $this->em,
-            []
-        );
-        $q->setNativeMode(true);
-        $q->pagedQuery(new QueryParams(1, []));
     }
 
     public function testNativeQuery(): void

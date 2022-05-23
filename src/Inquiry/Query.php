@@ -122,8 +122,8 @@ class Query
     {
         $qb = $this->prepareQuery($params, self::BUILD_FOR_COUNT)->getQueryBuilder();
 
-        return $this->em->getConnection()
-                        ->fetchOne($qb->getStatement(), $qb->getBindValues());
+        return (int)($this->em->getConnection()
+                              ->fetchOne($qb->getStatement(), $qb->getBindValues()));
     }
 
     private const BUILD_FOR_PAGING = 2;
