@@ -170,7 +170,7 @@ class QueryTest extends Mockery\Adapter\Phpunit\MockeryTestCase
              ->with(
                  Mockery::on(
                      fn($s) => preg_replace('/\s+/', ' ', $s) ===
-                         'SELECT id, name FROM `tbl` WHERE id > :_1_ LIMIT 25 OFFSET 225'
+                         'SELECT id, name FROM `tbl` WHERE id > :_1_ LIMIT 25 OFFSET 250'
                  ),
                  ['_1_' => 12]
              )

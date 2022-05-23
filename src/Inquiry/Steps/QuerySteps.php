@@ -22,8 +22,8 @@ class QuerySteps
         $pageNo = $builder->getQueryParams()->getPageNo();
         $qb = $builder->getQueryBuilder();
         if ($qb instanceof SelectInterface) {
-            $qb->setPaging(self::PAGE_RECS);
-            $qb->page($builder->getQueryParams()->getPageNo());
+            $qb->offset($pageNo * self::PAGE_RECS);
+            $qb->limit(self::PAGE_RECS);
         } else {
             $qb->setFirstResult($pageNo * self::PAGE_RECS);
             $qb->setMaxResults(self::PAGE_RECS);
