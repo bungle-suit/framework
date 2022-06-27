@@ -473,11 +473,19 @@ class FP
     }
 
     /**
-     * @template T
-     * @phpstan-param (\ArrayAccess<mixed, T>&\Countable)|array<T> $arr
-     * @phpstan-return T
+     * Alias of @see self::lastItem().
      */
-    public static function last($arr)
+    public static function last(array $arr): mixed
+    {
+        return $arr[array_key_last($arr)];
+    }
+
+    /**
+     * @template T
+     * @param array<T> $arr
+     * @return T
+     */
+    public static function lastItem(array $arr): mixed
     {
         return $arr[array_key_last($arr)];
     }
