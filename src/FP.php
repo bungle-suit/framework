@@ -484,10 +484,22 @@ class FP
      * @template T
      * @param array<T> $arr
      * @return T
+     * @trigger_error if $arr is empty
      */
     public static function lastItem(array $arr): mixed
     {
         return $arr[array_key_last($arr)];
+    }
+
+    /**
+     * @template T
+     * @param array<T> $arr
+     * @return T
+     * @trigger_error if $arr is empty
+     */
+    public static function firstItem(array $arr): mixed
+    {
+        return $arr[array_key_first($arr)];
     }
 
     /**

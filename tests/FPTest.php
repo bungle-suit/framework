@@ -339,6 +339,13 @@ class FPTest extends TestCase
         FP::last([]);
     }
 
+    public function testFirstItem(): void
+    {
+        self::assertNull(FP::firstItem([null]));
+        self::assertEquals(1, FP::firstItem([1]));
+        self::assertEquals(1, FP::firstItem([1, 2]));
+    }
+
     public function testFilter(): void
     {
         $isOdd = fn(int $v) => $v % 2 !== 0;
