@@ -334,7 +334,7 @@ class FPTest extends TestCase
 
     public function testLastOnEmpty(): void
     {
-        $this->expectException(LogicException::class);
+        $this->expectError();
 
         FP::last([]);
     }

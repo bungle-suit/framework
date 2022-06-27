@@ -476,16 +476,10 @@ class FP
      * @template T
      * @phpstan-param (\ArrayAccess<mixed, T>&\Countable)|array<T> $arr
      * @phpstan-return T
-     * @throws LogicException if no last element
      */
     public static function last($arr)
     {
-        $lastIdx = count($arr) - 1;
-        if ($lastIdx < 0) {
-            throw new LogicException('No last element, collection is empty');
-        }
-
-        return $arr[$lastIdx];
+        return $arr[array_key_last($arr)];
     }
 
     /**
