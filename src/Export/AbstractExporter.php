@@ -108,29 +108,36 @@ abstract class AbstractExporter
         $this->onProgress = $onProgress;
     }
 
+    private function callOnProgress(): void
+    {
+        if (isset($this->onProgress)) {
+            ($this->onProgress)($this->progress);
+        }
+    }
+
     protected function setProgressTotal(int $total): void
     {
         $this->progress->total = $total;
-        ($this->onProgress)($this->progress);
+        $this->callOnProgress();
     }
 
     protected function incProgress(int $delta = 1): void
     {
         $this->progress->current++;
-        ($this->onProgress)($this->progress);
+        $this->callOnProgress();
     }
 
     protected function sendMessage(string $message): void
     {
         $this->progress->message = $message;
-        ($this->onProgress)($this->progress);
+        $this->callOnProgress();
         $this->progress->message = '';
     }
 
     protected function sendStatus(string $status): void
     {
         $this->progress->status = $status;
-        ($this->onProgress)($this->progress);
+        $this->callOnProgress();
         $this->progress->status = '';
     }
 }
