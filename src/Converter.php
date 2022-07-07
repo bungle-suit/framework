@@ -146,8 +146,24 @@ class Converter
     {
         $s = u($s);
         if ($s->length() > $n) {
-            return $s->slice(0, $n-1).'…';
+            return $s->slice(0, $n - 1).'…';
         }
+
         return $s->toString();
+    }
+
+    /**
+     * Parse $value as $enumClass, returns enum value name or $value if failed, or return
+     * $default if $default is not null.
+     */
+    public static function enumValueToString(string $enumClass, string|int $value, ?string $default = null): string
+    {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $v = $enumClass::tryFrom($value);
+        if ($v === null) {
+            return $default ?? (string)$value;
+        }
+
+        return $v->name;
     }
 }

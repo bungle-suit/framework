@@ -160,4 +160,23 @@ class ConverterTest extends TestCase
             'utf ellipsis' => ['汉字又如…', '汉字又如何啊'],
         ];
     }
+
+    /** @dataProvider enumValueToStringProvider */
+    public function testEnumValueToString($exp, $enumClass, $val, $default = null): void
+    {
+        self::assertEquals($exp, Converter::enumValueToString($enumClass, $val, $default));
+    }
+
+    public function enumValueToStringProvider()
+    {
+        return [
+            'string enum value 1' => ['foo', StringBackedEnum::class, 'foo'],
+            'string enum value 2' => ['bar', StringBackedEnum::class, 'bar'],
+            'int enum value 1' => ['foo', IntBackedEnum::class, 1],
+            'int enum value 2' => ['bar', IntBackedEnum::class, 2],
+            'invalid enum value has default' => ['default', IntBackedEnum::class, -1, 'default'],
+            'invalid enum value no default' => ['blah', StringBackedEnum::class, 'blah'],
+            'invalid enum value no default 2' => ['-1', IntBackedEnum::class, -1],
+        ];
+    }
 }
