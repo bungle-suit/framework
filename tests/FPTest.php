@@ -701,11 +701,22 @@ class FPTest extends TestCase
             fn($v) => $v + 3
         );
         self::assertEquals(15, $f(1, 2, 3));
-//        $f = FP::chain(
-//            fn($v) => $v + 1,
-//            fn($v) => $v * 2,
-//            fn($v) => $v + 3
-//        );
-//        self::assertEquals(10, $f(1));
+    }
+
+    /** @dataProvider allEqualProvider */
+    public function testAllEqual($exp, $items): void
+    {
+        self::assertEquals($exp, FP::allEqual(fn($v) => $v % 2 === 0, $items));
+    }
+
+    public function allEqualProvider()
+    {
+        return [
+            'empty' => [true, []],
+            'one' => [true, [2]],
+            'two' => [false, [2, 3]],
+            'three are equal' => [true, [2, 2, 2]],
+            'three are not equal' => [false, [2, 3, 4]],
+        ];
     }
 }

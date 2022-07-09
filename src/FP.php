@@ -910,4 +910,28 @@ class FP
             }
         };
     }
+
+    /**
+     * Returns true if all elements in $arr are equal.
+     *
+     * @template T
+     * @param callable(T, T): bool $fEqual
+     * @param iterable<T>. $items
+     */
+    public static function allEqual(callable $fEqual, iterable $items): bool
+    {
+        $first = true;
+        foreach ($items as $item) {
+            if ($first) {
+                $first = false;
+                continue;
+            }
+
+            if (!$fEqual($item, $first)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
