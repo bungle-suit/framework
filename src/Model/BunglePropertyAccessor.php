@@ -24,12 +24,8 @@ class BunglePropertyAccessor implements PropertyAccessorInterface
 
     /**
      * @inheritDoc
-     * @param object|mixed[]               $objectOrArray The object or array to modify
-     * @param string|PropertyPathInterface $propertyPath  The property path to modify
-     * @param mixed                        $value         The value to set at the end of the property path
-     * @return void
      */
-    public function setValue(&$objectOrArray, $propertyPath, mixed $value)
+    public function setValue(object|array &$objectOrArray, string|PropertyPathInterface $propertyPath, mixed $value)
     {
         if ($propertyPath === '') {
             throw new InvalidArgumentException('BunglePropertyAccessor: setValue on self');
@@ -40,11 +36,8 @@ class BunglePropertyAccessor implements PropertyAccessorInterface
 
     /**
      * @inheritDoc
-     * @param object|array                 $objectOrArray The object or array to modify
-     * @param string|PropertyPathInterface $propertyPath  The property path to modify
-     * @return mixed
      */
-    public function getValue($objectOrArray, $propertyPath)
+    public function getValue(object|array $objectOrArray, string|PropertyPathInterface $propertyPath): mixed
     {
         if ($propertyPath === '') {
             return $objectOrArray;
@@ -55,11 +48,8 @@ class BunglePropertyAccessor implements PropertyAccessorInterface
 
     /**
      * @inheritDoc
-     * @param object|array                 $objectOrArray The object or array to modify
-     * @param string|PropertyPathInterface $propertyPath  The property path to modify
-     * @return bool
      */
-    public function isWritable($objectOrArray, $propertyPath)
+    public function isWritable(object|array $objectOrArray, string|PropertyPathInterface $propertyPath): bool
     {
         if ($propertyPath === '') {
             return false;
@@ -70,11 +60,8 @@ class BunglePropertyAccessor implements PropertyAccessorInterface
 
     /**
      * @inheritDoc
-     * @param object|array                 $objectOrArray The object or array to modify
-     * @param string|PropertyPathInterface $propertyPath  The property path to modify
-     * @return bool
      */
-    public function isReadable($objectOrArray, $propertyPath)
+    public function isReadable(object|array $objectOrArray, string|PropertyPathInterface $propertyPath): bool
     {
         if ($propertyPath === '') {
             return true;
