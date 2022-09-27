@@ -17,16 +17,17 @@ class Converters
      * get value from $o.
      * @template T
      * @param array<string, string|callable(T): mixed> $props
-     * @param T $o
-     * @return array<string, mixed>
+     * @return callable(T): array<string, mixed>
      */
-    public function assocArrayFrom(array $props, mixed $o): array
+    public function assocArrayFrom(array $props): callable
     {
-        $ret = [];
-        foreach ($props as $k => $v) {
-            $ret[$k] = is_callable($v) ? $v($o) : $this->propAcc->getValue($o, $v);
-        }
+        return function ($o) use ($props): array {
+            $ret = [];
+            foreach ($props as $k => $v) {
+                $ret[$k] = is_callable($v) ? $v($o) : $this->propAcc->getValue($o, $v);
+            }
 
-        return $ret;
+            return $ret;
+        };
     }
 }
