@@ -30,4 +30,23 @@ class Converters
             return $ret;
         };
     }
+
+    /**
+     * Create list array from string or callback, use PropertyAccessor to
+     * get value from $o.
+     * @template T
+     * @param (string|callable(T): mixed)[] $props
+     * @return callable(T): array
+     */
+    public function listArrayFrom(array $props): callable
+    {
+        return function ($o) use ($props): array {
+            $ret = [];
+            foreach ($props as $v) {
+                $ret[] = is_callable($v) ? $v($o) : $this->propAcc->getValue($o, $v);
+            }
+
+            return $ret;
+        };
+    }
 }
