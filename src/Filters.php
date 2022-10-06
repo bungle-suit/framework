@@ -28,10 +28,12 @@ class Filters
     /**
      * @return callable(): bool Return true if now equal or after $time
      */
-    public function afterThatTime(DateTime $time): callable
+    public function afterThatTime(DateTime $time, callable $fNow = null): callable
     {
-        return function () use ($time) {
-            return $this->basal->now() >= $time;
+        $fNow = $fNow ?? $this->basal->now(...);
+
+        return function () use ($fNow, $time) {
+            return $fNow() >= $time;
         };
     }
 }
