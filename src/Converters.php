@@ -26,17 +26,22 @@ class Converters
         return function ($o) use ($props): array {
             $ret = [];
             foreach ($props as $k => $v) {
-                if (is_callable($v)) {
-                    $ret[$k] = $v($o);
-                } elseif (is_array($v)) {
-                    $ret[$k] = $v[1]($this->propAcc->getValue($o, $v[0]), $o);
-                } else {
-                    $ret[$k] = $this->propAcc->getValue($o, $v);
-                }
+                $ret[$k] = $this->convertValue($v, $o);
             }
 
             return $ret;
         };
+    }
+
+    private function convertValue($pathOrF, $o): mixed
+    {
+        if (is_callable($pathOrF)) {
+            return $pathOrF($o);
+        } elseif (is_array($pathOrF)) {
+            return $pathOrF[1]($this->propAcc->getValue($o, $pathOrF[0]), $o);
+        } else {
+            return $this->propAcc->getValue($o, $pathOrF);
+        }
     }
 
     /**
@@ -51,7 +56,7 @@ class Converters
         return function ($o) use ($props): array {
             $ret = [];
             foreach ($props as $v) {
-                $ret[] = is_callable($v) ? $v($o) : $this->propAcc->getValue($o, $v);
+                $ret[] = $this->convertValue($v, $o);
             }
 
             return $ret;
