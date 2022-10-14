@@ -46,7 +46,7 @@ class FS implements FSInterface
     {
         $r = file_get_contents($path);
         if ($r === false) {
-            throw new RuntimeException("Read file %path failed");
+            throw new RuntimeException("Read file $path failed");
         }
 
         if (is_array($charset)) {
