@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Bungle\Framework\Model\ExtAttribute;
@@ -83,7 +84,12 @@ trait AttributeTrait
 
     public function setFloat(float $v): void
     {
-        $this->value = $v === 0.0 ? '' : strval($v);
+        $this->value = self::encodeFloat($v);
+    }
+
+    public static function encodeFloat(float $v): string
+    {
+        return $v === 0.0 ? '' : strval($v);
     }
 
     /** @return string[] */

@@ -85,4 +85,18 @@ class AttributeTraitTest extends MockeryTestCase
             'three' => [['one', 'two', 'three'], 'one,two,three'],
         ];
     }
+
+    /** @dataProvider encodeFloatProvider */
+    public function testEncodeFloat($exp, $val): void
+    {
+        self::assertEquals($exp, $this->attr::encodeFloat($val));
+    }
+
+    public function encodeFloatProvider()
+    {
+        return [
+            'zero' => ['', 0.0],
+            'non zero' => ['-4.5', -4.5],
+        ];
+    }
 }
