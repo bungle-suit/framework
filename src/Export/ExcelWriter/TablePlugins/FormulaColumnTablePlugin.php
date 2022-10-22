@@ -32,7 +32,7 @@ class FormulaColumnTablePlugin extends AbstractTablePlugin
                 $context->getWriter()->getSheet()->setCellValueByColumnAndRow(
                     $context->getColumnIndex($col),
                     $context->getRowIndex(),
-                    ($col->getFormula())($context->getRowIndex()),
+                    ($col->getFormula())($context->getRowIndex(), $col, $context),
                 );
             }
         }

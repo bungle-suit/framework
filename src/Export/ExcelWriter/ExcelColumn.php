@@ -23,7 +23,7 @@ final class ExcelColumn
     private bool $enableSum = false;
     /**
      * @var callable $formula
-     * @phpstan-var callable(int): string $formula
+     * @phpstan-var callable(int, Self, TableContext): string $formula
      */
     private $formula; // 公式
     private int $colSpan;
@@ -109,7 +109,7 @@ final class ExcelColumn
     /**
      * Returns excel formula, write the formula using the function result.
      *
-     * @phpstan-return callable(int): string
+     * @phpstan-return callable(int, Self, TableContext): string
      */
     public function getFormula(): callable
     {
@@ -119,7 +119,7 @@ final class ExcelColumn
     /**
      * The argument of callable is current row index.
      *
-     * @phpstan-param callable(int): string $formula
+     * @phpstan-param callable(int, Self, TableContext): string $formula
      */
     public function setFormula(callable $formula): self
     {
