@@ -72,9 +72,7 @@ class AttributeSetNormalizer implements DataTransformerInterface
             $attr = ($this->createAttribute)($name);
             $def = $this->getDefinition($name);
             $def->saveValue($attr, $val);
-            if ($attr->getValue() !== '') {
-                $r[] = $attr;
-            }
+            $r[] = $attr;
         }
 
         return $r;

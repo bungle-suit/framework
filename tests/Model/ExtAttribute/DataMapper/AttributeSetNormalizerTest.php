@@ -23,7 +23,7 @@ class AttributeSetNormalizerTest extends MockeryTestCase
             new BoolAttribute('b', 'Bar', 'Bar Desc'),
             new StringAttribute('c', 'Foobar', 'Foobar Desc'),
         ];
-        $this->normalizer = new AttributeSetNormalizer($defs, fn (string $name) => new TestAttribute($name));
+        $this->normalizer = new AttributeSetNormalizer($defs, fn(string $name) => new TestAttribute($name));
     }
 
     public function testTransform(): void
@@ -56,14 +56,20 @@ class AttributeSetNormalizerTest extends MockeryTestCase
         self::assertEquals(
             [
                 new TestAttribute('a', '1'),
-                new TestAttribute('c', 'foo') ],
+                new TestAttribute('b', ''),
+                new TestAttribute('c', 'foo'),
+            ],
             $this->normalizer->reverseTransform($normalized)
         );
 
         // case 2: value change to default
         $normalized['a'] = false;
         self::assertEquals(
-            [ new TestAttribute('c', 'foo')],
+            [
+                new TestAttribute('a', ''),
+                new TestAttribute('b', ''),
+                new TestAttribute('c', 'foo'),
+            ],
             $this->normalizer->reverseTransform($normalized)
         );
     }
