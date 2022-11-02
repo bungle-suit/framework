@@ -28,7 +28,7 @@ class Filters
     /**
      * @return callable(): bool Return true if now equal or after $time
      */
-    public function afterThatTime(DateTime $time, callable $fNow = null): callable
+    public function afterThatTimeF(DateTime $time, callable $fNow = null): callable
     {
         $fNow = $fNow ?? $this->basal->now(...);
 
