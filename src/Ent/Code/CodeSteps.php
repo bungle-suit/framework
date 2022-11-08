@@ -59,7 +59,7 @@ class CodeSteps
     /**
      * Return a code step that return n random chars of $charset.
      */
-    public function randomChars(string $charset, int $n): callable
+    public static function randomChars(string $charset, int $n): callable
     {
         return function () use ($charset, $n): string {
             $len = strlen($charset);

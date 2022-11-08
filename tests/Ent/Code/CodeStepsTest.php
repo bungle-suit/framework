@@ -68,7 +68,7 @@ class CodeStepsTest extends TestCase
 
     public function testRandomChars(): void
     {
-        $f = $this->steps->randomChars('0123456789', 5);
+        $f = $this->steps::randomChars('0123456789', 5);
         $s = $f();
         self::assertEquals(5, strlen($s));
         self::assertMatchesRegularExpression('/^[0-9]+$/', $s);
