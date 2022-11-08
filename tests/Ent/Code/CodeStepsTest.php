@@ -66,6 +66,14 @@ class CodeStepsTest extends TestCase
         self::assertEquals('20200103', $f());
     }
 
+    public function testRandomChars(): void
+    {
+        $f = $this->steps->randomChars('0123456789', 5);
+        $s = $f();
+        self::assertEquals(5, strlen($s));
+        self::assertMatchesRegularExpression('/^[0-9]+$/', $s);
+    }
+
     public function testCompose(): void
     {
         $steps = [

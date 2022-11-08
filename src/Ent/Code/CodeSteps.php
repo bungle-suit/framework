@@ -57,6 +57,22 @@ class CodeSteps
     }
 
     /**
+     * Return a code step that return n random chars of $charset.
+     */
+    public function randomChars(string $charset, int $n): callable
+    {
+        return function () use ($charset, $n): string {
+            $len = strlen($charset);
+            $s = '';
+            for ($i = 0; $i < $n; $i++) {
+                $s .= $charset[random_int(0, $len - 1)];
+            }
+
+            return $s;
+        };
+    }
+
+    /**
      * Compose a set of steps into one step.
      *
      * @template T
