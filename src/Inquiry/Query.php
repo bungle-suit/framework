@@ -30,6 +30,7 @@ class Query
 
     protected EntityManagerInterface $em;
     private string $title;
+    private bool $emInitialized = false;
 
     /**
      * @phpstan-param array<callable(Builder): void> $steps
@@ -40,9 +41,18 @@ class Query
         string $title = 'Query Name Not Set'
     ) {
         $this->em = $em;
-        $this->em->getConnection()->setTransactionIsolation(TransactionIsolationLevel::READ_UNCOMMITTED);
         $this->steps = $steps;
         $this->title = $title;
+    }
+
+    private function getEm(): EntityManagerInterface
+    {
+        if (!$this->emInitialized) {
+            $this->emInitialized = true;
+            $this->em->getConnection()->setTransactionIsolation(TransactionIsolationLevel::READ_UNCOMMITTED);
+        }
+
+        return $this->em;
     }
 
     /**
@@ -76,8 +86,8 @@ class Query
     protected function queryData(QueryBuilder|SelectInterface $qb): Traversable
     {
         if ($qb instanceof SelectInterface) {
-            $iter = $this->em->getConnection()
-                             ->executeQuery($qb->getStatement(), $qb->getBindValues());
+            $iter = $this->getEm()->getConnection()
+                         ->executeQuery($qb->getStatement(), $qb->getBindValues());
             foreach ($iter as $row) {
                 yield $row;
             }
@@ -124,8 +134,8 @@ class Query
     {
         $qb = $this->prepareQuery($params, self::BUILD_FOR_COUNT)->getQueryBuilder();
 
-        return (int)($this->em->getConnection()
-                              ->fetchOne($qb->getStatement(), $qb->getBindValues()));
+        return (int)($this->getEm()->getConnection()
+                          ->fetchOne($qb->getStatement(), $qb->getBindValues()));
     }
 
     private const BUILD_FOR_PAGING = 2;
@@ -146,7 +156,7 @@ class Query
         if ($this->nativeMode) {
             $qb = new QueryFactory('mysql');
         } else {
-            $qb = $this->em->createQueryBuilder();
+            $qb = $this->getEm()->createQueryBuilder();
         }
 
         $builder = new Builder($qb, $params);
