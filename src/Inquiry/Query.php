@@ -7,6 +7,7 @@ namespace Bungle\Framework\Inquiry;
 use Aura\SqlQuery\Common\SelectInterface;
 use Aura\SqlQuery\QueryFactory;
 use Bungle\Framework\Inquiry\Steps\QuerySteps;
+use Doctrine\DBAL\TransactionIsolationLevel;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -39,6 +40,7 @@ class Query
         string $title = 'Query Name Not Set'
     ) {
         $this->em = $em;
+        $this->em->getConnection()->setTransactionIsolation(TransactionIsolationLevel::READ_UNCOMMITTED);
         $this->steps = $steps;
         $this->title = $title;
     }
