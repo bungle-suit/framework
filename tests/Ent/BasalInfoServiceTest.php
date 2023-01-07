@@ -10,16 +10,16 @@ use LogicException;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use RuntimeException;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class BasalInfoServiceTest extends MockeryTestCase
 {
     private Mockery\LegacyMockInterface|EntityManagerInterface|Mockery\MockInterface $em;
-    private Mockery\LegacyMockInterface|Mockery\MockInterface|Security $security;
     private BasalInfoService $basal;
     private Mockery\LegacyMockInterface|ObjectName|Mockery\MockInterface $objectName;
+    private Security|Mockery\MockInterface|Mockery\LegacyMockInterface $security;
 
     protected function setUp(): void
     {

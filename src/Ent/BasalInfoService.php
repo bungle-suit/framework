@@ -7,8 +7,8 @@ use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use LogicException;
 use RuntimeException;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authorization\Voter\AuthenticatedVoter;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class BasalInfoService
