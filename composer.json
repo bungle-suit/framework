@@ -17,7 +17,8 @@
     "phpoffice/phpspreadsheet": "^1.17.0",
     "webmozart/assert": "^1.9",
     "ext-mbstring": "*",
-    "aura/sqlquery": "^2.7"
+    "aura/sqlquery": "^2.7",
+    "symfony/security-bundle": "^6.2"
   },
   "autoload": {
     "psr-4": { "Bungle\\Framework\\": "src/" }
