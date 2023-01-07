@@ -18,7 +18,8 @@
     "webmozart/assert": "^1.9",
     "ext-mbstring": "*",
     "aura/sqlquery": "^2.7",
-    "symfony/security-bundle": "^6.2"
+    "symfony/security-bundle": "^6.2",
+    "phpdocumentor/reflection": "^5.3"
   },
   "autoload": {
     "psr-4": { "Bungle\\Framework\\": "src/" }
