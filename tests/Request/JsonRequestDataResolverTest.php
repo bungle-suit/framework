@@ -60,6 +60,7 @@ class JsonRequestDataResolverTest extends MockeryTestCase
     public function testResolve($exp, $type, $json, $attributes): void
     {
         $req = new Request([], [], [], [], [], [], $json);
+        $req->setMethod(Request::METHOD_POST);
         $arg = new ArgumentMetadata('data', $type, false, false, null, attributes: $attributes);
         $arr = iterator_to_array($this->resolver->resolve($req, $arg));
         self::assertEquals([$exp], $arr);

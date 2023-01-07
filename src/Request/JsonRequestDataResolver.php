@@ -4,15 +4,14 @@ declare(strict_types=1);
 namespace Bungle\Framework\Request;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
+use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\Serializer\SerializerInterface;
-use Traversable;
 
 /**
  * Inject JsonRequestDataInterface argument from post data into controller argument.
  */
-class JsonRequestDataResolver implements ArgumentValueResolverInterface
+class JsonRequestDataResolver implements ValueResolverInterface
 {
     private SerializerInterface $serializer;
 
@@ -35,7 +34,7 @@ class JsonRequestDataResolver implements ArgumentValueResolverInterface
             return false;
         }
 
-        if (strpos($argument->getType(), '\\') === false) {
+        if (!str_contains($argument->getType(), '\\')) {
             return false;
         }
 
@@ -43,11 +42,12 @@ class JsonRequestDataResolver implements ArgumentValueResolverInterface
         return in_array(JsonRequestDataInterface::class, $interfaces);
     }
 
-    /**
-     * @phpstan-return Traversable<mixed>
-     */
-    public function resolve(Request $request, ArgumentMetadata $argument): Traversable
+    public function resolve(Request $request, ArgumentMetadata $argument): iterable
     {
+        if (!$this->supports($request, $argument)) {
+            return [];
+        }
+
         $t = $argument->getType();
         /** @var JsonRequestType[] $attrs */
         $attrs = $argument->getAttributes(JsonRequestType::class);
