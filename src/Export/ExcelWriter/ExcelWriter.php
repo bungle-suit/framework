@@ -116,6 +116,8 @@ class ExcelWriter extends ExcelOperator
         string $col = 'A',
         array $options = []
     ): void {
+        $memoryLimiter = new MemoryLimiter();
+
         $options = self::resolveTableOptions($options);
         $plugin = self::createPlugins($cols, $options);
 
@@ -142,7 +144,13 @@ class ExcelWriter extends ExcelOperator
         $this->nextRow();
 
         $propertyAccessor = new PropertyAccessor();
+        $rowWritten = 0;
         foreach ($rows as $idx => $row) {
+            $rowWritten++;
+            if ($rowWritten % 100 === 0) {
+                $memoryLimiter->check();
+            }
+
             $dataRow = [];
             /** @var ExcelColumn $c */
             foreach ($cols as $c) {

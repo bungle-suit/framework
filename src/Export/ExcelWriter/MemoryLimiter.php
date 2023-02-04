@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Export\ExcelWriter;
 
-use LogicException;
+use RuntimeException;
 
 /**
  * Parse php.inp memory_limit value, if current usage near limit, throw
@@ -14,14 +14,16 @@ class MemoryLimiter
 {
     private int $memoryLimit;
 
-    public function __construct()
+    public function __construct(?int $memoryLimit = null)
     {
-        $this->memoryLimit = self::parseMemoryLimit();
+        $this->memoryLimit = $memoryLimit ?? self::parseMemoryLimit();
     }
 
     public function check(): void
     {
-        throw new LogicException('todo');
+        if (memory_get_usage() > $this->memoryLimit * 0.9) {
+            throw new RuntimeException('导出数据太多，内存不足');
+        }
     }
 
     public static function parseMemoryLimit(): int
