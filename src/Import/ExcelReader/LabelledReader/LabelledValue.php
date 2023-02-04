@@ -23,7 +23,7 @@ class LabelledValue
     public const MODE_WRITE = 1;
 
     private int $mode = self::MODE_READ;
-    /** @var callable(mixed, Context<T>): mixed */
+    /** @var callable(mixed, Context<T>, Cell): mixed */
     private $writeConverter;
 
     private string $cellFormat = '';
@@ -94,7 +94,7 @@ class LabelledValue
      * Note: currently no read/write mode, after setWriteMode(), current value
      * will act as write only labelled value.
      *
-     * @param callable(mixed, Context<T>): mixed $fWriteConverter
+     * @param callable(mixed, Context<T>, Cell): mixed $fWriteConverter
      * @phpstan-return self<T>
      */
     public function setWriteMode(callable $fWriteConverter = null): self
@@ -109,7 +109,7 @@ class LabelledValue
      * Write converter converts object value to excel value, if returns null,
      * skip set cell value, return empty string, if want set the cell to empty.
      *
-     * @return callable(mixed, Context<T>): mixed
+     * @return callable(mixed, Context<T>, Cell): mixed
      */
     public function getWriteConverter(): callable
     {

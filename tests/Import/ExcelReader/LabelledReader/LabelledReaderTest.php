@@ -80,7 +80,7 @@ class LabelledReaderTest extends MockeryTestCase
             self::assertEquals('fill', $cell->getValue());
             $cell->setValue('new label');
         });
-        $lv4->expects('getWriteConverter')->with()->andReturn(fn($v, Context $context) => 456);
+        $lv4->expects('getWriteConverter')->with()->andReturn(fn($v, Context $context, Cell $cell) => 456);
         $f = Mockery::mock(Func::class);
         $f->expects('__invoke')->with(Mockery::type(Cell::class));
         $lv4->expects('getCellWriter')->andReturn($f);

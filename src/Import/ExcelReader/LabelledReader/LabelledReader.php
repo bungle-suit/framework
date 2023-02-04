@@ -87,8 +87,6 @@ class LabelledReader implements SectionContentReaderInterface
                                        ->getCellByColumnAndRow($lblColIdx, $reader->getRow())
                             );
                             $v = $this->propertyAccessor->getValue($this->obj, $value->getPath());
-                            $v = ($value->getWriteConverter())($v, $context);
-                            $reader->setCellValue($colIdx, $v);
                             if ($fmt = $value->getCellFormat()) {
                                 $cell = $reader->getSheet()->getCellByColumnAndRow(
                                     $colIdx,
@@ -96,6 +94,8 @@ class LabelledReader implements SectionContentReaderInterface
                                 );
                                 $cell->getStyle()->getNumberFormat()->setFormatCode($fmt);
                             }
+                            $v = ($value->getWriteConverter())($v, $context, $cell);
+                            $reader->setCellValue($colIdx, $v);
                             if ($f = $value->getCellWriter()) {
                                 $f($cell);
                             }
