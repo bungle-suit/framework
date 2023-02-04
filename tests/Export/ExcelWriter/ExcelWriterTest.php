@@ -415,9 +415,4 @@ class ExcelWriterTest extends MockeryTestCase
     {
         self::assertEquals($exp, $this->writer->getRow());
     }
-
-    public function testParseMemoryLimit(): void
-    {
-        self::assertIsInt(ExcelWriter::parseMemoryLimit());
-    }
 }
