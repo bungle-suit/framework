@@ -21,7 +21,7 @@ class MemoryLimiter
 
     public function check(): void
     {
-        if (memory_get_usage() > $this->memoryLimit * 0.9) {
+        if (memory_get_usage(true) > $this->memoryLimit * 0.75) {
             throw new RuntimeException('导出数据太多，内存不足');
         }
     }
