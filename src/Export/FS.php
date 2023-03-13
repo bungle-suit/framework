@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Bungle\Framework\Export;
 
+use LogicException;
 use RuntimeException;
 use Symfony\Component\ErrorHandler\ErrorHandler;
 use Webmozart\Assert\Assert;
+use ZipArchive;
 
 class FS implements FSInterface
 {
@@ -41,10 +43,42 @@ class FS implements FSInterface
         return ErrorHandler::call(fn() => filesize($path));
     }
 
+    /**
+     * Read content of a zip file entry. $path format: izip:///path/to/file.zip#entryIdx#entryName
+     */
+    private function readIZip(string $path): string
+    {
+        $words = explode('#', $path);
+        if (count($words) < 2) {
+            throw new RuntimeException("Invalid izip path: $path");
+        }
+
+        $zip = new ZipArchive();
+        $p = substr($words[0], 7);
+        $r = $zip->open($p);
+        if ($r !== true) {
+            throw new RuntimeException("Open zip file $p failed: $r");
+        }
+
+        $r = $zip->getFromIndex((int)$words[1]);
+        $zip->close();
+
+        if ($r === false) {
+            throw new LogicException("failed to read ".$path);
+        }
+
+        return $r;
+    }
+
     /** @inheritDoc */
     public function readFile(string $path, string|array $charset = ''): string
     {
-        $r = file_get_contents($path);
+        if (str_starts_with($path, 'izip:///')) {
+            $r = $this->readIZip($path);
+        } else {
+            $r = file_get_contents($path);
+        }
+
         if ($r === false) {
             throw new RuntimeException("Read file $path failed");
         }

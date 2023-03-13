@@ -16,4 +16,15 @@ class FSTest extends MockeryTestCase
         self::assertEquals('abc', $capture());
         self::assertFalse(is_resource($f));
     }
+
+    public function testReadIZip(): void
+    {
+        $fs = new FS();
+
+        $path = __DIR__.'/izip-test.zip';
+        $exp = file_get_contents('zip://'.$path.'#20230310-银丝垂柳-无标-衣柜-1单-0315/8121070/81210701004.mpr');
+
+        self::assertEquals($exp, $fs->readFile('izip://'.$path.'#5'));
+        self::assertEquals($exp, $fs->readFile('izip://'.$path.'#5#20230310-银丝垂柳-无标-衣柜-1单-0315/8121070/81210701004.mpr'));
+    }
 }
