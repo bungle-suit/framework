@@ -7,7 +7,6 @@ namespace Bungle\Framework\Inquiry;
 use Aura\SqlQuery\Common\SelectInterface;
 use Aura\SqlQuery\QueryFactory;
 use Bungle\Framework\Inquiry\Steps\QuerySteps;
-use Doctrine\DBAL\TransactionIsolationLevel;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -30,7 +29,6 @@ class Query
 
     protected EntityManagerInterface $em;
     private string $title;
-    private bool $emInitialized = false;
 
     /**
      * @phpstan-param array<callable(Builder): void> $steps
@@ -43,16 +41,6 @@ class Query
         $this->em = $em;
         $this->steps = $steps;
         $this->title = $title;
-    }
-
-    private function getEm(): EntityManagerInterface
-    {
-        if (!$this->emInitialized) {
-            $this->emInitialized = true;
-            $this->em->getConnection()->setTransactionIsolation(TransactionIsolationLevel::READ_UNCOMMITTED);
-        }
-
-        return $this->em;
     }
 
     /**
@@ -86,8 +74,8 @@ class Query
     protected function queryData(QueryBuilder|SelectInterface $qb): Traversable
     {
         if ($qb instanceof SelectInterface) {
-            $iter = $this->getEm()->getConnection()
-                         ->executeQuery($qb->getStatement(), $qb->getBindValues());
+            $iter = $this->em->getConnection()
+                             ->executeQuery($qb->getStatement(), $qb->getBindValues());
             foreach ($iter as $row) {
                 yield $row;
             }
@@ -134,8 +122,8 @@ class Query
     {
         $qb = $this->prepareQuery($params, self::BUILD_FOR_COUNT)->getQueryBuilder();
 
-        return (int)($this->getEm()->getConnection()
-                          ->fetchOne($qb->getStatement(), $qb->getBindValues()));
+        return (int)($this->em->getConnection()
+                              ->fetchOne($qb->getStatement(), $qb->getBindValues()));
     }
 
     private const BUILD_FOR_PAGING = 2;
@@ -156,7 +144,7 @@ class Query
         if ($this->nativeMode) {
             $qb = new QueryFactory('mysql');
         } else {
-            $qb = $this->getEm()->createQueryBuilder();
+            $qb = $this->em->createQueryBuilder();
         }
 
         $builder = new Builder($qb, $params);

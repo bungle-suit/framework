@@ -14,7 +14,6 @@ use Bungle\Framework\Inquiry\QueryParams;
 use Bungle\Framework\Inquiry\QueryStepInterface;
 use Countable;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\TransactionIsolationLevel;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -32,9 +31,6 @@ class QueryTest extends Mockery\Adapter\Phpunit\MockeryTestCase
         parent::setUp();
 
         $this->em = Mockery::mock(EntityManagerInterface::class);
-        $conn = Mockery::mock(Connection::class);
-        $this->em->expects('getConnection')->andReturn($conn);
-        $conn->expects('setTransactionIsolation')->with(TransactionIsolationLevel::READ_UNCOMMITTED);
     }
 
     public function testQuery(): void
