@@ -23,24 +23,13 @@ class Query
     private bool $nativeMode = false;
 
     /**
-     * @phpstan-var (callable(Builder): void)[]
-     */
-    private array $steps;
-
-    protected EntityManagerInterface $em;
-    private string $title;
-
-    /**
      * @phpstan-param array<callable(Builder): void> $steps
      */
     public function __construct(
-        EntityManagerInterface $em,
-        array $steps,
-        string $title = 'Query Name Not Set'
+        protected EntityManagerInterface $em,
+        private readonly array $steps,
+        private string $title = 'Query Name Not Set'
     ) {
-        $this->em = $em;
-        $this->steps = $steps;
-        $this->title = $title;
     }
 
     /**
